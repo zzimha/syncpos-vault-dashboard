@@ -912,12 +912,17 @@ function formatSyncStamp(d = new Date()) {
   return `${date} · ${h}.${m}${ampm}`;
 }
 
+function displayOwnerName(name) {
+  if (!name) return '';
+  return String(name).replace(/\s*\([^)]*\)/g, '').trim().replace(/\s+/g, ' ');
+}
+
 function ownerName(row) {
   const o = row?.Owner;
   if (o == null || o === '') return '';
   const s = String(o).trim();
   if (s === 'None') return '';
-  return s;
+  return displayOwnerName(s);
 }
 
 /** Display-only: DisplayDate text from sheet. SortDate is never shown here. */
@@ -1079,7 +1084,7 @@ function followTypeIcon(source) {
 
 function followOwnerParts(owner) {
   if (!owner) return [];
-  return owner.split(/[/,]/).map(s => s.trim()).filter(Boolean);
+  return owner.split(/[/,]/).map(s => displayOwnerName(s.trim())).filter(Boolean);
 }
 
 function followOwnerKey(owner) {

@@ -493,11 +493,11 @@
   }
   .follow-task input:hover { border-color:#fff; background:rgba(255,255,255,0.22); }
   .follow-task input:checked {
-    background:#fff; border-color:#fff;
+    background:var(--green); border-color:var(--green);
   }
   .follow-task input:checked::after {
     content:''; position:absolute; left:4px; top:1px;
-    width:5px; height:9px; border:solid var(--green); border-width:0 2px 2px 0;
+    width:5px; height:9px; border:solid #fff; border-width:0 2px 2px 0;
     transform:rotate(45deg);
   }
   .follow-task input:active { transform:scale(0.92); }
@@ -1208,22 +1208,46 @@ function heroDailyItemMatches(item) {
   return !!item.owner;
 }
 
+function heroTaskLabel(item) {
+  const owner = followOwnerParts(item.owner)[0];
+  const chase = owner ? `chase ${owner}` : 'follow up';
+  return `Track ${item.trackNum} · ${chase}`;
+}
+
+function followTrackSortKey(item) {
+  const n = Number(item.trackNum);
+  return Number.isFinite(n) ? n : 999;
+}
+
+function pickBestPerTrack(items) {
+  const byTrack = new Map();
+  items.forEach(item => {
+    if (!item.trackNum) return;
+    const cur = byTrack.get(item.trackNum);
+    if (!cur || followTierSort(item, cur) < 0) byTrack.set(item.trackNum, item);
+  });
+  return [...byTrack.values()].sort((a, b) => followTrackSortKey(a) - followTrackSortKey(b));
+}
+
 function pickHeroDailyTasks(allItems) {
-  const eligible = allItems.filter(heroDailyItemMatches).sort(followTierSort);
-  const unchecked = eligible.filter(i => !isFollowTaskDone(i.key));
-  const picked = unchecked.slice(0, 5);
+  const eligible = allItems.filter(i => heroDailyItemMatches(i) && i.trackNum);
+  const byTrack = pickBestPerTrack(eligible);
+  const unchecked = byTrack.filter(i => !isFollowTaskDone(i.key));
+  const picked = [...unchecked.slice(0, 5)];
   if (picked.length < 3) {
-    const checked = eligible.filter(i => isFollowTaskDone(i.key));
+    const checked = byTrack.filter(i => isFollowTaskDone(i.key));
     for (const item of checked) {
-      if (picked.length >= 3) break;
+      if (picked.length >= 5) break;
+      if (picked.some(p => p.trackNum === item.trackNum)) continue;
       picked.push(item);
     }
   }
+  picked.sort((a, b) => followTrackSortKey(a) - followTrackSortKey(b));
   return picked.slice(0, 5);
 }
 
 function renderHeroDailyTask(item) {
-  const taskText = followTaskLabel(item);
+  const taskText = heroTaskLabel(item);
   const done = isFollowTaskDone(item.key);
   const tier = followPriorityTier(item);
   return `
@@ -1411,10 +1435,20 @@ function bindFollowUpEvents() {
 }
 
 function gateTrackNum(g) {
-  if (g.Track != null && g.Track !== '') return String(g.Track);
-  if (g.Num != null && g.Num !== '' && Number(g.Num) <= 6) return String(Number(g.Num));
+  const t = String(g.Track || '').trim();
+  if (t && t !== 'None') {
+    const m = t.match(/track\s*(\d+)/i);
+    if (m) return m[1];
+    if (/^\d+$/.test(t)) return t;
+  }
   const m = String(g.Name || '').match(/track\s*(\d+)/i);
-  return m ? m[1] : '';
+  if (m) return m[1];
+  const name = String(g.Name || '').toLowerCase();
+  if (/kms|auto-unseal|iam roles/i.test(name)) return '2';
+  if (/ldap|ad group/i.test(name)) return '3';
+  if (/\buat\b|nprd|sign-off/i.test(name)) return '5';
+  if (/production cutover|dr deploy|bidirectional firewall/i.test(name)) return '6';
+  return '';
 }
 
 function applyGateFilter() {

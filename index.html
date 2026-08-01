@@ -336,7 +336,17 @@
 const SHEET_ID = '1EWSX-LsXjh-hV55E3SSNpqS9FTBXpKlGnuzW15-J5Dc';
 const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
-const STATUS_COLORS = { green: '#2F8F5B', amber: '#B8790A', red: '#B3261E', grey: '#6B7280' };
+const HERO_SHORT = {
+  'Cutover Window': 'Cutover 9 Aug · end TBC (~27 Aug)',
+  'Hero Note 1': 'Start on track · end may slip ~1 wk',
+  'Hero Note 2': 'Auto-unseal, LDAP Prod, DR & UAT after 9 Aug',
+};
+
+function heroText(name, detail) {
+  const d = String(detail || '').trim();
+  if (d && d.length <= 48) return d;
+  return HERO_SHORT[name] || d;
+}
 
 let expandedTracks = new Set();
 let gateCutoverFilter = 'all';
@@ -680,9 +690,9 @@ function render(rows) {
   const days = Math.round((cutoverStart - today) / 86400000);
   document.getElementById('daysToCutover').textContent = days;
 
-  const heroTitle = meta['Cutover Window'] || 'Starts 9 Aug 2026 — end date unconfirmed';
-  const heroNote1 = meta['Hero Note 1'] || '';
-  const heroNote2 = meta['Hero Note 2'] || '';
+  const heroTitle = heroText('Cutover Window', meta['Cutover Window']) || 'Cutover 9 Aug · end TBC';
+  const heroNote1 = heroText('Hero Note 1', meta['Hero Note 1']);
+  const heroNote2 = heroText('Hero Note 2', meta['Hero Note 2']);
   const warnLine = heroNote2
     ? `<p class="hero-warn">${escapeHtml(heroNote2.startsWith('⚠') ? heroNote2 : '⚠ ' + heroNote2)}</p>`
     : '';

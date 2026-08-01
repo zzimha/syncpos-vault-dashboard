@@ -264,7 +264,7 @@
         <span class="refresh-icon" aria-hidden="true">↻</span>
         <span>Refresh now</span>
       </button>
-      <span class="edit-link">✎ <a href="https://docs.google.com/spreadsheets/d/1AXrOH5bdHM74t3SVLmDgNDH2VePiHPjCOd40Xx-iF40/edit" target="_blank">Edit source sheet</a></span>
+      <span class="edit-link">✎ <a href="https://docs.google.com/spreadsheets/d/1mPZrtR8TY0InLexpg9xE2phBjNiVx1lcc7hEhKsyMVU/edit" target="_blank">Edit source sheet</a></span>
     </div>
   </header>
 
@@ -293,7 +293,7 @@
 </div>
 
 <script>
-const SHEET_ID = '1AXrOH5bdHM74t3SVLmDgNDH2VePiHPjCOd40Xx-iF40';
+const SHEET_ID = '1mPZrtR8TY0InLexpg9xE2phBjNiVx1lcc7hEhKsyMVU';
 const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
 const STATUS_COLORS = { green: '#2F8F5B', amber: '#B8790A', red: '#B3261E', grey: '#6B7280' };
@@ -478,15 +478,33 @@ function parseSheetDate(val) {
   if (val == null || val === '') return null;
   const str = String(val);
   const m = str.match(/^Date\((\d+),(\d+),(\d+)\)$/);
-  if (m) return new Date(+m[1], +m[2], +m[3]);
+  if (m) {
+    const d = new Date(+m[1], +m[2], +m[3]);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
   const d = new Date(val);
-  return isNaN(d) ? null : d;
+  if (isNaN(d)) return null;
+  d.setHours(0, 0, 0, 0);
+  return d;
 }
 
-function formatDisplayDate(row, field = 'Date') {
-  if (row[field + '_fmt']) return row[field + '_fmt'];
-  const parsed = parseSheetDate(row[field]);
-  return parsed ? formatShortDate(parsed) : '—';
+function parseSortDate(row) {
+  if (!row) return null;
+  if (row.SortDate_fmt) {
+    const d = new Date(row.SortDate_fmt);
+    if (!isNaN(d)) { d.setHours(0, 0, 0, 0); return d; }
+  }
+  return parseSheetDate(row.SortDate);
+}
+
+function formatGateDisplayDate(row) {
+  if (row.Date_fmt) return String(row.Date_fmt);
+  if (row.Date != null && row.Date !== '' && !String(row.Date).startsWith('Date(')) {
+    return String(row.Date);
+  }
+  const sortParsed = parseSortDate(row);
+  return sortParsed ? formatShortDate(sortParsed) : '';
 }
 
 function markerPosition(pct) {
@@ -521,15 +539,14 @@ function pctBetween(date, start, end) {
 }
 
 function riskCount(row) {
-  // RISK section stores numeric counts in the Date column (reused field)
-  const raw = row.Date ?? row.Detail ?? '';
+  const raw = row.Value ?? '';
   if (raw !== '' && raw != null) {
     if (typeof raw === 'number') return raw;
     const n = Number(raw);
     if (!isNaN(n)) return n;
   }
-  if (row.Date_fmt) {
-    const f = Number(row.Date_fmt);
+  if (row.Value_fmt) {
+    const f = Number(row.Value_fmt);
     if (!isNaN(f)) return f;
   }
   return 0;
@@ -585,12 +602,14 @@ function render(rows) {
   rows.filter(r => r.Section === 'META').forEach(r => { meta[r.Name] = r.Detail; });
   const cutoverDateRaw = rows.find(r => r.Section === 'META' && r.Name === 'Cutover Window');
 
-  // Countdown — parse the Date column on the Cutover Window META row
+  // Countdown — SortDate on Cutover Window META row (fallback: legacy Date column)
   let cutoverStart = new Date('2026-08-09');
   const dateCell = rows.find(r => r.Section === 'META' && r.Name === 'Cutover Window');
-  if (dateCell && dateCell.Date) {
-    const d = new Date(dateCell.Date);
-    if (!isNaN(d)) cutoverStart = d;
+  const cutoverParsed = dateCell ? parseSortDate(dateCell) : null;
+  if (cutoverParsed) cutoverStart = cutoverParsed;
+  else if (dateCell && dateCell.Date) {
+    const d = parseSheetDate(dateCell.Date);
+    if (d) cutoverStart = d;
   }
   const today = new Date(); today.setHours(0,0,0,0);
   const days = Math.round((cutoverStart - today) / 86400000);
@@ -655,8 +674,15 @@ function render(rows) {
 
   /* 3 — Horizontal timeline bar + filterable list */
   const gates = rows.filter(r => r.Section === 'GATE');
-  const gateDates = gates.map(g => ({ ...g, parsed: parseSheetDate(g.Date) })).filter(g => g.parsed);
-  gateDates.sort((a, b) => a.parsed - b.parsed);
+  gates.sort((a, b) => {
+    const da = parseSortDate(a);
+    const db = parseSortDate(b);
+    if (!da && !db) return Number(a.Num) - Number(b.Num);
+    if (!da) return 1;
+    if (!db) return -1;
+    return da - db;
+  });
+  const gateDates = gates.map(g => ({ ...g, parsed: parseSortDate(g) })).filter(g => g.parsed);
 
   const cutoverNorm = new Date(cutoverStart); cutoverNorm.setHours(0, 0, 0, 0);
   window._cutoverNorm = cutoverNorm;
@@ -674,7 +700,7 @@ function render(rows) {
   const cutoverPos = markerPosition(cutoverPct);
   const dotsHtml = gateDates.map(g => {
     const p = markerPosition(pctBetween(g.parsed, rangeStart, rangeEnd));
-    const title = `${g.Name} (${formatDisplayDate(g)})`;
+    const title = `${g.Name} (${formatGateDisplayDate(g) || g.SortDate_fmt || ''})`;
     return `<div class="tl-bar-dot status-${g.Status || 'grey'}" style="left:${p}%" title="${escapeHtml(title)}"></div>`;
   }).join('');
 
@@ -682,14 +708,15 @@ function render(rows) {
     .map(n => `<option value="${n}"${n === gateTrackFilter ? ' selected' : ''}>${n === 'all' ? 'All Tracks' : 'Track ' + n}</option>`).join('');
 
   const gateRowsHtml = gates.map(g => {
-    const parsed = parseSheetDate(g.Date);
+    const parsed = parseSortDate(g);
     const detailBullets = textToBullets(g.Detail || '');
     const detailHtml = detailBullets.length
       ? `<div class="tl-milestone-detail">${bulletsHtml(detailBullets)}</div>`
       : '';
+    const displayDate = formatGateDisplayDate(g);
     return `
       <div class="tl-row" data-parsed="${parsed ? parsed.getTime() : ''}" data-track="${escapeHtml(gateTrackNum(g))}">
-        <div class="tl-date">${escapeHtml(formatDisplayDate(g))}</div>
+        <div class="tl-date">${escapeHtml(displayDate)}</div>
         <div>
           <div class="tl-milestone">${escapeHtml(g.Name)}</div>
           ${detailHtml}

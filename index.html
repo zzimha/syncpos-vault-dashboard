@@ -29,8 +29,12 @@
     border-radius:99px;
   }
   header .meta { font-size:11px; color:#C7D2E8; font-family:var(--mono); margin-top:8px; font-weight:500; }
-  .sync-box { text-align:right; }
-  .sync-status { font-size:11px; font-family:var(--mono); color:#9FB0D0; }
+  .sync-box { text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+  .sync-status {
+    font-size:11px; font-family:var(--mono); font-weight:500;
+    color:#F4F7FC; background:rgba(255,255,255,0.14);
+    padding:5px 10px; border-radius:6px; border:1px solid rgba(255,255,255,0.12);
+  }
   .refresh-btn {
     display:inline-flex; align-items:center; gap:7px;
     font-family:var(--sans); font-size:12px; font-weight:600;
@@ -50,8 +54,14 @@
   }
   .refresh-btn.loading .refresh-icon { animation:refresh-spin 0.75s linear infinite; }
   @keyframes refresh-spin { to { transform:rotate(360deg); } }
-  .edit-link { font-family:var(--mono); font-size:10.5px; color:#C7D2E8; display:block; margin-top:4px; }
-  .edit-link a { color:#C7D2E8; }
+  .edit-link {
+    font-family:var(--mono); font-size:10.5px; font-weight:500;
+    color:#F4F7FC; background:rgba(255,255,255,0.1);
+    padding:4px 10px; border-radius:6px; display:inline-block;
+    border:1px solid rgba(255,255,255,0.1);
+  }
+  .edit-link a { color:#F4F7FC; text-decoration:none; }
+  .edit-link a:hover { text-decoration:underline; }
 
   .hero { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:22px 26px; margin-bottom:18px; display:grid; grid-template-columns:auto auto 1fr; gap:28px; align-items:center; }
   @media (max-width:760px){ .hero{ grid-template-columns:1fr; } .countdown,.hero-ring{ border-right:none !important; padding-right:0 !important; border-bottom:1px solid var(--line); padding-bottom:18px; } }
@@ -66,21 +76,25 @@
   .hero-ring svg { display:block; margin:0 auto; }
   .hero-detail h2 { font-family:var(--sans); font-size:15px; font-weight:600; margin-bottom:8px; line-height:1.35; }
   .hero-detail .content-list { font-family:var(--sans); font-size:14px; color:#333; line-height:1.5; margin-bottom:6px; }
-  .hero-detail .content-list.warn { color:var(--red); }
 
   .section-title {
     font-size:10.5px; text-transform:uppercase; letter-spacing:1.3px; color:#9CA3AF;
     margin:28px 0 10px 2px; font-family:var(--mono); font-weight:500;
   }
+  .section-title-gates {
+    font-size:13px; font-weight:700; letter-spacing:0.06em; color:var(--navy);
+    font-family:var(--sans); margin:32px 0 12px 2px;
+  }
 
   .content-list { list-style:none; padding-left:0; margin:0; }
   .content-list li { position:relative; padding-left:16px; margin-bottom:4px; }
   .content-list li::before {
-    content:'•'; position:absolute; left:0; top:0; color:var(--grey); font-weight:700;
+    content:'•'; position:absolute; left:0; top:0; color:var(--slate); font-weight:700;
   }
   .content-list li:last-child { margin-bottom:0; }
   .content-list.compact { font-size:13px; color:#444; line-height:1.45; }
-  .content-list.warn li::before { color:var(--grey); }
+  .hero-detail .content-list.warn li { color:var(--red); }
+  .hero-detail .content-list.warn li::before { color:var(--slate); }
 
   .tracks { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
   @media (max-width:900px){ .tracks{grid-template-columns:repeat(2,1fr);} }
@@ -160,9 +174,14 @@
   .tl-bar-dot.status-amber{ background:var(--amber); }
   .tl-bar-dot.status-red{ background:var(--red); }
   .tl-bar-dot.status-grey{ background:var(--grey); }
-  .tl-bar-legend { display:flex; flex-wrap:wrap; gap:14px; margin-top:28px; font-family:var(--mono); font-size:10px; font-weight:500; color:var(--grey); }
-  .tl-bar-legend span { display:inline-flex; align-items:center; gap:5px; }
-  .tl-bar-legend i { display:inline-block; width:10px; height:10px; border-radius:50%; }
+  .tl-bar-legend {
+    display:inline-flex; flex-wrap:wrap; gap:10px 16px; margin-top:16px;
+    font-family:var(--mono); font-size:10px; font-weight:500; color:var(--slate);
+    background:var(--grey-bg); border:1px solid var(--line);
+    border-radius:8px; padding:10px 14px;
+  }
+  .tl-bar-legend span { display:inline-flex; align-items:center; gap:6px; }
+  .tl-bar-legend i { display:inline-block; width:10px; height:10px; border-radius:50%; flex-shrink:0; }
 
   .tl-filters {
     display:flex; flex-wrap:wrap; gap:16px 24px; align-items:flex-end;
@@ -257,7 +276,7 @@
   <div class="section-title">Track Status</div>
   <div class="tracks" id="trackGrid"></div>
 
-  <div class="section-title">Key Gates &amp; Milestones</div>
+  <div class="section-title section-title-gates">Key Gates &amp; Milestones</div>
   <div class="timeline" id="timeline"></div>
 
   <div class="section-title">Open Risks</div>

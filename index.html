@@ -67,20 +67,46 @@
   .edit-link a { color:#F4F7FC; text-decoration:none; }
   .edit-link a:hover { text-decoration:underline; }
 
-  .hero { padding:10px 14px; margin-bottom:8px; display:grid; grid-template-columns:auto auto 1fr; gap:12px; align-items:center; }
-  @media (max-width:760px){ .hero{ grid-template-columns:1fr; } .countdown,.hero-ring{ border-right:none !important; padding-right:0 !important; border-bottom:1px solid var(--line); padding-bottom:8px; } }
-  .countdown { text-align:center; padding-right:12px; border-right:1px solid var(--line); min-width:72px; }
+  .hero { padding:16px 20px; margin-bottom:8px; display:grid; grid-template-columns:auto auto 1fr; gap:20px; align-items:center; }
+  @media (max-width:760px){ .hero{ grid-template-columns:1fr; } .countdown,.hero-ring{ border-right:none !important; padding-right:0 !important; border-bottom:1px solid var(--line); padding-bottom:12px; } }
+  .countdown { text-align:center; padding-right:20px; border-right:1px solid var(--line); min-width:120px; }
   .countdown .num {
-    font-family:var(--display); font-size:44px; font-weight:700; color:var(--navy);
+    font-family:var(--display); font-size:72px; font-weight:700; color:var(--navy);
     line-height:0.95; letter-spacing:-0.03em; font-variant-numeric:tabular-nums;
   }
-  .countdown .label { font-family:var(--mono); font-size:8px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--grey); margin-top:3px; line-height:1.2; max-width:72px; margin-left:auto; margin-right:auto; }
-  .hero-ring { text-align:center; padding-right:12px; border-right:1px solid var(--line); min-width:88px; }
-  .hero-ring .ring-label { font-family:var(--mono); font-size:8px; font-weight:500; text-transform:uppercase; letter-spacing:0.7px; color:var(--grey); margin-top:2px; }
-  .hero-ring svg { display:block; margin:0 auto; width:80px; height:80px; }
-  .hero-detail h2 { font-family:var(--sans); font-size:13px; font-weight:700; margin-bottom:3px; line-height:1.3; color:var(--navy); }
-  .hero-note { font-family:var(--sans); font-size:12px; color:#444; line-height:1.35; }
-  .hero-warn { font-family:var(--sans); font-size:11px; color:var(--red); line-height:1.35; margin-top:4px; padding:4px 8px; background:var(--red-bg); border-radius:5px; border-left:3px solid var(--red); }
+  .countdown .label { font-family:var(--mono); font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--grey); margin-top:6px; }
+  .hero-ring { text-align:center; padding-right:20px; border-right:1px solid var(--line); min-width:130px; }
+  .hero-ring .ring-label { font-family:var(--mono); font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:0.8px; color:var(--grey); margin-top:4px; }
+  .hero-ring svg { display:block; margin:0 auto; width:118px; height:118px; }
+  .hero-detail h2 { font-family:var(--sans); font-size:15px; font-weight:700; margin-bottom:6px; line-height:1.35; color:var(--navy); }
+  .hero-note { font-family:var(--sans); font-size:13px; color:#444; line-height:1.45; }
+  .hero-warn { font-family:var(--sans); font-size:13px; color:var(--red); line-height:1.45; margin-top:6px; padding:6px 10px; background:var(--red-bg); border-radius:6px; border-left:3px solid var(--red); }
+
+  .dash-tabs {
+    display:flex; gap:4px; margin-bottom:8px; padding:4px;
+    background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    box-shadow:0 1px 2px rgba(31,56,100,0.04);
+  }
+  .dash-tab {
+    flex:1; font-family:var(--sans); font-size:12px; font-weight:600;
+    padding:9px 14px; border:none; border-radius:6px; cursor:pointer;
+    background:transparent; color:var(--grey); transition:background 0.15s ease, color 0.15s ease;
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .dash-tab:hover { background:var(--grey-bg); color:var(--slate); }
+  .dash-tab[aria-selected="true"] {
+    background:var(--navy); color:#fff;
+    box-shadow:0 1px 4px rgba(31,56,100,0.18);
+  }
+  .tab-badge {
+    font-family:var(--mono); font-size:10px; font-weight:700;
+    padding:2px 7px; border-radius:99px; line-height:1;
+    background:rgba(255,255,255,0.2); color:inherit;
+  }
+  .dash-tab[aria-selected="true"] .tab-badge { background:rgba(255,255,255,0.22); }
+  .dash-tab:not([aria-selected="true"]) .tab-badge { background:var(--red-bg); color:var(--red); }
+  .tab-panel { display:block; }
+  .tab-panel.hidden { display:none; }
 
   .section-title {
     font-size:9px; text-transform:uppercase; letter-spacing:1px; color:#9CA3AF;
@@ -246,15 +272,14 @@
   .tl-empty { font-family:var(--sans); font-size:13px; color:var(--grey); padding:12px 0; display:none; }
   .tl-empty.visible { display:block; }
 
-  .risk-panel { padding:10px 12px; }
-  .risk-layout { display:grid; grid-template-columns:auto 1fr; gap:10px; align-items:stretch; }
-  @media (max-width:600px){ .risk-layout{ grid-template-columns:1fr; } }
-  .risk-chart svg { display:block; width:88px; height:88px; }
-  .risk-strip-counts { display:grid; grid-template-columns:repeat(2,1fr); gap:6px; height:100%; }
+  .risk-panel { padding:16px 18px; }
+  .risk-layout { display:grid; grid-template-columns:auto 1fr; gap:20px; align-items:center; }
+  @media (max-width:600px){ .risk-layout{ grid-template-columns:1fr; justify-items:center; } }
+  .risk-chart svg { display:block; width:130px; height:130px; }  .risk-strip-counts { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; height:100%; }
   @media (min-width:601px){ .risk-strip-counts{ grid-template-columns:repeat(4,1fr); } }
-  .risk-box{ background:#FAFBFC; border:1px solid var(--line); border-radius:6px; padding:6px 8px; text-align:center; display:flex; flex-direction:column; justify-content:center; min-height:52px; }
-  .risk-box .count{ font-family:var(--mono); font-size:20px; font-weight:700; font-variant-numeric:tabular-nums; line-height:1; }
-  .risk-box .rlabel{ font-size:9px; color:var(--grey); text-transform:uppercase; letter-spacing:0.4px; margin-top:4px; font-family:var(--mono); font-weight:600; }
+  .risk-box{ background:#FAFBFC; border:1px solid var(--line); border-radius:8px; padding:12px 14px; text-align:center; display:flex; flex-direction:column; justify-content:center; min-height:72px; }
+  .risk-box .count{ font-family:var(--mono); font-size:28px; font-weight:700; font-variant-numeric:tabular-nums; line-height:1; }
+  .risk-box .rlabel{ font-size:10px; color:var(--grey); text-transform:uppercase; letter-spacing:0.5px; margin-top:6px; font-family:var(--mono); font-weight:600; }
   .risk-box.critical .count{ color:var(--red); }
   .risk-box.high .count{ color:var(--amber); }
   .risk-box.medium .count{ color:#4A7CB5; }
@@ -290,20 +315,30 @@
   <div class="hero panel">
     <div class="countdown">
       <div class="num" id="daysToCutover">–</div>
-      <div class="label">days to cutover</div>
+      <div class="label">days to cutover start</div>
     </div>
     <div class="hero-ring" id="heroRing"></div>
     <div class="hero-detail" id="heroDetail"></div>
   </div>
 
-  <div class="section-title">Track Status</div>
-  <div class="tracks" id="trackGrid"></div>
+  <nav class="dash-tabs" role="tablist" aria-label="Dashboard sections">
+    <button type="button" class="dash-tab" id="tabProgramme" role="tab" aria-selected="true" aria-controls="panelProgramme">Programme</button>
+    <button type="button" class="dash-tab" id="tabRisks" role="tab" aria-selected="false" aria-controls="panelRisks">
+      Open Risks <span class="tab-badge" id="riskTabBadge">–</span>
+    </button>
+  </nav>
 
-  <div class="section-title section-title-gates">Key Gates &amp; Milestones</div>
-  <div class="timeline panel" id="timeline"></div>
+  <div id="panelProgramme" class="tab-panel" role="tabpanel" aria-labelledby="tabProgramme">
+    <div class="section-title">Track Status</div>
+    <div class="tracks" id="trackGrid"></div>
 
-  <div class="section-title">Open Risks</div>
-  <div class="risk-strip" id="riskStrip"></div>
+    <div class="section-title section-title-gates">Key Gates &amp; Milestones</div>
+    <div class="timeline panel" id="timeline"></div>
+  </div>
+
+  <div id="panelRisks" class="tab-panel hidden" role="tabpanel" aria-labelledby="tabRisks">
+    <div class="risk-strip" id="riskStrip"></div>
+  </div>
 
   <div class="footnote">Live from Google Sheet · auto-refreshes every 60s · edit the sheet and hit Refresh</div>
 
@@ -318,6 +353,23 @@ const STATUS_COLORS = { green: '#2F8F5B', amber: '#B8790A', red: '#B3261E', grey
 let expandedTracks = new Set();
 let gateCutoverFilter = 'all';
 let gateTrackFilter = 'all';
+let activeTab = 'programme';
+
+function switchTab(tab) {
+  activeTab = tab;
+  const isProgramme = tab === 'programme';
+  document.getElementById('tabProgramme').setAttribute('aria-selected', String(isProgramme));
+  document.getElementById('tabRisks').setAttribute('aria-selected', String(!isProgramme));
+  document.getElementById('panelProgramme').classList.toggle('hidden', !isProgramme);
+  document.getElementById('panelRisks').classList.toggle('hidden', isProgramme);
+}
+
+function bindTabEvents() {
+  if (document.body.dataset.tabsBound) return;
+  document.body.dataset.tabsBound = '1';
+  document.getElementById('tabProgramme').addEventListener('click', () => switchTab('programme'));
+  document.getElementById('tabRisks').addEventListener('click', () => switchTab('risks'));
+}
 
 function setSyncStatus(text, isError) {
   document.getElementById('syncStatus').textContent = text;
@@ -663,7 +715,7 @@ function render(rows) {
     { value: trackCounts.red, color: STATUS_COLORS.red },
   ];
   document.getElementById('heroRing').innerHTML = `
-    ${svgSegmentedRing(ringSegments, { size: 80, stroke: 9, centerText: `${onTrack}/${totalTracks}`, centerSub: 'On track', centerSize: 13 })}
+    ${svgSegmentedRing(ringSegments, { size: 118, stroke: 14, centerText: `${onTrack}/${totalTracks}`, centerSub: 'On Track', centerSize: 17 })}
     <div class="ring-label">Track health</div>
   `;
 
@@ -819,12 +871,14 @@ function render(rows) {
     { value: med, color: '#4A7CB5' },
   ];
   const riskDonut = svgSegmentedRing(riskSegments, {
-    size: 88,
-    stroke: 10,
+    size: 130,
+    stroke: 14,
     centerText: String(totalOpen),
-    centerSub: 'Open',
-    centerSize: 16,
+    centerSub: 'Total open',
+    centerSize: 22,
   });
+
+  document.getElementById('riskTabBadge').textContent = totalOpen;
 
   riskStrip.innerHTML = `
     <div class="risk-layout">
@@ -844,15 +898,18 @@ function render(rows) {
         </div>
         <div class="risk-box open-total">
           <div class="count">${totalOpen}</div>
-          <div class="rlabel">Total</div>
+          <div class="rlabel">Total open</div>
         </div>
       </div>
     </div>
   `;
+
+  switchTab(activeTab);
 }
 
 loadData();
 bindTrackGridEvents();
+bindTabEvents();
 setInterval(loadData, 60000);
 </script>
 </body>

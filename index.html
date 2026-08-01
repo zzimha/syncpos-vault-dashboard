@@ -33,14 +33,14 @@
     background:#fff; border-radius:6px; padding:4px 6px;
     box-shadow:0 1px 3px rgba(0,0,0,0.12);
   }
-  .header-title-text { text-align:left; min-width:0; }
+  .header-title-text { text-align:center; min-width:0; }
   header h1 {
     font-size:19px; font-weight:800; font-family:var(--sans);
     letter-spacing:0.03em; line-height:1.25; text-transform:none;
     white-space:nowrap;
   }
   .header-accent {
-    display:block; width:56px; height:2px; margin:5px 0 0;
+    display:block; width:56px; height:2px; margin:5px auto 0;
     background:linear-gradient(90deg, rgba(142,180,232,0.15) 0%, #8EB4E8 50%, rgba(142,180,232,0.15) 100%);
     border-radius:99px;
   }
@@ -274,12 +274,21 @@
   .tl-filters select:focus { outline:2px solid #C7D2E8; outline-offset:1px; }
 
   .tl-list { }
+  .tl-header {
+    display:grid; grid-template-columns:58px 1fr auto; gap:8px; align-items:center;
+    padding:6px 4px 8px; border-bottom:1px solid var(--line); margin-bottom:2px;
+    font-family:var(--mono); font-size:9px; font-weight:600; text-transform:uppercase;
+    letter-spacing:0.8px; color:var(--grey);
+  }
+  .tl-header > div:last-child { text-align:right; min-width:72px; }
   .tl-row{
     display:grid; grid-template-columns:58px 1fr auto; gap:8px; align-items:center;
     padding:5px 4px; border-bottom:1px solid #F0F1F4; border-radius:4px;
     transition:background 0.15s ease;
   }
   .tl-row:hover { background:#FAFBFC; }
+  .tl-row.tl-row-overdue { background:var(--red-bg); }
+  .tl-row.tl-row-overdue:hover { background:#FAD9D6; }
   .tl-row:last-child{ border-bottom:none; }
   .tl-row.hidden { display:none; }
   .tl-date{
@@ -852,8 +861,10 @@ function render(rows) {
     const ownerInline = owner ? `<span class="tl-owner"> · ${escapeHtml(owner)}</span>` : '';
     const status = g.Status || '';
     const detail = g.Detail ? ` title="${escapeHtml(g.Detail)}"` : '';
+    const isOverdue = status === 'amber' && parsed && parsed < today;
+    const rowClass = isOverdue ? 'tl-row tl-row-overdue' : 'tl-row';
     return `
-      <div class="tl-row" data-parsed="${parsed ? parsed.getTime() : ''}" data-track="${escapeHtml(gateTrackNum(g))}"${detail}>
+      <div class="${rowClass}" data-parsed="${parsed ? parsed.getTime() : ''}" data-track="${escapeHtml(gateTrackNum(g))}"${detail}>
         <div class="tl-date">${escapeHtml(displayDate || '—')}</div>
         <div class="tl-milestone">${escapeHtml(g.Name)}${ownerInline}</div>
         <div class="tl-badges">${statusLabelHtml(status)}</div>
@@ -888,6 +899,11 @@ function render(rows) {
           <option value="after"${gateCutoverFilter === 'after' ? ' selected' : ''}>After Cutover</option>
         </select>
       </div>
+    </div>
+    <div class="tl-header" aria-hidden="true">
+      <div>Target date</div>
+      <div>Task</div>
+      <div>Status</div>
     </div>
     <div class="tl-list" id="gateList">${gateRowsHtml}</div>
     <div class="tl-empty" id="gateEmpty">No milestones match this filter.</div>

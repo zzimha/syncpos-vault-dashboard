@@ -148,7 +148,7 @@
     flex:0 1 240px; min-width:210px; max-width:280px;
   }
   .hero-daily-label {
-    font-family:var(--sans); font-size:11px; font-weight:600; color:var(--grey);
+    font-family:var(--sans); font-size:13px; font-weight:700; color:var(--navy);
     letter-spacing:0.02em; margin-bottom:8px;
   }
   .hero-daily-list { display:flex; flex-direction:column; gap:6px; }
@@ -1262,7 +1262,7 @@ function renderHeroDailySection(tasks) {
   if (!tasks.length) return '';
   return `
     <div class="hero-daily" id="heroDaily">
-      <div class="hero-daily-label">Chase today</div>
+      <div class="hero-daily-label">Daily task</div>
       <div class="hero-daily-list">
         ${tasks.map(renderHeroDailyTask).join('')}
       </div>

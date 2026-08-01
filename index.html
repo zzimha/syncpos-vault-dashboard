@@ -39,7 +39,7 @@
     display:inline-flex; align-items:center; gap:7px;
     font-family:var(--sans); font-size:12px; font-weight:600;
     background:#FFFFFF; color:var(--navy);
-    border:none; border-radius:7px; padding:9px 16px; cursor:pointer; margin-top:6px;
+    border:none; border-radius:7px; padding:9px 16px; cursor:pointer;
     box-shadow:0 1px 4px rgba(0,0,0,0.14);
     transition:transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   }
@@ -511,6 +511,21 @@ function pctBetween(date, start, end) {
   return Math.max(0, Math.min(100, ((date - start) / (end - start)) * 100));
 }
 
+function riskCount(row) {
+  // RISK section stores numeric counts in the Date column (reused field)
+  const raw = row.Date ?? row.Detail ?? '';
+  if (raw !== '' && raw != null) {
+    if (typeof raw === 'number') return raw;
+    const n = Number(raw);
+    if (!isNaN(n)) return n;
+  }
+  if (row.Date_fmt) {
+    const f = Number(row.Date_fmt);
+    if (!isNaN(f)) return f;
+  }
+  return 0;
+}
+
 function gateTrackNum(g) {
   if (g.Track != null && g.Track !== '') return String(g.Track);
   if (g.Num != null && g.Num !== '' && Number(g.Num) <= 6) return String(Number(g.Num));
@@ -722,7 +737,7 @@ function render(rows) {
   riskStrip.className = 'risk-panel';
 
   const riskMap = {};
-  riskRows.forEach(r => { riskMap[r.Name] = Number(r.Num) || 0; });
+  riskRows.forEach(r => { riskMap[r.Name] = riskCount(r); });
   const crit = riskMap['Critical'] || 0;
   const high = riskMap['High'] || 0;
   const med = riskMap['Medium'] || 0;

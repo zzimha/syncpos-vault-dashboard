@@ -408,50 +408,69 @@
   .follow-intro {
     font-family:var(--sans); font-size:13px; color:var(--grey); margin-bottom:12px; line-height:1.4;
   }
+  .follow-toolbar {
+    display:flex; flex-wrap:wrap; gap:12px 16px; align-items:flex-end;
+    margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--line);
+  }
+  .follow-view-toggle {
+    display:inline-flex; gap:4px; padding:3px;
+    background:var(--grey-bg); border:1px solid var(--line); border-radius:8px;
+  }
+  .follow-view-btn {
+    font-family:var(--sans); font-size:11px; font-weight:600;
+    padding:7px 12px; border:none; border-radius:6px; cursor:pointer;
+    background:transparent; color:var(--grey); white-space:nowrap;
+    transition:background 0.15s ease, color 0.15s ease;
+  }
+  .follow-view-btn:hover { color:var(--slate); background:rgba(255,255,255,0.6); }
+  .follow-view-btn.is-active { background:var(--navy); color:#fff; box-shadow:0 1px 3px rgba(31,56,100,0.15); }
+  .follow-count-note {
+    font-family:var(--mono); font-size:10px; font-weight:500; color:var(--grey);
+    margin-bottom:10px;
+  }
   .follow-section-title {
-    font-family:var(--mono); font-size:10px; font-weight:600; text-transform:uppercase;
-    letter-spacing:0.8px; color:var(--grey); margin:14px 0 6px;
+    font-family:var(--mono); font-size:10px; font-weight:700; text-transform:uppercase;
+    letter-spacing:0.8px; color:var(--navy); margin:14px 0 6px;
   }
   .follow-section-title:first-of-type { margin-top:0; }
   .follow-list { display:flex; flex-direction:column; }
   .follow-row {
-    display:grid; grid-template-columns:54px minmax(0,1fr) auto auto auto auto;
-    gap:8px; align-items:center; width:100%;
-    padding:8px 6px; border:none; border-bottom:1px solid #F0F1F4; border-radius:4px;
+    display:grid; grid-template-columns:54px 16px minmax(0,1fr) auto; gap:8px; align-items:center;
+    width:100%; padding:8px 6px; border:none; border-bottom:1px solid #F0F1F4; border-radius:4px;
     background:transparent; cursor:pointer; text-align:left; font:inherit;
     transition:background 0.15s ease;
   }
   .follow-row:hover { background:#FAFBFC; }
+  .follow-row.hidden { display:none; }
   .follow-row:last-child { border-bottom:none; }
   .follow-date {
     font-family:var(--mono); font-size:11px; font-weight:600; color:var(--slate);
     font-variant-numeric:tabular-nums;
   }
   .follow-date.is-empty { color:#C4C9D4; }
+  .follow-type {
+    font-family:var(--mono); font-size:9px; font-weight:700; color:var(--grey); line-height:1;
+  }
+  .follow-title-wrap { min-width:0; display:flex; align-items:center; gap:6px; }
   .follow-title {
     font-family:var(--sans); font-size:13px; font-weight:600; color:#1A1D23;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0;
   }
-  .follow-source {
-    font-family:var(--mono); font-size:9px; font-weight:500; color:var(--slate);
-    padding:2px 6px; border-radius:4px; background:var(--grey-bg); white-space:nowrap;
+  .follow-chip {
+    font-family:var(--mono); font-size:10px; font-weight:600; white-space:nowrap;
+    padding:4px 9px; border-radius:99px; flex-shrink:0;
   }
-  .follow-owner {
-    font-family:var(--mono); font-size:10px; font-weight:500; color:var(--grey); white-space:nowrap;
-  }
-  .follow-chase {
-    font-family:var(--mono); font-size:9px; font-weight:600; white-space:nowrap;
-    padding:2px 7px; border-radius:4px; background:var(--amber-bg); color:var(--amber);
-  }
+  .follow-chip.chip-critical { background:var(--red); color:#fff; }
+  .follow-chip.chip-high { background:var(--amber); color:#fff; }
+  .follow-chip.chip-medium { background:#4A7CB5; color:#fff; }
   .follow-empty {
     font-family:var(--sans); font-size:14px; color:var(--grey); padding:16px 0; text-align:center;
   }
+  .follow-section-empty { display:none; font-family:var(--sans); font-size:12px; color:var(--grey); padding:6px 0 10px; }
+  .follow-section-empty.visible { display:block; }
   @media (max-width:760px){
-    .follow-row { grid-template-columns:44px minmax(0,1fr) auto; grid-template-rows:auto auto; gap:4px 8px; }
-    .follow-row .follow-source { grid-column:2; grid-row:2; justify-self:start; }
-    .follow-row .follow-badge { grid-column:3; grid-row:1; }
-    .follow-row .follow-owner { display:none; }
-    .follow-row .follow-chase { grid-column:3; grid-row:2; justify-self:end; }
+    .follow-row { grid-template-columns:44px 14px minmax(0,1fr); grid-template-rows:auto auto; }
+    .follow-row .follow-chip { grid-column:2 / -1; grid-row:2; justify-self:start; margin-left:22px; }
   }
 
   .footnote{ margin-top:10px; font-size:9px; color:var(--grey); font-family:var(--mono); font-weight:500; border-top:1px solid var(--line); padding-top:6px; line-height:1.35; }
@@ -554,6 +573,8 @@ let gateTrackFilter = 'all';
 let riskListExpanded = false;
 let riskPriorityFilter = 'all';
 let riskTrackFilter = 'all';
+let followViewMode = 'today';
+let followOwnerFilter = 'all';
 let activeTab = 'programme';
 
 function switchTab(tab) {
@@ -982,18 +1003,54 @@ function followRiskKey(name, index) {
   return base.slice(0, 48) || `item-${index}`;
 }
 
+function followPriorityTier(item) {
+  if (item.source === 'risk') return item.priority || 'high';
+  return item.status === 'red' ? 'critical' : 'high';
+}
+
+function followPriorityLabel(item) {
+  const tier = followPriorityTier(item);
+  if (tier === 'critical') return 'Critical';
+  if (tier === 'medium') return 'Medium';
+  return 'High';
+}
+
+function followTypeIcon(source) {
+  if (source === 'track') return 'T';
+  if (source === 'gate') return 'G';
+  return 'R';
+}
+
+function followOwnerParts(owner) {
+  if (!owner) return [];
+  return owner.split(/[/,]/).map(s => s.trim()).filter(Boolean);
+}
+
+function followOwnerKey(owner) {
+  return followOwnerParts(owner).join('|').toLowerCase();
+}
+
+function followTierSort(a, b) {
+  const order = { critical: 0, high: 1, medium: 2 };
+  const ta = order[followPriorityTier(a)] ?? 3;
+  const tb = order[followPriorityTier(b)] ?? 3;
+  if (ta !== tb) return ta - tb;
+  return a.name.localeCompare(b.name);
+}
+
 function buildFollowUpItems(rows) {
   const items = [];
 
   rows.filter(r => r.Section === 'TRACK' && (r.Status === 'red' || r.Status === 'amber')).forEach(r => {
     const trackNum = trackKey(r.Num);
+    const owner = ownerName(r);
     items.push({
       key: `track-${trackNum}`,
       source: 'track',
-      sourceLabel: 'Track',
       name: String(r.Name || '').trim(),
       status: r.Status,
-      owner: ownerName(r),
+      owner,
+      ownerKey: followOwnerKey(owner),
       date: null,
       dateParsed: null,
       trackNum,
@@ -1002,13 +1059,14 @@ function buildFollowUpItems(rows) {
 
   rows.filter(r => r.Section === 'GATE' && (r.Status === 'red' || r.Status === 'amber')).forEach(r => {
     const parsed = parseSortDate(r);
+    const owner = ownerName(r);
     items.push({
       key: `gate-${Number(r.Num)}`,
       source: 'gate',
-      sourceLabel: 'Gate',
       name: String(r.Name || '').trim(),
       status: r.Status,
-      owner: ownerName(r),
+      owner,
+      ownerKey: followOwnerKey(owner),
       date: parsed ? formatListDate(parsed) : null,
       dateParsed: parsed,
     });
@@ -1016,46 +1074,116 @@ function buildFollowUpItems(rows) {
 
   rows.filter(r => r.Section === 'RISKITEM').forEach((r, i) => {
     const priority = normalizeRiskPriority(r.Status);
-    if (priority !== 'critical' && priority !== 'high') return;
-    const riskKey = followRiskKey(r.Name, i);
+    if (!priority) return;
+    const owner = ownerName(r);
     items.push({
-      key: `risk-${riskKey}`,
+      key: `risk-${followRiskKey(r.Name, i)}`,
       source: 'risk',
-      sourceLabel: 'Risk',
       name: String(r.Name || '').trim(),
       priority,
-      owner: ownerName(r),
+      owner,
+      ownerKey: followOwnerKey(owner),
       date: null,
       dateParsed: null,
     });
   });
 
-  const undated = items.filter(i => !i.dateParsed).sort((a, b) => a.name.localeCompare(b.name));
-  const dated = items.filter(i => i.dateParsed).sort((a, b) => a.dateParsed - b.dateParsed);
-  return { undated, dated, total: items.length };
+  const undated = items.filter(i => !i.dateParsed).sort(followTierSort);
+  const dated = items.filter(i => i.dateParsed).sort((a, b) => {
+    const byDate = a.dateParsed - b.dateParsed;
+    if (byDate !== 0) return byDate;
+    return followTierSort(a, b);
+  });
+  return { undated, dated, all: items, total: items.length };
+}
+
+function followItemMatchesView(item) {
+  const tier = followPriorityTier(item);
+  if (followViewMode === 'today') {
+    if (tier === 'medium') return false;
+    if (tier === 'critical') return true;
+    return !!item.owner;
+  }
+  return tier === 'critical' || tier === 'high' || tier === 'medium';
+}
+
+function followItemMatchesOwner(item) {
+  if (followOwnerFilter === 'all') return true;
+  const needle = followOwnerFilter.toLowerCase();
+  return followOwnerParts(item.owner).some(o => o.toLowerCase() === needle);
+}
+
+function applyFollowFilter() {
+  const rows = document.querySelectorAll('#followPanel .follow-row');
+  let visible = 0;
+  rows.forEach(row => {
+    const tier = row.dataset.tier;
+    const ownerKey = row.dataset.ownerKey || '';
+    let show = true;
+    if (followViewMode === 'today') {
+      if (tier === 'medium') show = false;
+      else if (tier === 'critical') show = true;
+      else show = ownerKey.length > 0;
+    } else if (tier === 'medium' && followViewMode !== 'all') {
+      show = false;
+    }
+    if (show && followOwnerFilter !== 'all') {
+      const parts = ownerKey ? ownerKey.split('|') : [];
+      show = parts.includes(followOwnerFilter.toLowerCase());
+    }
+    row.classList.toggle('hidden', !show);
+    if (show) visible++;
+  });
+
+  ['followUndated', 'followDated'].forEach(id => {
+    const list = document.getElementById(id);
+    const empty = document.getElementById(`${id}Empty`);
+    if (!list || !empty) return;
+    const anyVisible = [...list.querySelectorAll('.follow-row')].some(r => !r.classList.contains('hidden'));
+    empty.classList.toggle('visible', !anyVisible);
+  });
+
+  const globalEmpty = document.getElementById('followGlobalEmpty');
+  if (globalEmpty) globalEmpty.style.display = visible ? 'none' : 'block';
+
+  const countNote = document.getElementById('followCountNote');
+  if (countNote) countNote.textContent = `${visible} item${visible === 1 ? '' : 's'} shown`;
+
+  document.getElementById('followTabBadge').textContent = visible;
 }
 
 function renderFollowRow(item) {
+  const tier = followPriorityTier(item);
+  const label = followPriorityLabel(item);
   const owner = item.owner;
-  const chaseHtml = owner ? `<span class="follow-chase">🔔 Chase ${escapeHtml(owner)}</span>` : '';
-  const ownerHtml = owner ? `<span class="follow-owner">${escapeHtml(owner)}</span>` : '<span class="follow-owner"></span>';
+  const chipText = owner ? `🔔 ${owner} · ${label}` : `🔔 · ${label}`;
   const dateHtml = item.date
     ? `<span class="follow-date">${escapeHtml(item.date)}</span>`
     : `<span class="follow-date is-empty">—</span>`;
-  const badgeHtml = item.source === 'risk'
-    ? priorityLabelHtml(item.priority === 'critical' ? 'Critical' : 'High')
-    : statusLabelHtml(item.status);
   const trackAttr = item.trackNum ? ` data-track-num="${escapeHtml(item.trackNum)}"` : '';
   return `
-    <button type="button" class="follow-row" data-source="${item.source}" data-follow-key="${escapeHtml(item.key)}"${trackAttr}>
+    <button type="button" class="follow-row" data-source="${item.source}" data-follow-key="${escapeHtml(item.key)}" data-tier="${tier}" data-owner-key="${escapeHtml(item.ownerKey)}"${trackAttr}>
       ${dateHtml}
+      <span class="follow-type" title="${item.source === 'track' ? 'Track' : item.source === 'gate' ? 'Gate' : 'Risk'}">${followTypeIcon(item.source)}</span>
       <span class="follow-title">${escapeHtml(item.name)}</span>
-      <span class="follow-source">${item.sourceLabel}</span>
-      <span class="follow-badge">${badgeHtml}</span>
-      ${ownerHtml}
-      ${chaseHtml}
+      <span class="follow-chip chip-${tier}">${escapeHtml(chipText)}</span>
     </button>
   `;
+}
+
+function bindFollowToolbarEvents() {
+  document.querySelectorAll('.follow-view-btn').forEach(btn => {
+    btn.onclick = () => {
+      followViewMode = btn.dataset.view;
+      document.querySelectorAll('.follow-view-btn').forEach(b => b.classList.toggle('is-active', b.dataset.view === followViewMode));
+      applyFollowFilter();
+    };
+  });
+  const ownerSel = document.getElementById('followOwnerFilter');
+  if (ownerSel) ownerSel.onchange = () => {
+    followOwnerFilter = ownerSel.value;
+    applyFollowFilter();
+  };
 }
 
 function handleFollowUpClick(e) {
@@ -1105,7 +1233,8 @@ function bindFollowUpEvents() {
   if (document.body.dataset.followBound) return;
   document.body.dataset.followBound = '1';
   document.addEventListener('click', (e) => {
-    if (!e.target.closest('#followPanel')) return;
+    const row = e.target.closest('.follow-row');
+    if (!row || !e.target.closest('#followPanel')) return;
     handleFollowUpClick(e);
   });
 }
@@ -1473,24 +1602,39 @@ function render(rows) {
 
   /* 5 — Follow-ups action list */
   const followUps = buildFollowUpItems(rows);
-  document.getElementById('followTabBadge').textContent = followUps.total;
+  const ownerOptions = [...new Set(followUps.all.flatMap(i => followOwnerParts(i.owner)))].sort((a, b) => a.localeCompare(b));
+  const ownerSelectHtml = ['all', ...ownerOptions]
+    .map(o => `<option value="${escapeHtml(o)}"${followOwnerFilter === o ? ' selected' : ''}>${o === 'all' ? 'All owners' : escapeHtml(o)}</option>`)
+    .join('');
   const undatedHtml = followUps.undated.map(renderFollowRow).join('');
   const datedHtml = followUps.dated.map(renderFollowRow).join('');
-  let followBody = '';
-  if (!followUps.total) {
-    followBody = '<div class="follow-empty">Nothing to chase right now — all clear.</div>';
-  } else {
-    if (followUps.undated.length) {
-      followBody += `<div class="follow-section-title">Ongoing / No fixed date</div><div class="follow-list">${undatedHtml}</div>`;
-    }
-    if (followUps.dated.length) {
-      followBody += `<div class="follow-section-title">By date</div><div class="follow-list">${datedHtml}</div>`;
-    }
-  }
+
   document.getElementById('followPanel').innerHTML = `
-    <p class="follow-intro">Who to chase today — tracks, gates, and high-priority risks in one list. Tap a row to jump to details.</p>
-    ${followBody}
+    <p class="follow-intro">Who to chase today — your top action items in one scannable list. Tap a row to jump to details.</p>
+    <div class="follow-toolbar">
+      <div class="follow-view-toggle">
+        <button type="button" class="follow-view-btn${followViewMode === 'today' ? ' is-active' : ''}" data-view="today">My chase list today</button>
+        <button type="button" class="follow-view-btn${followViewMode === 'all' ? ' is-active' : ''}" data-view="all">All ongoing</button>
+      </div>
+      <div class="tl-filter-group">
+        <label for="followOwnerFilter">Owner</label>
+        <select id="followOwnerFilter">${ownerSelectHtml}</select>
+      </div>
+    </div>
+    <div class="follow-count-note" id="followCountNote"></div>
+    <div class="follow-empty" id="followGlobalEmpty" style="display:none">Nothing matches this view — try All ongoing or a different owner.</div>
+    ${followUps.total ? `
+      <div class="follow-section-title">Ongoing / No fixed date</div>
+      <div class="follow-section-empty" id="followUndatedEmpty">No items in this section for this view.</div>
+      <div class="follow-list" id="followUndated">${undatedHtml}</div>
+      <div class="follow-section-title">By date</div>
+      <div class="follow-section-empty" id="followDatedEmpty">No items in this section for this view.</div>
+      <div class="follow-list" id="followDated">${datedHtml}</div>
+    ` : '<div class="follow-empty">Nothing to chase right now — all clear.</div>'}
   `;
+
+  bindFollowToolbarEvents();
+  applyFollowFilter();
 
   switchTab(activeTab);
 }

@@ -114,7 +114,6 @@
     100% { opacity: 1; }
   }
   .hero-detail h2 { font-family:var(--sans); font-size:15px; font-weight:700; margin-bottom:6px; line-height:1.35; color:var(--navy); }
-  .hero-note-delay { font-family:var(--sans); font-size:13px; color:var(--amber); line-height:1.45; font-weight:600; }
   .hero-warn { font-family:var(--sans); font-size:13px; color:var(--red); line-height:1.45; margin-top:6px; padding:6px 10px; background:var(--red-bg); border-radius:6px; border-left:3px solid var(--red); }
 
   .dash-tabs {
@@ -376,7 +375,6 @@ const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx
 
 const HERO_SHORT = {
   'Cutover Window': 'Cutover 9 Aug · end TBC (~27 Aug)',
-  'Hero Note 1': '*May delay to 27 Aug',
   'Hero Note 2': 'Auto-unseal, LDAP Prod, DR & UAT after 9 Aug',
 };
 
@@ -384,10 +382,10 @@ const STATUS_COLORS = { green: '#2F8F5B', amber: '#B8790A', red: '#B3261E', grey
 const STATUS_LABELS = { green: 'Completed', amber: 'In Progress', red: 'Not Started' };
 
 function heroText(name, detail) {
-  if (name === 'Hero Note 1') return HERO_SHORT['Hero Note 1'];
+  if (HERO_SHORT[name]) return HERO_SHORT[name];
   const d = String(detail || '').trim();
   if (d && d.length <= 48) return d;
-  return HERO_SHORT[name] || d;
+  return d;
 }
 
 let expandedTracks = new Set();
@@ -448,7 +446,7 @@ async function loadData() {
     const text = await res.text();
     const rows = parseGviz(text);
     render(rows);
-    setSyncStatus('synced ✓ ' + new Date().toLocaleTimeString(), false);
+    setSyncStatus('synced ✓ ' + formatSyncStamp(), false);
   } catch (e) {
     setSyncStatus(e.message || 'Failed to load — check sheet sharing settings', true);
   } finally {
@@ -622,6 +620,15 @@ function formatListDate(d) {
   return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 }
 
+function formatSyncStamp(d = new Date()) {
+  const date = formatListDate(d);
+  let h = d.getHours();
+  const m = String(d.getMinutes()).padStart(2, '0');
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return `${date} · ${h}.${m}${ampm}`;
+}
+
 function ownerName(row) {
   const o = row?.Owner;
   if (o == null || o === '') return '';
@@ -735,15 +742,13 @@ function render(rows) {
   const days = Math.round((cutoverStart - today) / 86400000);
   document.getElementById('daysToCutover').textContent = days;
 
-  const heroTitle = heroText('Cutover Window', meta['Cutover Window']) || 'Cutover 9 Aug · end TBC';
-  const heroNote1 = heroText('Hero Note 1', meta['Hero Note 1']);
+  const heroTitle = heroText('Cutover Window', meta['Cutover Window']);
   const heroNote2 = heroText('Hero Note 2', meta['Hero Note 2']);
   const warnLine = heroNote2
     ? `<p class="hero-warn">${escapeHtml(heroNote2.startsWith('⚠') ? heroNote2 : '⚠ ' + heroNote2)}</p>`
     : '';
   document.getElementById('heroDetail').innerHTML = `
     <h2>${escapeHtml(heroTitle)}</h2>
-    ${heroNote1 ? `<p class="hero-note-delay">${escapeHtml(heroNote1)}</p>` : ''}
     ${warnLine}
   `;
 

@@ -26,10 +26,14 @@
   .edit-link { font-family:var(--mono); font-size:10.5px; color:#C7D2E8; display:block; margin-top:4px; }
   .edit-link a { color:#C7D2E8; }
 
-  .hero { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:22px 26px; margin-bottom:18px; display:grid; grid-template-columns:auto 1fr; gap:28px; align-items:center; }
-  .countdown { font-family:var(--mono); text-align:center; padding-right:26px; border-right:1px solid var(--line); min-width:150px; }
+  .hero { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:22px 26px; margin-bottom:18px; display:grid; grid-template-columns:auto auto 1fr; gap:28px; align-items:center; }
+  @media (max-width:760px){ .hero{ grid-template-columns:1fr; } .countdown,.hero-ring{ border-right:none !important; padding-right:0 !important; border-bottom:1px solid var(--line); padding-bottom:18px; } }
+  .countdown { font-family:var(--mono); text-align:center; padding-right:26px; border-right:1px solid var(--line); min-width:130px; }
   .countdown .num { font-size:52px; font-weight:700; color:var(--navy); line-height:1; }
   .countdown .label { font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--grey); margin-top:6px; }
+  .hero-ring { text-align:center; padding-right:26px; border-right:1px solid var(--line); min-width:148px; }
+  .hero-ring .ring-label { font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:0.8px; color:var(--grey); margin-top:6px; }
+  .hero-ring svg { display:block; margin:0 auto; }
   .hero-detail h2 { font-size:15px; font-weight:600; margin-bottom:6px; }
   .hero-detail p { font-size:13px; color:#444; margin-bottom:4px; }
   .hero-detail p.warn { color:#B3261E; font-weight:600; }
@@ -38,12 +42,14 @@
   .tracks { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
   @media (max-width:900px){ .tracks{grid-template-columns:repeat(2,1fr);} }
   @media (max-width:600px){ .tracks{grid-template-columns:1fr;} }
-  .track-card { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; border-left:4px solid var(--grey); }
+  .track-card { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; border-left:4px solid var(--grey); display:grid; grid-template-columns:1fr auto; gap:8px 12px; align-items:start; }
   .track-card.status-green{ border-left-color:var(--green); }
   .track-card.status-amber{ border-left-color:var(--amber); }
   .track-card.status-red{ border-left-color:var(--red); }
-  .track-card .tnum{ font-family:var(--mono); font-size:11px; color:var(--grey); }
-  .track-card h3{ font-size:13px; font-weight:600; margin:2px 0 8px; }
+  .track-card .tnum{ font-family:var(--mono); font-size:11px; color:var(--grey); grid-column:1; }
+  .track-card h3{ font-size:13px; font-weight:600; margin:2px 0 4px; grid-column:1; }
+  .track-card .track-body { grid-column:1; }
+  .track-card .track-ring { grid-column:2; grid-row:1 / span 3; align-self:start; }
   .pill{ display:inline-block; font-family:var(--mono); font-size:10.5px; font-weight:600; padding:2px 8px; border-radius:20px; margin-bottom:8px; }
   .pill.status-green{ background:var(--green-bg); color:var(--green); }
   .pill.status-amber{ background:var(--amber-bg); color:var(--amber); }
@@ -51,6 +57,22 @@
   .track-card .gate{ font-size:11.5px; color:#555; }
 
   .timeline{ background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:18px 20px; }
+  .tl-bar-wrap { margin-bottom:20px; padding-bottom:4px; }
+  .tl-bar-labels { display:flex; justify-content:space-between; font-family:var(--mono); font-size:10px; color:var(--grey); margin-bottom:8px; }
+  .tl-bar { position:relative; height:10px; background:var(--grey-bg); border-radius:99px; overflow:visible; }
+  .tl-bar-fill { position:absolute; left:0; top:0; height:100%; border-radius:99px; background:linear-gradient(90deg, var(--green) 0%, var(--amber) 55%, var(--red) 100%); opacity:0.25; }
+  .tl-bar-today { position:absolute; top:-6px; width:2px; height:22px; background:var(--navy); border-radius:1px; transform:translateX(-50%); z-index:3; }
+  .tl-bar-today::after { content:'TODAY'; position:absolute; top:-16px; left:50%; transform:translateX(-50%); font-family:var(--mono); font-size:9px; font-weight:700; color:var(--navy); white-space:nowrap; }
+  .tl-bar-cutover { position:absolute; top:-4px; width:3px; height:18px; background:var(--red); border-radius:1px; transform:translateX(-50%); z-index:2; }
+  .tl-bar-cutover::after { content:'CUTOVER'; position:absolute; bottom:-16px; left:50%; transform:translateX(-50%); font-family:var(--mono); font-size:9px; font-weight:700; color:var(--red); white-space:nowrap; }
+  .tl-bar-dot { position:absolute; top:50%; width:10px; height:10px; border-radius:50%; border:2px solid var(--panel); transform:translate(-50%,-50%); z-index:1; box-shadow:0 0 0 1px var(--line); }
+  .tl-bar-dot.status-green{ background:var(--green); }
+  .tl-bar-dot.status-amber{ background:var(--amber); }
+  .tl-bar-dot.status-red{ background:var(--red); }
+  .tl-bar-dot.status-grey{ background:var(--grey); }
+  .tl-bar-legend { display:flex; flex-wrap:wrap; gap:14px; margin-top:28px; font-family:var(--mono); font-size:10px; color:var(--grey); }
+  .tl-bar-legend span { display:inline-flex; align-items:center; gap:5px; }
+  .tl-bar-legend i { display:inline-block; width:10px; height:10px; border-radius:50%; }
   .tl-row{ display:grid; grid-template-columns:96px 1fr auto; gap:14px; align-items:center; padding:9px 0; border-bottom:1px solid #F0F1F4; }
   .tl-row:last-child{ border-bottom:none; }
   .tl-date{ font-family:var(--mono); font-size:11.5px; color:var(--slate); font-weight:600; }
@@ -61,14 +83,19 @@
   .tl-badge.status-red{ background:var(--red-bg); color:var(--red); }
   .tl-badge.status-grey{ background:var(--grey-bg); color:var(--grey); }
 
-  .risk-strip{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
-  .risk-box{ background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; text-align:center; }
-  .risk-box .count{ font-family:var(--mono); font-size:26px; font-weight:700; }
-  .risk-box .rlabel{ font-size:11px; color:var(--grey); text-transform:uppercase; letter-spacing:0.5px; margin-top:2px; }
-  .risk-box.critical .count{ color:var(--red); }
-  .risk-box.high .count{ color:var(--amber); }
-  .risk-box.medium .count{ color:#4A7CB5; }
-  .risk-box.open-total .count{ color:var(--navy); }
+  .risk-panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:18px 20px; display:grid; grid-template-columns:auto 1fr; gap:24px; align-items:center; }
+  @media (max-width:600px){ .risk-panel{ grid-template-columns:1fr; justify-items:center; text-align:center; } }
+  .risk-chart svg { display:block; }
+  .risk-legend { display:flex; flex-direction:column; gap:10px; }
+  .risk-legend-item { display:flex; align-items:center; gap:10px; font-size:13px; }
+  .risk-legend-item .swatch { width:12px; height:12px; border-radius:3px; flex-shrink:0; }
+  .risk-legend-item .rlabel { color:var(--grey); font-size:11px; text-transform:uppercase; letter-spacing:0.4px; font-family:var(--mono); min-width:72px; }
+  .risk-legend-item .count { font-family:var(--mono); font-weight:700; font-size:18px; min-width:28px; }
+  .risk-legend-item.critical .count { color:var(--red); }
+  .risk-legend-item.high .count { color:var(--amber); }
+  .risk-legend-item.medium .count { color:#4A7CB5; }
+  .risk-legend-item.total { margin-top:6px; padding-top:10px; border-top:1px solid var(--line); }
+  .risk-legend-item.total .count { color:var(--navy); font-size:22px; }
 
   .footnote{ margin-top:22px; font-size:11px; color:var(--grey); font-family:var(--mono); border-top:1px solid var(--line); padding-top:12px; }
   .error-banner{ background:var(--red-bg); color:var(--red); border:1px solid #F3C6C4; border-radius:8px; padding:12px 16px; margin-bottom:18px; font-size:12.5px; display:none; }
@@ -96,6 +123,7 @@
       <div class="num" id="daysToCutover">–</div>
       <div class="label">days to cutover start</div>
     </div>
+    <div class="hero-ring" id="heroRing"></div>
     <div class="hero-detail" id="heroDetail"></div>
   </div>
 
@@ -115,6 +143,8 @@
 <script>
 const SHEET_ID = '1AXrOH5bdHM74t3SVLmDgNDH2VePiHPjCOd40Xx-iF40';
 const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+
+const STATUS_COLORS = { green: '#2F8F5B', amber: '#B8790A', red: '#B3261E', grey: '#6B7280' };
 
 function setSyncStatus(text, isError) {
   document.getElementById('syncStatus').textContent = text;
@@ -150,6 +180,66 @@ async function loadData() {
   }
 }
 
+/* ── SVG helpers (pure inline, no external libs) ── */
+
+function svgSegmentedRing(segments, opts = {}) {
+  const size = opts.size || 120;
+  const stroke = opts.stroke || 13;
+  const cx = size / 2;
+  const cy = size / 2;
+  const r = (size - stroke) / 2;
+  const circ = 2 * Math.PI * r;
+  const total = segments.reduce((s, seg) => s + seg.value, 0) || 1;
+  let angle = -90;
+  const arcs = segments.filter(s => s.value > 0).map(seg => {
+    const sweep = (seg.value / total) * 360;
+    const dash = (seg.value / total) * circ;
+    const gap = circ - dash;
+    const rot = angle;
+    angle += sweep;
+    return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${seg.color}" stroke-width="${stroke}" stroke-linecap="butt" stroke-dasharray="${dash} ${gap}" transform="rotate(${rot} ${cx} ${cy})"/>`;
+  }).join('');
+  const track = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#EEF0F3" stroke-width="${stroke}"/>`;
+  const center = opts.centerText
+    ? `<text x="${cx}" y="${opts.centerSub ? cy - 4 : cy + 5}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="${opts.centerSize || 16}" font-weight="700" fill="#1F3864">${opts.centerText}</text>`
+    : '';
+  const sub = opts.centerSub
+    ? `<text x="${cx}" y="${cy + 14}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#6B7280">${opts.centerSub}</text>`
+    : '';
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true">${track}${arcs}${center}${sub}</svg>`;
+}
+
+function svgStatusRing(status, size = 44) {
+  const stroke = 5;
+  const cx = size / 2;
+  const cy = size / 2;
+  const r = (size - stroke) / 2;
+  const circ = 2 * Math.PI * r;
+  const color = STATUS_COLORS[status] || STATUS_COLORS.grey;
+  const fillPct = status === 'green' ? 1 : status === 'amber' ? 0.65 : status === 'red' ? 0.35 : 0.5;
+  const dash = fillPct * circ;
+  const gap = circ - dash;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true">
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#EEF0F3" stroke-width="${stroke}"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-dasharray="${dash} ${gap}" transform="rotate(-90 ${cx} ${cy})"/>
+  </svg>`;
+}
+
+function parseSheetDate(val) {
+  if (!val) return null;
+  const d = new Date(val);
+  return isNaN(d) ? null : d;
+}
+
+function formatShortDate(d) {
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: '2-digit' });
+}
+
+function pctBetween(date, start, end) {
+  if (!date || !start || !end || end <= start) return 0;
+  return Math.max(0, Math.min(100, ((date - start) / (end - start)) * 100));
+}
+
 function render(rows) {
   const meta = {};
   rows.filter(r => r.Section === 'META').forEach(r => { meta[r.Name] = r.Detail; });
@@ -172,43 +262,145 @@ function render(rows) {
     <p class="warn">${meta['Hero Note 2'] ? '⚠ ' + meta['Hero Note 2'] : ''}</p>
   `;
 
+  /* 1 — Programme progress ring */
+  const tracks = rows.filter(r => r.Section === 'TRACK');
+  const trackCounts = { green: 0, amber: 0, red: 0 };
+  tracks.forEach(t => { if (trackCounts[t.Status] !== undefined) trackCounts[t.Status]++; });
+  const onTrack = trackCounts.green;
+  const totalTracks = tracks.length || 6;
+  const ringSegments = [
+    { value: trackCounts.green, color: STATUS_COLORS.green },
+    { value: trackCounts.amber, color: STATUS_COLORS.amber },
+    { value: trackCounts.red, color: STATUS_COLORS.red },
+  ];
+  document.getElementById('heroRing').innerHTML = `
+    ${svgSegmentedRing(ringSegments, { size: 118, stroke: 14, centerText: `${onTrack}/${totalTracks}`, centerSub: 'On Track', centerSize: 17 })}
+    <div class="ring-label">Track health</div>
+  `;
+
+  /* 2 — Track cards with status rings */
   const trackGrid = document.getElementById('trackGrid');
   trackGrid.innerHTML = '';
-  rows.filter(r => r.Section === 'TRACK').forEach(t => {
+  tracks.forEach(t => {
     const el = document.createElement('div');
     el.className = `track-card status-${t.Status}`;
     el.innerHTML = `
+      <div class="track-ring">${svgStatusRing(t.Status)}</div>
       <div class="tnum">TRACK ${t.Num}</div>
       <h3>${t.Name}</h3>
-      <span class="pill status-${t.Status}">${(t.Status||'').toUpperCase()}</span>
-      <div class="gate">${t.Detail}</div>
+      <div class="track-body">
+        <span class="pill status-${t.Status}">${(t.Status || '').toUpperCase()}</span>
+        <div class="gate">${t.Detail}</div>
+      </div>
     `;
     trackGrid.appendChild(el);
   });
 
+  /* 3 — Horizontal timeline bar + list */
+  const gates = rows.filter(r => r.Section === 'GATE');
+  const gateDates = gates.map(g => ({ ...g, parsed: parseSheetDate(g.Date) })).filter(g => g.parsed);
+  gateDates.sort((a, b) => a.parsed - b.parsed);
+
+  const cutoverNorm = new Date(cutoverStart); cutoverNorm.setHours(0, 0, 0, 0);
+  const allDates = [...gateDates.map(g => g.parsed), cutoverNorm, today];
+  const rangeStart = new Date(Math.min(...allDates.map(d => d.getTime())));
+  const rangeEnd = new Date(Math.max(...allDates.map(d => d.getTime())));
+  rangeStart.setHours(0, 0, 0, 0);
+  rangeEnd.setHours(0, 0, 0, 0);
+  if (rangeEnd <= rangeStart) rangeEnd.setDate(rangeEnd.getDate() + 1);
+
+  const todayPct = pctBetween(today, rangeStart, rangeEnd);
+  const cutoverPct = pctBetween(cutoverNorm, rangeStart, rangeEnd);
+  const dotsHtml = gateDates.map(g => {
+    const p = pctBetween(g.parsed, rangeStart, rangeEnd);
+    const title = `${g.Name} (${g.Date})`;
+    return `<div class="tl-bar-dot status-${g.Status || 'grey'}" style="left:${p}%" title="${title.replace(/"/g, '&quot;')}"></div>`;
+  }).join('');
+
   const timeline = document.getElementById('timeline');
-  timeline.innerHTML = '';
-  rows.filter(r => r.Section === 'GATE').forEach(g => {
+  timeline.innerHTML = `
+    <div class="tl-bar-wrap">
+      <div class="tl-bar-labels">
+        <span>${formatShortDate(rangeStart)}</span>
+        <span>${formatShortDate(rangeEnd)}</span>
+      </div>
+      <div class="tl-bar">
+        <div class="tl-bar-fill" style="width:${Math.max(todayPct, cutoverPct)}%"></div>
+        ${dotsHtml}
+        <div class="tl-bar-today" style="left:${todayPct}%"></div>
+        <div class="tl-bar-cutover" style="left:${cutoverPct}%"></div>
+      </div>
+      <div class="tl-bar-legend">
+        <span><i style="background:var(--navy)"></i> Today</span>
+        <span><i style="background:var(--red)"></i> Cutover start</span>
+        <span><i style="background:var(--green)"></i> Gate — green</span>
+        <span><i style="background:var(--amber)"></i> Gate — amber</span>
+        <span><i style="background:var(--red);opacity:0.7"></i> Gate — red</span>
+      </div>
+    </div>
+  `;
+  gates.forEach(g => {
     const el = document.createElement('div');
     el.className = 'tl-row';
     el.innerHTML = `
       <div class="tl-date">${g.Date}</div>
       <div class="tl-milestone">${g.Name}</div>
-      <div class="tl-badge status-${g.Status}">${(g.Status||'').toUpperCase()}</div>
+      <div class="tl-badge status-${g.Status}">${(g.Status || '').toUpperCase()}</div>
     `;
     timeline.appendChild(el);
   });
 
+  /* 4 — Risk donut + legend */
   const riskRows = rows.filter(r => r.Section === 'RISK');
   const riskStrip = document.getElementById('riskStrip');
   riskStrip.innerHTML = '';
-  const clsMap = { 'Critical':'critical', 'High':'high', 'Medium':'medium', 'Total Open':'open-total' };
-  riskRows.forEach(r => {
-    const el = document.createElement('div');
-    el.className = `risk-box ${clsMap[r.Name] || ''}`;
-    el.innerHTML = `<div class="count">${r.Date}</div><div class="rlabel">${r.Name}</div>`;
-    riskStrip.appendChild(el);
+  riskStrip.className = 'risk-panel';
+
+  const riskMap = {};
+  riskRows.forEach(r => { riskMap[r.Name] = Number(r.Date) || 0; });
+  const crit = riskMap['Critical'] || 0;
+  const high = riskMap['High'] || 0;
+  const med = riskMap['Medium'] || 0;
+  const totalOpen = riskMap['Total Open'] || (crit + high + med);
+
+  const riskSegments = [
+    { value: crit, color: STATUS_COLORS.red },
+    { value: high, color: STATUS_COLORS.amber },
+    { value: med, color: '#4A7CB5' },
+  ];
+  const riskDonut = svgSegmentedRing(riskSegments, {
+    size: 130,
+    stroke: 16,
+    centerText: String(totalOpen),
+    centerSub: 'Total open',
+    centerSize: 22,
   });
+
+  riskStrip.innerHTML = `
+    <div class="risk-chart">${riskDonut}</div>
+    <div class="risk-legend">
+      <div class="risk-legend-item critical">
+        <span class="swatch" style="background:var(--red)"></span>
+        <span class="rlabel">Critical</span>
+        <span class="count">${crit}</span>
+      </div>
+      <div class="risk-legend-item high">
+        <span class="swatch" style="background:var(--amber)"></span>
+        <span class="rlabel">High</span>
+        <span class="count">${high}</span>
+      </div>
+      <div class="risk-legend-item medium">
+        <span class="swatch" style="background:#4A7CB5"></span>
+        <span class="rlabel">Medium</span>
+        <span class="count">${med}</span>
+      </div>
+      <div class="risk-legend-item total">
+        <span class="swatch" style="background:var(--navy)"></span>
+        <span class="rlabel">Total open</span>
+        <span class="count">${totalOpen}</span>
+      </div>
+    </div>
+  `;
 }
 
 loadData();

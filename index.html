@@ -149,7 +149,7 @@
   }
   .hero-daily-label {
     font-family:var(--sans); font-size:13px; font-weight:700; color:var(--navy);
-    letter-spacing:0.02em; margin-bottom:8px;
+    letter-spacing:0.02em; margin-bottom:8px; text-align:center;
   }
   .hero-daily-list { display:flex; flex-direction:column; gap:6px; }
   .hero-daily-list .follow-task {
@@ -626,11 +626,6 @@ const HERO_SHORT = {
 /** Track Num → status override when sheet lags behind reality */
 const TRACK_STATUS_OVERRIDE = {
   '2': 'amber',
-};
-
-/** Track Num → preferred person to chase in Daily Task */
-const TRACK_CHASE_OWNER = {
-  '5': 'Sruthi',
 };
 
 const STATUS_COLORS = { green: '#2F8F5B', amber: '#B8790A', red: '#B3261E', grey: '#6B7280' };
@@ -1242,24 +1237,8 @@ function heroDailyItemMatches(item) {
   return !!item.owner;
 }
 
-function heroChaseOwner(item) {
-  const parts = followOwnerParts(item.owner);
-  const preferred = TRACK_CHASE_OWNER[item.trackNum];
-  if (preferred) {
-    const match = parts.find(p => p.toLowerCase() === preferred.toLowerCase());
-    if (match) return match;
-    return preferred;
-  }
-  return parts[0] || '';
-}
-
-function itemHasChaseOwner(item, name) {
-  const needle = name.toLowerCase();
-  return followOwnerParts(item.owner).some(p => p.toLowerCase() === needle);
-}
-
 function heroTaskLabel(item) {
-  const owner = heroChaseOwner(item);
+  const owner = followOwnerParts(item.owner)[0];
   const chase = owner ? `chase ${owner}` : 'follow up';
   return `Track ${item.trackNum} · ${chase}`;
 }
@@ -1270,24 +1249,13 @@ function followTrackSortKey(item) {
 }
 
 function pickBestPerTrack(items) {
-  const byTrackNum = new Map();
+  const byTrack = new Map();
   items.forEach(item => {
     if (!item.trackNum) return;
-    if (!byTrackNum.has(item.trackNum)) byTrackNum.set(item.trackNum, []);
-    byTrackNum.get(item.trackNum).push(item);
+    const cur = byTrack.get(item.trackNum);
+    if (!cur || followTierSort(item, cur) < 0) byTrack.set(item.trackNum, item);
   });
-  const result = [];
-  byTrackNum.forEach((trackItems, trackNum) => {
-    const preferred = TRACK_CHASE_OWNER[trackNum];
-    let pool = trackItems;
-    if (preferred) {
-      const preferredItems = trackItems.filter(i => itemHasChaseOwner(i, preferred));
-      if (preferredItems.length) pool = preferredItems;
-    }
-    pool.sort(followTierSort);
-    if (pool[0]) result.push(pool[0]);
-  });
-  return result.sort((a, b) => followTrackSortKey(a) - followTrackSortKey(b));
+  return [...byTrack.values()].sort((a, b) => followTrackSortKey(a) - followTrackSortKey(b));
 }
 
 function pickHeroDailyTasks(allItems) {

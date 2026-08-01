@@ -98,20 +98,16 @@
   .countdown .label { font-family:var(--mono); font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--grey); margin-top:6px; }
   .hero-ring { text-align:center; padding-right:20px; border-right:1px solid var(--line); min-width:130px; }
   .hero-ring .ring-label { font-family:var(--mono); font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:0.8px; color:var(--grey); margin-top:4px; }
-  .hero-ring svg { display:block; margin:0 auto; width:118px; height:118px; transform-origin:center center; }
-  .hero-ring svg.ring-animate { animation:hero-ring-refresh 0.95s cubic-bezier(0.22, 1, 0.36, 1); }
-  .hero-ring svg.ring-animate .ring-seg { animation:hero-ring-seg-in 0.75s ease-out backwards; }
-  .hero-ring svg.ring-animate .ring-seg:nth-child(1) { animation-delay:0.05s; }
-  .hero-ring svg.ring-animate .ring-seg:nth-child(2) { animation-delay:0.14s; }
-  .hero-ring svg.ring-animate .ring-seg:nth-child(3) { animation-delay:0.23s; }
-  @keyframes hero-ring-refresh {
-    0% { transform: rotate(-140deg) scale(0.82); opacity: 0.45; }
-    65% { transform: rotate(6deg) scale(1.04); opacity: 1; }
-    100% { transform: rotate(0deg) scale(1); opacity: 1; }
+  .hero-ring svg { display:block; margin:0 auto; width:118px; height:118px; }
+  .hero-ring svg.ring-animate .ring-seg {
+    stroke-dashoffset: var(--seg-offset);
+    animation: hero-ring-load 0.55s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
-  @keyframes hero-ring-seg-in {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
+  .hero-ring svg.ring-animate .ring-seg:nth-child(1) { animation-delay: 0s; }
+  .hero-ring svg.ring-animate .ring-seg:nth-child(2) { animation-delay: 0.16s; }
+  .hero-ring svg.ring-animate .ring-seg:nth-child(3) { animation-delay: 0.32s; }
+  @keyframes hero-ring-load {
+    to { stroke-dashoffset: 0; }
   }
   .hero-detail h2 { font-family:var(--sans); font-size:15px; font-weight:700; margin-bottom:6px; line-height:1.35; color:var(--navy); }
   .hero-warn { font-family:var(--sans); font-size:13px; color:var(--red); line-height:1.45; margin-top:6px; padding:6px 10px; background:var(--red-bg); border-radius:6px; border-left:3px solid var(--red); }
@@ -383,7 +379,7 @@ const SHEET_ID = '1EWSX-LsXjh-hV55E3SSNpqS9FTBXpKlGnuzW15-J5Dc';
 const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
 const HERO_SHORT = {
-  'Cutover Window': 'Cutover 9 Aug · end TBC (~27 Aug)',
+  'Cutover Window': 'Cutover 9 Aug · * may delay to ~27 Aug',
   'Hero Note 2': 'Auto-unseal, LDAP Prod, DR & UAT after 9 Aug',
 };
 
@@ -564,7 +560,10 @@ function svgSegmentedRing(segments, opts = {}) {
     const gap = circ - dash;
     const rot = angle;
     angle += (seg.value / total) * 360;
-    return `<circle class="ring-seg" cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${seg.color}" stroke-width="${stroke}" stroke-linecap="butt" stroke-dasharray="${dash} ${gap}" transform="rotate(${rot} ${cx} ${cy})"/>`;
+    const segStyle = opts.animate
+      ? ` style="--seg-offset:${dash + gap}"`
+      : '';
+    return `<circle class="ring-seg"${segStyle} cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${seg.color}" stroke-width="${stroke}" stroke-linecap="butt" stroke-dasharray="${dash} ${gap}" transform="rotate(${rot} ${cx} ${cy})"/>`;
   }).join('');
   const track = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#EEF0F3" stroke-width="${stroke}"/>`;
   const center = opts.centerText

@@ -133,12 +133,32 @@
   @keyframes hero-ring-load {
     to { stroke-dashoffset: 0; }
   }
+  .hero-detail {
+    display:flex; flex-wrap:wrap; gap:16px 20px; align-items:flex-start; justify-content:space-between;
+    min-width:0;
+  }
+  .hero-main { flex:1 1 220px; min-width:0; }
   .hero-detail h2 { font-family:var(--sans); font-size:18px; font-weight:700; margin-bottom:8px; line-height:1.35; color:var(--navy); }
   .hero-note {
     font-family:var(--sans); font-size:14px; color:#444; line-height:1.5; margin-top:8px;
     padding:9px 12px; background:var(--grey-bg); border-radius:6px; border-left:3px solid var(--amber);
   }
   .hero-note-icon { color:var(--amber); font-weight:700; margin-right:5px; }
+  .hero-daily {
+    flex:0 1 240px; min-width:210px; max-width:280px;
+  }
+  .hero-daily-label {
+    font-family:var(--sans); font-size:11px; font-weight:600; color:var(--grey);
+    letter-spacing:0.02em; margin-bottom:8px;
+  }
+  .hero-daily-list { display:flex; flex-direction:column; gap:6px; }
+  .hero-daily-list .follow-task {
+    max-width:none; width:100%; font-size:11px; padding:6px 10px;
+  }
+  @media (max-width:760px){
+    .hero-detail { flex-direction:column; }
+    .hero-daily { max-width:none; width:100%; flex-basis:auto; }
+  }
 
   .dash-tabs {
     display:flex; gap:4px; margin-bottom:8px; padding:4px;
@@ -428,18 +448,6 @@
   }
   .follow-toolbar select:hover { border-color:#C7D2E8; }
   .follow-toolbar select:focus { outline:2px solid #C7D2E8; outline-offset:1px; }
-  .follow-view-toggle {
-    display:inline-flex; gap:4px; padding:3px;
-    background:var(--grey-bg); border:1px solid var(--line); border-radius:8px;
-  }
-  .follow-view-btn {
-    font-family:var(--sans); font-size:11px; font-weight:600;
-    padding:7px 12px; border:none; border-radius:6px; cursor:pointer;
-    background:transparent; color:var(--grey); white-space:nowrap;
-    transition:background 0.15s ease, color 0.15s ease;
-  }
-  .follow-view-btn:hover { color:var(--slate); background:rgba(255,255,255,0.6); }
-  .follow-view-btn.is-active { background:var(--navy); color:#fff; box-shadow:0 1px 3px rgba(31,56,100,0.15); }
   .follow-count-note {
     font-family:var(--sans); font-size:12px; font-weight:500; color:var(--grey);
     margin-bottom:10px;
@@ -459,7 +467,7 @@
   .follow-row.hidden { display:none; }
   .follow-row.is-done { opacity:0.85; }
   .follow-row.is-done .follow-title { text-decoration:line-through; color:var(--grey); }
-  .follow-row.is-done .follow-task-text { text-decoration:line-through; color:rgba(255,255,255,0.65); }
+  .follow-row.is-done .follow-task-text { text-decoration:line-through; opacity:0.75; }
   .follow-row:last-child { border-bottom:none; }
   .follow-row-link {
     display:grid; grid-template-columns:54px 16px minmax(0,1fr); gap:8px; align-items:center;
@@ -470,37 +478,35 @@
   .follow-task {
     display:inline-flex; align-items:center; gap:8px; cursor:pointer; flex-shrink:0;
     font-family:var(--sans); font-size:12px; font-weight:500; white-space:nowrap;
-    padding:7px 12px; border-radius:6px; max-width:200px;
-    border:1px solid var(--navy); background:var(--navy); color:#fff;
-    transition:background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    padding:7px 12px; border-radius:99px; max-width:200px;
+    border:none; color:#fff;
+    transition:opacity 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
     user-select:none;
   }
-  .follow-task:hover { background:#2A4A7A; border-color:#2A4A7A; }
-  .follow-task:focus-within { outline:2px solid #8EB4E8; outline-offset:1px; }
+  .follow-task:hover { filter:brightness(1.06); }
+  .follow-task:focus-within { outline:2px solid #C7D2E8; outline-offset:1px; }
   .follow-task input {
     appearance:none; -webkit-appearance:none;
     width:16px; height:16px; margin:0; flex-shrink:0; cursor:pointer;
-    border:1.5px solid rgba(255,255,255,0.55); border-radius:4px; background:rgba(255,255,255,0.08);
+    border:1.5px solid rgba(255,255,255,0.65); border-radius:4px; background:rgba(255,255,255,0.12);
     position:relative; transition:background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
   }
-  .follow-task input:hover { border-color:#fff; background:rgba(255,255,255,0.15); }
+  .follow-task input:hover { border-color:#fff; background:rgba(255,255,255,0.22); }
   .follow-task input:checked {
-    background:var(--green); border-color:var(--green);
+    background:#fff; border-color:#fff;
   }
   .follow-task input:checked::after {
     content:''; position:absolute; left:4px; top:1px;
-    width:5px; height:9px; border:solid #fff; border-width:0 2px 2px 0;
+    width:5px; height:9px; border:solid var(--green); border-width:0 2px 2px 0;
     transform:rotate(45deg);
   }
   .follow-task input:active { transform:scale(0.92); }
   .follow-task-text { overflow:hidden; text-overflow:ellipsis; line-height:1.3; color:#fff; }
-  .follow-task.tier-critical { box-shadow:inset 3px 0 0 var(--red); }
-  .follow-task.tier-high { box-shadow:inset 3px 0 0 var(--amber); }
-  .follow-task.tier-medium { box-shadow:inset 3px 0 0 #8EB4E8; }
-  .follow-task.is-checked {
-    background:#163056; border-color:#163056; opacity:0.88;
-  }
-  .follow-task.is-checked .follow-task-text { text-decoration:line-through; color:rgba(255,255,255,0.65); }
+  .follow-task.tier-critical { background:var(--red); }
+  .follow-task.tier-high { background:var(--amber); }
+  .follow-task.tier-medium { background:#4A7CB5; }
+  .follow-task.is-checked { opacity:0.72; }
+  .follow-task.is-checked .follow-task-text { text-decoration:line-through; opacity:0.85; }
   .follow-date {
     font-family:var(--mono); font-size:11px; font-weight:600; color:var(--slate);
     font-variant-numeric:tabular-nums;
@@ -623,7 +629,6 @@ let gateTrackFilter = 'all';
 let riskListExpanded = false;
 let riskPriorityFilter = 'all';
 let riskTrackFilter = 'all';
-let followViewMode = 'today';
 let followOwnerFilter = 'all';
 let followPriorityFilter = 'critical';
 let activeTab = 'programme';
@@ -1154,16 +1159,6 @@ function buildFollowUpItems(rows) {
   return { undated, dated, all: items, total: items.length };
 }
 
-function followItemMatchesView(item) {
-  const tier = followPriorityTier(item);
-  if (followViewMode === 'today') {
-    if (tier === 'medium') return false;
-    if (tier === 'critical') return true;
-    return !!item.owner;
-  }
-  return tier === 'critical' || tier === 'high' || tier === 'medium';
-}
-
 function followItemMatchesOwner(item) {
   if (followOwnerFilter === 'all') return true;
   const needle = followOwnerFilter.toLowerCase();
@@ -1206,6 +1201,68 @@ function followTaskLabel(item) {
   return `Risk · ${chase}`;
 }
 
+function heroDailyItemMatches(item) {
+  const tier = followPriorityTier(item);
+  if (tier === 'medium') return false;
+  if (tier === 'critical') return true;
+  return !!item.owner;
+}
+
+function pickHeroDailyTasks(allItems) {
+  const eligible = allItems.filter(heroDailyItemMatches).sort(followTierSort);
+  const unchecked = eligible.filter(i => !isFollowTaskDone(i.key));
+  const picked = unchecked.slice(0, 5);
+  if (picked.length < 3) {
+    const checked = eligible.filter(i => isFollowTaskDone(i.key));
+    for (const item of checked) {
+      if (picked.length >= 3) break;
+      picked.push(item);
+    }
+  }
+  return picked.slice(0, 5);
+}
+
+function renderHeroDailyTask(item) {
+  const taskText = followTaskLabel(item);
+  const done = isFollowTaskDone(item.key);
+  const tier = followPriorityTier(item);
+  return `
+    <label class="follow-task hero-daily-task tier-${tier}${done ? ' is-checked' : ''}" data-follow-key="${escapeHtml(item.key)}" title="${escapeHtml(taskText)}">
+      <input type="checkbox"${done ? ' checked' : ''} aria-label="${escapeHtml(taskText)}" />
+      <span class="follow-task-text">${escapeHtml(taskText)}</span>
+    </label>
+  `;
+}
+
+function renderHeroDailySection(tasks) {
+  if (!tasks.length) return '';
+  return `
+    <div class="hero-daily" id="heroDaily">
+      <div class="hero-daily-label">Chase today</div>
+      <div class="hero-daily-list">
+        ${tasks.map(renderHeroDailyTask).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function syncFollowTaskUI(key, done) {
+  const safe = CSS.escape(key);
+  document.querySelectorAll(`.follow-row[data-follow-key="${safe}"]`).forEach(row => {
+    row.classList.toggle('is-done', done);
+    const task = row.querySelector('.follow-task');
+    if (!task) return;
+    task.classList.toggle('is-checked', done);
+    const input = task.querySelector('input[type="checkbox"]');
+    if (input) input.checked = done;
+  });
+  document.querySelectorAll(`.hero-daily-task[data-follow-key="${safe}"]`).forEach(task => {
+    task.classList.toggle('is-checked', done);
+    const input = task.querySelector('input[type="checkbox"]');
+    if (input) input.checked = done;
+  });
+}
+
 function applyFollowFilter() {
   const rows = document.querySelectorAll('#followPanel .follow-row');
   let visible = 0;
@@ -1215,11 +1272,6 @@ function applyFollowFilter() {
     let show = true;
 
     if (followPriorityFilter !== 'all' && tier !== followPriorityFilter) show = false;
-
-    if (show && followViewMode === 'today' && followPriorityFilter === 'all') {
-      if (tier === 'medium') show = false;
-      else if (tier !== 'critical') show = ownerKey.length > 0;
-    }
 
     if (show && followOwnerFilter !== 'all') {
       const parts = ownerKey ? ownerKey.split('|') : [];
@@ -1249,11 +1301,10 @@ function applyFollowFilter() {
 
   const countNote = document.getElementById('followCountNote');
   if (countNote) {
-    const viewLabel = followViewMode === 'today' ? 'My chase list today' : 'All ongoing';
     const left = remaining === visible
       ? `${visible} item${visible === 1 ? '' : 's'}`
       : `${remaining} left · ${visible} item${visible === 1 ? '' : 's'}`;
-    countNote.textContent = `${left} · ${viewLabel}`;
+    countNote.textContent = left;
   }
 
   document.getElementById('followTabBadge').textContent = remaining;
@@ -1283,18 +1334,6 @@ function renderFollowRow(item) {
 }
 
 function bindFollowToolbarEvents() {
-  document.querySelectorAll('.follow-view-btn').forEach(btn => {
-    btn.onclick = () => {
-      followViewMode = btn.dataset.view;
-      if (followViewMode === 'today' && followPriorityFilter === 'all') {
-        followPriorityFilter = 'critical';
-        const pri = document.getElementById('followPriorityFilter');
-        if (pri) pri.value = 'critical';
-      }
-      document.querySelectorAll('.follow-view-btn').forEach(b => b.classList.toggle('is-active', b.dataset.view === followViewMode));
-      applyFollowFilter();
-    };
-  });
   const ownerSel = document.getElementById('followOwnerFilter');
   if (ownerSel) ownerSel.onchange = () => {
     followOwnerFilter = ownerSel.value;
@@ -1356,13 +1395,11 @@ function bindFollowUpEvents() {
   document.body.dataset.followBound = '1';
   document.addEventListener('change', (e) => {
     const input = e.target;
-    if (!input.matches('#followPanel .follow-task input[type="checkbox"]')) return;
-    const row = input.closest('.follow-row');
-    if (!row) return;
-    const key = row.dataset.followKey;
+    if (!input.matches('#followPanel .follow-task input[type="checkbox"], #heroDaily .follow-task input[type="checkbox"]')) return;
+    const key = input.closest('[data-follow-key]')?.dataset.followKey;
+    if (!key) return;
     setFollowTaskDone(key, input.checked);
-    row.classList.toggle('is-done', input.checked);
-    input.closest('.follow-task')?.classList.toggle('is-checked', input.checked);
+    syncFollowTaskUI(key, input.checked);
     applyFollowFilter();
   });
   document.addEventListener('click', (e) => {
@@ -1436,9 +1473,14 @@ function render(rows) {
   const noteLine = noteText
     ? `<p class="hero-note"><span class="hero-note-icon" aria-hidden="true">⚠</span>${escapeHtml(noteText)}</p>`
     : '';
+  const followUps = buildFollowUpItems(rows);
+  const heroDailyTasks = pickHeroDailyTasks(followUps.all);
   document.getElementById('heroDetail').innerHTML = `
-    <h2>${escapeHtml(heroTitle)}</h2>
-    ${noteLine}
+    <div class="hero-main">
+      <h2>${escapeHtml(heroTitle)}</h2>
+      ${noteLine}
+    </div>
+    ${renderHeroDailySection(heroDailyTasks)}
   `;
 
   /* 1 — Programme progress ring */
@@ -1736,7 +1778,6 @@ function render(rows) {
   applyRiskFilter();
 
   /* 5 — Follow-ups action list */
-  const followUps = buildFollowUpItems(rows);
   const ownerOptions = [...new Set(followUps.all.flatMap(i => followOwnerParts(i.owner)))].sort((a, b) => a.localeCompare(b));
   const ownerSelectHtml = ['all', ...ownerOptions]
     .map(o => `<option value="${escapeHtml(o)}"${followOwnerFilter === o ? ' selected' : ''}>${o === 'all' ? 'All owners' : escapeHtml(o)}</option>`)
@@ -1752,12 +1793,8 @@ function render(rows) {
   const datedHtml = followUps.dated.map(renderFollowRow).join('');
 
   document.getElementById('followPanel').innerHTML = `
-    <p class="follow-intro">One action per row — filter down to what you need to chase. Tap a row for full details.</p>
+    <p class="follow-intro">One action per row — tick when chased. Tap a row for full details. Filter by priority or owner below.</p>
     <div class="follow-toolbar">
-      <div class="follow-view-toggle">
-        <button type="button" class="follow-view-btn${followViewMode === 'today' ? ' is-active' : ''}" data-view="today">My chase list today</button>
-        <button type="button" class="follow-view-btn${followViewMode === 'all' ? ' is-active' : ''}" data-view="all">All ongoing</button>
-      </div>
       <div class="tl-filter-group">
         <label for="followPriorityFilter">Priority</label>
         <select id="followPriorityFilter">${prioritySelectHtml}</select>
@@ -1768,7 +1805,7 @@ function render(rows) {
       </div>
     </div>
     <div class="follow-count-note" id="followCountNote"></div>
-    <div class="follow-empty" id="followGlobalEmpty" style="display:none">Nothing matches — try All ongoing or change the filters above.</div>
+    <div class="follow-empty" id="followGlobalEmpty" style="display:none">Nothing matches — try changing the priority or owner filter above.</div>
     ${followUps.total ? `
       <div class="follow-section-block" id="followUndatedBlock">
         <div class="follow-section-title">Ongoing / No fixed date</div>

@@ -256,7 +256,10 @@
 
   .timeline{ padding:14px 16px; }
   .tl-bar-wrap { margin-bottom:10px; padding:26px 8px 6px; }
-  .tl-bar-range { display:flex; justify-content:space-between; font-family:var(--mono); font-size:11px; font-weight:500; color:var(--grey); margin-top:12px; padding:0 2px; }
+  .tl-bar-range { display:flex; justify-content:space-between; align-items:flex-end; font-family:var(--mono); font-size:11px; font-weight:500; color:var(--grey); margin-top:12px; padding:0 2px; }
+  .tl-bar-range-end { display:flex; flex-direction:column; align-items:flex-end; gap:2px; line-height:1.1; }
+  .tl-bar-range-end .tl-range-label { font-size:10px; font-weight:700; letter-spacing:0.3px; color:var(--grey); text-transform:uppercase; }
+  .tl-bar-range-end .tl-range-date { font-size:10px; font-weight:500; color:var(--grey); }
   .tl-bar { position:relative; height:12px; background:transparent; border-radius:99px; overflow:visible; }
   .tl-bar-past {
     position:absolute; left:0; top:0; height:100%; z-index:0;
@@ -747,7 +750,13 @@ function parseSortDate(row) {
     const fromFmt = parseSortDateValue(row.SortDate_fmt);
     if (fromFmt) return fromFmt;
   }
-  return parseSortDateValue(row.SortDate);
+  const fromSort = parseSortDateValue(row.SortDate);
+  if (fromSort) return fromSort;
+  if (row.DisplayDate_fmt) {
+    const fromDisplayFmt = parseSortDateValue(row.DisplayDate_fmt);
+    if (fromDisplayFmt) return fromDisplayFmt;
+  }
+  return parseSortDateValue(row.DisplayDate);
 }
 
 function formatShortDate(d) {
@@ -1095,6 +1104,10 @@ function render(rows) {
     `;
   }).join('');
 
+  const closureGate = gates.find(g => /closure/i.test(String(g.Name || '')));
+  const closureDate = closureGate ? parseSortDate(closureGate) : null;
+  const rangeEndLabel = closureDate || rangeEnd;
+
   const timeline = document.getElementById('timeline');
   timeline.innerHTML = `
     <div class="tl-bar-wrap">
@@ -1107,7 +1120,10 @@ function render(rows) {
       </div>
       <div class="tl-bar-range">
         <span>${formatShortDate(rangeStart)}</span>
-        <span>${formatShortDate(rangeEnd)}</span>
+        <span class="tl-bar-range-end">
+          <span class="tl-range-label">Closure</span>
+          <span class="tl-range-date">${formatShortDate(rangeEndLabel)}</span>
+        </span>
       </div>
     </div>
     <div class="tl-filters">

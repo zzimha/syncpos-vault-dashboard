@@ -87,14 +87,20 @@
   }
 
   .content-list { list-style:none; padding-left:0; margin:0; }
-  .content-list li { position:relative; padding-left:16px; margin-bottom:4px; }
-  .content-list li::before {
-    content:'•'; position:absolute; left:0; top:0; color:var(--slate); font-weight:700;
+  .content-list li {
+    display:flex; align-items:flex-start; gap:8px;
+    margin-bottom:4px; padding-left:0; color:#333;
   }
+  .content-list li::before { content:none !important; display:none !important; }
+  .content-list li::marker { color:var(--slate); }
+  .content-list .list-bullet {
+    color:var(--slate); font-weight:700; flex-shrink:0; line-height:1.45;
+  }
+  .content-list .list-text { flex:1; min-width:0; }
   .content-list li:last-child { margin-bottom:0; }
   .content-list.compact { font-size:13px; color:#444; line-height:1.45; }
-  .hero-detail .content-list.warn li { color:var(--red); }
-  .hero-detail .content-list.warn li::before { color:var(--slate); }
+  .content-list.warn .list-text { color:var(--red); }
+  .content-list.warn .list-bullet { color:var(--slate); }
 
   .tracks { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
   @media (max-width:900px){ .tracks{grid-template-columns:repeat(2,1fr);} }
@@ -388,9 +394,12 @@ function textToBullets(text) {
   return bullets.filter(Boolean);
 }
 
-function bulletsHtml(items, className = 'content-list compact') {
+function bulletsHtml(items, className = 'content-list compact', warnText = false) {
   if (!items.length) return '';
-  return `<ul class="${className}">${items.map(li => `<li>${escapeHtml(li)}</li>`).join('')}</ul>`;
+  const listClass = warnText ? `${className} warn` : className;
+  return `<ul class="${listClass}">${items.map(li =>
+    `<li><span class="list-bullet" aria-hidden="true">•</span><span class="list-text">${escapeHtml(li)}</span></li>`
+  ).join('')}</ul>`;
 }
 
 function trackKey(num) {
@@ -587,12 +596,15 @@ function render(rows) {
   const days = Math.round((cutoverStart - today) / 86400000);
   document.getElementById('daysToCutover').textContent = days;
 
-  const heroNote1 = textToBullets(meta['Hero Note 1'] || '');
-  const heroNote2 = textToBullets(meta['Hero Note 2'] || '');
+  const heroCopy = {
+    title: '9–20 Aug 2026 (end date unconfirmed, may shift to ~27 Aug)',
+    note1: 'Per Hazmei: end date may push a week. Start date (9 Aug) not at risk — pending Prabodha\'s confirmation.',
+    note2: '⚠️ Auto-unseal, LDAP (Prod), DR validation, and UAT sign-off are all estimated to land after 9 Aug.',
+  };
   document.getElementById('heroDetail').innerHTML = `
-    <h2>Production Cutover — ${escapeHtml(meta['Cutover Window'] || '')}</h2>
-    ${heroNote1.length ? bulletsHtml(heroNote1) : ''}
-    ${heroNote2.length ? bulletsHtml(heroNote2.map(n => '⚠ ' + n), 'content-list warn') : ''}
+    <h2>Production Cutover — ${escapeHtml(heroCopy.title)}</h2>
+    ${bulletsHtml([heroCopy.note1], 'content-list')}
+    ${bulletsHtml([heroCopy.note2], 'content-list', true)}
   `;
 
   /* 1 — Programme progress ring */

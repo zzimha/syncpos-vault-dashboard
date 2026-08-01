@@ -290,11 +290,14 @@
   .track-card .gate-list { margin-top:0; }
 
   .timeline{ padding:14px 16px; }
-  .tl-bar-wrap { margin-bottom:10px; padding:26px 8px 6px; }
-  .tl-bar-range { display:flex; justify-content:space-between; align-items:flex-end; font-family:var(--mono); font-size:11px; font-weight:500; color:var(--grey); margin-top:12px; padding:0 2px; }
-  .tl-bar-range-end { display:flex; flex-direction:column; align-items:flex-end; gap:2px; line-height:1.1; }
-  .tl-bar-range-end .tl-range-label { font-size:10px; font-weight:700; letter-spacing:0.3px; color:var(--grey); text-transform:uppercase; }
-  .tl-bar-range-end .tl-range-date { font-size:10px; font-weight:500; color:var(--grey); }
+  .tl-bar-wrap { margin-bottom:10px; padding:28px 8px 8px; }
+  .tl-bar-range { display:flex; justify-content:space-between; align-items:flex-end; font-family:var(--mono); font-size:11px; font-weight:500; color:var(--grey); margin-top:14px; padding:0 2px; }
+  .tl-bar-range-col { display:flex; flex-direction:column; gap:2px; line-height:1.1; }
+  .tl-bar-range-start { align-items:flex-start; }
+  .tl-bar-range-end { align-items:flex-end; }
+  .tl-range-label { font-size:10px; font-weight:700; letter-spacing:0.3px; color:var(--grey); text-transform:uppercase; min-height:11px; }
+  .tl-range-label.is-spacer { visibility:hidden; }
+  .tl-range-date { font-size:10px; font-weight:500; color:var(--grey); line-height:1.2; }
   .tl-bar { position:relative; height:12px; background:transparent; border-radius:99px; overflow:visible; }
   .tl-bar-past {
     position:absolute; left:0; top:0; height:100%; z-index:0;
@@ -312,7 +315,7 @@
   .tl-marker.align-center { transform:translate(-50%,-50%); }
   .tl-marker.align-left { transform:translate(0,-50%); }
   .tl-marker.align-right { transform:translate(-100%,-50%); }
-  .tl-marker-callout { position:absolute; bottom:14px; display:flex; flex-direction:column; gap:3px; white-space:nowrap; line-height:1.1; }
+  .tl-marker-callout { position:absolute; bottom:18px; display:flex; flex-direction:column; gap:3px; white-space:nowrap; line-height:1.1; }
   .tl-marker.align-center .tl-marker-callout { left:50%; transform:translateX(-50%); align-items:center; }
   .tl-marker.align-left .tl-marker-callout { left:0; align-items:flex-start; }
   .tl-marker.align-right .tl-marker-callout { right:0; align-items:flex-end; }
@@ -322,9 +325,11 @@
   .tl-marker.align-right .tl-marker-line { right:0; left:auto; transform:translateY(-50%); }
   .tl-marker-label { font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:0.3px; }
   .tl-marker-date { font-family:var(--mono); font-size:10px; font-weight:500; color:var(--grey); }
+  .tl-bar-today .tl-marker-callout { bottom:24px; gap:4px; }
   .tl-bar-today .tl-marker-line { width:2px; height:32px; background:var(--navy); }
   .tl-bar-today .tl-marker-label { color:var(--navy); }
-  .tl-bar-cutover .tl-marker-callout { top:14px; bottom:auto; }
+  .tl-bar-today .tl-marker-date { margin-bottom:2px; }
+  .tl-bar-cutover .tl-marker-callout { top:18px; bottom:auto; }
   .tl-bar-cutover .tl-marker-line { width:3px; height:30px; background:var(--cutover-orange); }
   .tl-bar-cutover .tl-marker-label { color:var(--cutover-orange); }
   .tl-bar-dot { position:absolute; top:50%; width:11px; height:11px; border-radius:50%; border:2px solid var(--panel); transform:translate(-50%,-50%); z-index:2; box-shadow:0 0 0 1px var(--line); }
@@ -1687,11 +1692,14 @@ function render(rows) {
         ${timelineMarkerHtml('cutover', cutoverPos, 'CUTOVER', formatShortDate(cutoverNorm))}
       </div>
       <div class="tl-bar-range">
-        <span>${formatShortDate(rangeStart)}</span>
-        <span class="tl-bar-range-end">
+        <div class="tl-bar-range-col tl-bar-range-start">
+          <span class="tl-range-label is-spacer">Start</span>
+          <span class="tl-range-date">${formatShortDate(rangeStart)}</span>
+        </div>
+        <div class="tl-bar-range-col tl-bar-range-end">
           <span class="tl-range-label">Closure</span>
           <span class="tl-range-date">${formatShortDate(rangeEndLabel)}</span>
-        </span>
+        </div>
       </div>
     </div>
     <div class="tl-filters">

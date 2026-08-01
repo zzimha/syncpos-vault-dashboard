@@ -15,10 +15,11 @@
     --display:'Poppins',sans-serif;
   }
   * { box-sizing:border-box; margin:0; padding:0; }
-  body { background:var(--bg); font-family:var(--sans); color:#1A1D23; padding:10px 12px 16px; line-height:1.4; font-size:13px; }
-  .wrap { max-width:1180px; margin:0 auto; }
+  body { background:var(--bg); font-family:var(--sans); color:#1A1D23; padding:10px 12px 14px; line-height:1.4; font-size:13px; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:1160px; margin:0 auto; }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; box-shadow:0 1px 2px rgba(31,56,100,0.04); }
 
-  header { background:var(--navy); color:#fff; border-radius:8px; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px; }
+  header { background:var(--navy); color:#fff; border-radius:8px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px; box-shadow:0 2px 8px rgba(31,56,100,0.12); }
   .header-brand { display:flex; flex-direction:column; gap:0; }
   header h1 {
     font-size:17px; font-weight:800; font-family:var(--sans);
@@ -31,10 +32,12 @@
   }
   header .meta { font-size:10px; color:#C7D2E8; font-family:var(--mono); margin-top:4px; font-weight:500; }
   .sync-box { text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
+  .sync-actions { display:flex; align-items:center; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
   .sync-status {
-    font-size:11px; font-family:var(--mono); font-weight:500;
+    font-size:10px; font-family:var(--mono); font-weight:500;
     color:#F4F7FC; background:rgba(255,255,255,0.14);
-    padding:5px 10px; border-radius:6px; border:1px solid rgba(255,255,255,0.12);
+    padding:4px 8px; border-radius:5px; border:1px solid rgba(255,255,255,0.12);
+    white-space:nowrap;
   }
   .refresh-btn {
     display:inline-flex; align-items:center; gap:5px;
@@ -64,28 +67,28 @@
   .edit-link a { color:#F4F7FC; text-decoration:none; }
   .edit-link a:hover { text-decoration:underline; }
 
-  .hero { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:12px 16px; margin-bottom:10px; display:grid; grid-template-columns:auto auto 1fr; gap:14px; align-items:center; }
-  @media (max-width:760px){ .hero{ grid-template-columns:1fr; } .countdown,.hero-ring{ border-right:none !important; padding-right:0 !important; border-bottom:1px solid var(--line); padding-bottom:10px; } }
-  .countdown { text-align:center; padding-right:14px; border-right:1px solid var(--line); min-width:88px; }
+  .hero { padding:10px 14px; margin-bottom:8px; display:grid; grid-template-columns:auto auto 1fr; gap:12px; align-items:center; }
+  @media (max-width:760px){ .hero{ grid-template-columns:1fr; } .countdown,.hero-ring{ border-right:none !important; padding-right:0 !important; border-bottom:1px solid var(--line); padding-bottom:8px; } }
+  .countdown { text-align:center; padding-right:12px; border-right:1px solid var(--line); min-width:72px; }
   .countdown .num {
-    font-family:var(--display); font-size:48px; font-weight:700; color:var(--navy);
+    font-family:var(--display); font-size:44px; font-weight:700; color:var(--navy);
     line-height:0.95; letter-spacing:-0.03em; font-variant-numeric:tabular-nums;
   }
-  .countdown .label { font-family:var(--mono); font-size:9px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--grey); margin-top:4px; }
-  .hero-ring { text-align:center; padding-right:14px; border-right:1px solid var(--line); min-width:96px; }
-  .hero-ring .ring-label { font-family:var(--mono); font-size:9px; font-weight:500; text-transform:uppercase; letter-spacing:0.8px; color:var(--grey); margin-top:2px; }
-  .hero-ring svg { display:block; margin:0 auto; width:84px; height:84px; }
-  .hero-detail h2 { font-family:var(--sans); font-size:13px; font-weight:600; margin-bottom:4px; line-height:1.3; }
-  .hero-detail .content-list { font-family:var(--sans); font-size:12px; color:#333; line-height:1.4; margin-bottom:4px; }
-  .hero-warn { font-family:var(--sans); font-size:12px; color:var(--red); line-height:1.4; margin-top:4px; }
+  .countdown .label { font-family:var(--mono); font-size:8px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--grey); margin-top:3px; line-height:1.2; max-width:72px; margin-left:auto; margin-right:auto; }
+  .hero-ring { text-align:center; padding-right:12px; border-right:1px solid var(--line); min-width:88px; }
+  .hero-ring .ring-label { font-family:var(--mono); font-size:8px; font-weight:500; text-transform:uppercase; letter-spacing:0.7px; color:var(--grey); margin-top:2px; }
+  .hero-ring svg { display:block; margin:0 auto; width:80px; height:80px; }
+  .hero-detail h2 { font-family:var(--sans); font-size:13px; font-weight:700; margin-bottom:3px; line-height:1.3; color:var(--navy); }
+  .hero-note { font-family:var(--sans); font-size:12px; color:#444; line-height:1.35; }
+  .hero-warn { font-family:var(--sans); font-size:11px; color:var(--red); line-height:1.35; margin-top:4px; padding:4px 8px; background:var(--red-bg); border-radius:5px; border-left:3px solid var(--red); }
 
   .section-title {
-    font-size:10px; text-transform:uppercase; letter-spacing:1.1px; color:#9CA3AF;
-    margin:12px 0 6px 2px; font-family:var(--mono); font-weight:500;
+    font-size:9px; text-transform:uppercase; letter-spacing:1px; color:#9CA3AF;
+    margin:10px 0 5px 2px; font-family:var(--mono); font-weight:600;
   }
   .section-title-gates {
-    font-size:12px; font-weight:700; letter-spacing:0.05em; color:var(--navy);
-    font-family:var(--sans); margin:14px 0 6px 2px;
+    font-size:11px; font-weight:700; letter-spacing:0.04em; color:var(--navy);
+    font-family:var(--sans); margin:12px 0 5px 2px;
   }
 
   .content-list { list-style:none; padding-left:0; margin:0; }
@@ -100,36 +103,35 @@
   }
   .content-list .list-text { flex:1; min-width:0; }
   .content-list li:last-child { margin-bottom:0; }
-  .content-list.compact { font-size:13px; color:#444; line-height:1.45; }
+  .content-list.compact { font-size:12px; color:#444; line-height:1.4; }
   .content-list.warn .list-text { color:var(--red); }
   .content-list.warn .list-bullet { color:var(--slate); }
 
-  .tracks { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .tracks { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
   @media (max-width:900px){ .tracks{grid-template-columns:repeat(2,1fr);} }
   @media (max-width:600px){ .tracks{grid-template-columns:1fr;} }
 
   .track-card {
-    background:var(--panel); border:1px solid var(--line); border-radius:8px;
-    border-left:4px solid var(--grey); overflow:hidden;
+    border-left:3px solid var(--grey); overflow:hidden;
   }
+  .track-card.panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; border-left-width:3px; }
   .track-card.status-green{ border-left-color:var(--green); }
   .track-card.status-amber{ border-left-color:var(--amber); }
   .track-card.status-red{ border-left-color:var(--red); }
 
   .track-header {
-    width:100%; display:grid; grid-template-columns:1fr auto auto; gap:6px; align-items:center;
-    padding:8px 10px; background:none; border:none; cursor:pointer; text-align:left;
+    width:100%; display:grid; grid-template-columns:1fr auto auto; gap:4px 6px; align-items:center;
+    padding:7px 9px; background:none; border:none; cursor:pointer; text-align:left;
     font-family:inherit; color:inherit;
   }
-  .track-header:hover { background:#FAFBFC; }
-  .track-header-main { min-width:0; }
+  .track-header:hover { background:#F8FAFC; }
+  .track-header-main { min-width:0; display:flex; flex-direction:column; gap:3px; }
   .track-card .tnum{ font-family:var(--mono); font-size:10px; font-weight:500; color:#9CA3AF; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:4px; display:none; }
   .track-card.expanded .tnum { display:block; }
   .track-card h3{
-    font-family:var(--sans); font-size:12px; font-weight:600; line-height:1.25;
-    color:#1A1D23; margin:0 0 4px;
+    font-family:var(--sans); font-size:12px; font-weight:600; line-height:1.2;
+    color:#1A1D23; margin:0;
   }
-  .track-card.collapsed h3 { margin-bottom:0; }
   .track-card .track-ring { flex-shrink:0; }
   .track-chevron {
     font-size:11px; color:var(--grey); transition:transform 0.2s ease; line-height:1;
@@ -138,18 +140,19 @@
   .track-card.expanded .track-chevron { transform:rotate(180deg); }
 
   .pill{
-    display:inline-block; font-family:var(--mono); font-size:10px; font-weight:700;
-    padding:3px 9px; border-radius:20px; letter-spacing:0.4px;
+    display:inline-block; font-family:var(--mono); font-size:9px; font-weight:700;
+    padding:2px 7px; border-radius:20px; letter-spacing:0.3px;
   }
   .pill.status-green{ background:var(--green-bg); color:var(--green); }
   .pill.status-amber{ background:var(--amber-bg); color:var(--amber); }
   .pill.status-red{ background:var(--red-bg); color:var(--red); }
 
-  .track-status-row { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:3px; }
-  .track-card.collapsed .track-status-row { margin-bottom:2px; }
+  .track-meta { display:flex; align-items:center; gap:5px; flex-wrap:wrap; }
   .track-owner {
-    font-family:var(--mono); font-size:10px; font-weight:500; color:var(--grey);
+    font-family:var(--mono); font-size:9px; font-weight:500; color:var(--grey);
   }
+  .track-owner::before { content:'·'; margin-right:5px; color:var(--line); }
+  .track-meta .track-owner:first-child::before { content:none; margin-right:0; }
 
   .track-details {
     display:none; padding:0 10px 8px 10px; border-top:1px solid #F0F1F4;
@@ -159,8 +162,8 @@
   .track-card .track-ring svg { pointer-events:none; width:36px; height:36px; }
   .track-card .gate-list { margin-top:0; }
 
-  .timeline{ background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:12px 14px; }
-  .tl-bar-wrap { margin-bottom:12px; padding:26px 10px 6px; }
+  .timeline{ padding:10px 12px; }
+  .tl-bar-wrap { margin-bottom:8px; padding:22px 8px 4px; }
   .tl-bar-range { display:flex; justify-content:space-between; font-family:var(--mono); font-size:10px; font-weight:500; color:var(--grey); margin-top:10px; padding:0 2px; }
   .tl-bar { position:relative; height:10px; background:var(--grey-bg); border-radius:99px; overflow:visible; }
   .tl-bar-fill { position:absolute; left:0; top:0; height:100%; border-radius:99px; background:linear-gradient(90deg, var(--green) 0%, var(--amber) 55%, var(--red) 100%); opacity:0.25; }
@@ -212,22 +215,23 @@
 
   .tl-list { }
   .tl-row{
-    display:grid; grid-template-columns:72px 1fr auto; gap:10px; align-items:start;
-    padding:6px 0; border-bottom:1px solid #F0F1F4;
+    display:grid; grid-template-columns:58px 1fr auto; gap:8px; align-items:center;
+    padding:5px 4px; border-bottom:1px solid #F0F1F4; border-radius:4px;
+    transition:background 0.15s ease;
   }
+  .tl-row:hover { background:#FAFBFC; }
   .tl-row:last-child{ border-bottom:none; }
   .tl-row.hidden { display:none; }
   .tl-date{
-    font-family:var(--mono); font-size:12px; color:var(--slate); font-weight:600;
-    font-variant-numeric:tabular-nums; padding-right:8px; min-width:4.5em;
+    font-family:var(--mono); font-size:11px; color:var(--slate); font-weight:600;
+    font-variant-numeric:tabular-nums;
   }
-  .tl-milestone{ font-family:var(--sans); font-size:12px; font-weight:600; color:#1A1D23; line-height:1.3; margin-bottom:2px; }
-  .tl-owner { font-weight:500; color:var(--grey); font-size:13px; }
-  .tl-milestone-detail { margin-top:2px; }
-  .tl-badges { display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+  .tl-milestone{ font-family:var(--sans); font-size:12px; font-weight:500; color:#1A1D23; line-height:1.25; }
+  .tl-owner { font-weight:500; color:var(--grey); font-size:11px; }
+  .tl-badges { display:flex; flex-direction:row; align-items:center; gap:4px; flex-wrap:wrap; justify-content:flex-end; }
   .tl-chase {
-    font-family:var(--mono); font-size:9px; font-weight:600; padding:3px 8px;
-    border-radius:4px; white-space:nowrap; letter-spacing:0.2px;
+    font-family:var(--mono); font-size:8px; font-weight:600; padding:2px 6px;
+    border-radius:4px; white-space:nowrap; letter-spacing:0.1px;
   }
   .tl-chase.status-amber { color:var(--amber); background:var(--amber-bg); }
   .tl-chase.status-red { color:var(--red); background:var(--red-bg); }
@@ -242,29 +246,21 @@
   .tl-empty { font-family:var(--sans); font-size:13px; color:var(--grey); padding:12px 0; display:none; }
   .tl-empty.visible { display:block; }
 
-  .risk-panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:12px 14px; }
-  .risk-top { display:grid; grid-template-columns:auto 1fr; gap:16px; align-items:center; margin-bottom:10px; }
-  @media (max-width:600px){ .risk-top{ grid-template-columns:1fr; justify-items:center; text-align:center; } }
-  .risk-chart svg { display:block; width:100px; height:100px; }
-  .risk-stack-wrap { flex:1; min-width:0; }
-  .risk-stack-label { font-family:var(--mono); font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--grey); margin-bottom:8px; }
-  .risk-stack { display:flex; height:14px; border-radius:99px; overflow:hidden; background:var(--grey-bg); }
-  .risk-stack-seg { height:100%; min-width:0; transition:width 0.3s ease; }
-  .risk-stack-seg.critical { background:var(--red); }
-  .risk-stack-seg.high { background:var(--amber); }
-  .risk-stack-seg.medium { background:#4A7CB5; }
-  .risk-stack-empty { font-family:var(--sans); font-size:12px; color:var(--grey); padding:4px 0; }
-  .risk-strip-counts { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
-  @media (max-width:600px){ .risk-strip-counts{ grid-template-columns:repeat(2,1fr); } }
-  .risk-box{ background:#FAFBFC; border:1px solid var(--line); border-radius:6px; padding:8px 10px; text-align:center; }
-  .risk-box .count{ font-family:var(--mono); font-size:22px; font-weight:700; font-variant-numeric:tabular-nums; line-height:1; }
-  .risk-box .rlabel{ font-size:10px; color:var(--grey); text-transform:uppercase; letter-spacing:0.5px; margin-top:6px; font-family:var(--mono); font-weight:600; }
+  .risk-panel { padding:10px 12px; }
+  .risk-layout { display:grid; grid-template-columns:auto 1fr; gap:10px; align-items:stretch; }
+  @media (max-width:600px){ .risk-layout{ grid-template-columns:1fr; } }
+  .risk-chart svg { display:block; width:88px; height:88px; }
+  .risk-strip-counts { display:grid; grid-template-columns:repeat(2,1fr); gap:6px; height:100%; }
+  @media (min-width:601px){ .risk-strip-counts{ grid-template-columns:repeat(4,1fr); } }
+  .risk-box{ background:#FAFBFC; border:1px solid var(--line); border-radius:6px; padding:6px 8px; text-align:center; display:flex; flex-direction:column; justify-content:center; min-height:52px; }
+  .risk-box .count{ font-family:var(--mono); font-size:20px; font-weight:700; font-variant-numeric:tabular-nums; line-height:1; }
+  .risk-box .rlabel{ font-size:9px; color:var(--grey); text-transform:uppercase; letter-spacing:0.4px; margin-top:4px; font-family:var(--mono); font-weight:600; }
   .risk-box.critical .count{ color:var(--red); }
   .risk-box.high .count{ color:var(--amber); }
   .risk-box.medium .count{ color:#4A7CB5; }
   .risk-box.open-total .count{ color:var(--navy); }
 
-  .footnote{ margin-top:12px; font-size:10px; color:var(--grey); font-family:var(--mono); font-weight:500; border-top:1px solid var(--line); padding-top:8px; }
+  .footnote{ margin-top:10px; font-size:9px; color:var(--grey); font-family:var(--mono); font-weight:500; border-top:1px solid var(--line); padding-top:6px; line-height:1.35; }
   .error-banner{ background:var(--red-bg); color:var(--red); border:1px solid #F3C6C4; border-radius:8px; padding:12px 16px; margin-bottom:18px; font-size:13px; font-family:var(--sans); display:none; }
 </style>
 </head>
@@ -278,21 +274,23 @@
       <div class="meta">TPM: Hamzi · Programme Owner: Prabodha</div>
     </div>
     <div class="sync-box">
-      <div class="sync-status" id="syncStatus">connecting…</div>
-      <button class="refresh-btn" id="refreshBtn" type="button" onclick="loadData()">
-        <span class="refresh-icon" aria-hidden="true">↻</span>
-        <span>Refresh now</span>
-      </button>
-      <span class="edit-link">✎ <a href="https://docs.google.com/spreadsheets/d/1EWSX-LsXjh-hV55E3SSNpqS9FTBXpKlGnuzW15-J5Dc/edit?usp=sharing" target="_blank">Edit source sheet</a></span>
+      <div class="sync-actions">
+        <div class="sync-status" id="syncStatus">connecting…</div>
+        <button class="refresh-btn" id="refreshBtn" type="button" onclick="loadData()">
+          <span class="refresh-icon" aria-hidden="true">↻</span>
+          <span>Refresh</span>
+        </button>
+      </div>
+      <span class="edit-link">✎ <a href="https://docs.google.com/spreadsheets/d/1EWSX-LsXjh-hV55E3SSNpqS9FTBXpKlGnuzW15-J5Dc/edit?usp=sharing" target="_blank">Edit sheet</a></span>
     </div>
   </header>
 
   <div class="error-banner" id="errorBanner"></div>
 
-  <div class="hero">
+  <div class="hero panel">
     <div class="countdown">
       <div class="num" id="daysToCutover">–</div>
-      <div class="label">days to cutover start</div>
+      <div class="label">days to cutover</div>
     </div>
     <div class="hero-ring" id="heroRing"></div>
     <div class="hero-detail" id="heroDetail"></div>
@@ -302,12 +300,12 @@
   <div class="tracks" id="trackGrid"></div>
 
   <div class="section-title section-title-gates">Key Gates &amp; Milestones</div>
-  <div class="timeline" id="timeline"></div>
+  <div class="timeline panel" id="timeline"></div>
 
   <div class="section-title">Open Risks</div>
   <div class="risk-strip" id="riskStrip"></div>
 
-  <div class="footnote">Live from Google Sheet — edit the sheet directly (link above) and hit Refresh to see changes here. Auto-refreshes every 60s while this page is open.</div>
+  <div class="footnote">Live from Google Sheet · auto-refreshes every 60s · edit the sheet and hit Refresh</div>
 
 </div>
 
@@ -547,7 +545,7 @@ function formatGateDisplayDate(row) {
 
 function chaseBadgeHtml(status, owner) {
   if (!owner || (status !== 'red' && status !== 'amber')) return '';
-  return `<span class="tl-chase status-${status}">🔔 Chase ${escapeHtml(owner)}</span>`;
+  return `<span class="tl-chase status-${status}">Chase ${escapeHtml(owner)}</span>`;
 }
 
 function markerPosition(pct) {
@@ -641,15 +639,15 @@ function render(rows) {
   const days = Math.round((cutoverStart - today) / 86400000);
   document.getElementById('daysToCutover').textContent = days;
 
-  const heroTitle = meta['Cutover Window'] || '9–20 Aug 2026 (end date unconfirmed, may shift to ~27 Aug)';
+  const heroTitle = meta['Cutover Window'] || 'Starts 9 Aug 2026 — end date unconfirmed';
   const heroNote1 = meta['Hero Note 1'] || '';
   const heroNote2 = meta['Hero Note 2'] || '';
   const warnLine = heroNote2
-    ? `<p class="hero-warn">${escapeHtml(heroNote2.startsWith('⚠') ? heroNote2 : '⚠️ ' + heroNote2)}</p>`
+    ? `<p class="hero-warn">${escapeHtml(heroNote2.startsWith('⚠') ? heroNote2 : '⚠ ' + heroNote2)}</p>`
     : '';
   document.getElementById('heroDetail').innerHTML = `
-    <h2>Production Cutover — ${escapeHtml(heroTitle)}</h2>
-    ${heroNote1 ? bulletsHtml([heroNote1], 'content-list') : ''}
+    <h2>${escapeHtml(heroTitle)}</h2>
+    ${heroNote1 ? `<p class="hero-note">${escapeHtml(heroNote1)}</p>` : ''}
     ${warnLine}
   `;
 
@@ -665,7 +663,7 @@ function render(rows) {
     { value: trackCounts.red, color: STATUS_COLORS.red },
   ];
   document.getElementById('heroRing').innerHTML = `
-    ${svgSegmentedRing(ringSegments, { size: 84, stroke: 10, centerText: `${onTrack}/${totalTracks}`, centerSub: 'On Track', centerSize: 14 })}
+    ${svgSegmentedRing(ringSegments, { size: 80, stroke: 9, centerText: `${onTrack}/${totalTracks}`, centerSub: 'On track', centerSize: 13 })}
     <div class="ring-label">Track health</div>
   `;
 
@@ -677,20 +675,20 @@ function render(rows) {
     const isExpanded = expandedTracks.has(num);
     const detailBullets = textToBullets(t.Detail);
     const el = document.createElement('div');
-    el.className = `track-card status-${t.Status} ${isExpanded ? 'expanded' : 'collapsed'}`;
+    el.className = `track-card panel status-${t.Status} ${isExpanded ? 'expanded' : 'collapsed'}`;
     el.dataset.trackNum = num;
 
     const owner = ownerName(t);
-    const ownerHtml = owner ? `<span class="track-owner">→ ${escapeHtml(owner)}</span>` : '';
+    const ownerHtml = owner ? `<span class="track-owner">${escapeHtml(owner)}</span>` : '';
 
     el.innerHTML = `
       <button type="button" class="track-header" aria-expanded="${isExpanded}">
         <div class="track-header-main">
-          <div class="track-status-row">
+          <h3>${escapeHtml(t.Name)}</h3>
+          <div class="track-meta">
             <span class="pill status-${t.Status}">${(t.Status || '').toUpperCase()}</span>
             ${ownerHtml}
           </div>
-          <h3>${escapeHtml(t.Name)}</h3>
         </div>
         <div class="track-ring">${svgStatusRing(t.Status, 36)}</div>
         <span class="track-chevron" aria-hidden="true">▼</span>
@@ -742,21 +740,15 @@ function render(rows) {
 
   const gateRowsHtml = gates.map(g => {
     const parsed = parseSortDate(g);
-    const detailBullets = textToBullets(g.Detail || '');
-    const detailHtml = detailBullets.length
-      ? `<div class="tl-milestone-detail">${bulletsHtml(detailBullets)}</div>`
-      : '';
     const displayDate = formatGateDisplayDate(g);
     const owner = ownerName(g);
     const ownerInline = owner ? `<span class="tl-owner"> · ${escapeHtml(owner)}</span>` : '';
     const status = g.Status || 'grey';
+    const detail = g.Detail ? ` title="${escapeHtml(g.Detail)}"` : '';
     return `
-      <div class="tl-row" data-parsed="${parsed ? parsed.getTime() : ''}" data-track="${escapeHtml(gateTrackNum(g))}">
-        <div class="tl-date">${escapeHtml(displayDate)}</div>
-        <div>
-          <div class="tl-milestone">${escapeHtml(g.Name)}${ownerInline}</div>
-          ${detailHtml}
-        </div>
+      <div class="tl-row" data-parsed="${parsed ? parsed.getTime() : ''}" data-track="${escapeHtml(gateTrackNum(g))}"${detail}>
+        <div class="tl-date">${escapeHtml(displayDate || '—')}</div>
+        <div class="tl-milestone">${escapeHtml(g.Name)}${ownerInline}</div>
         <div class="tl-badges">
           <span class="tl-badge status-${status}">${status.toUpperCase()}</span>
           ${chaseBadgeHtml(status, owner)}
@@ -797,10 +789,10 @@ function render(rows) {
     <div class="tl-empty" id="gateEmpty">No milestones match this filter.</div>
     <div class="tl-bar-legend">
       <span><i style="background:var(--navy)"></i> Today</span>
-      <span><i style="background:var(--cutover-orange)"></i> Cutover start</span>
-      <span><i style="background:var(--green)"></i> Gate — green</span>
-      <span><i style="background:var(--amber)"></i> Gate — amber</span>
-      <span><i style="background:var(--red)"></i> Gate — red</span>
+      <span><i style="background:var(--cutover-orange)"></i> Cutover</span>
+      <span><i style="background:var(--green)"></i> Green</span>
+      <span><i style="background:var(--amber)"></i> Amber</span>
+      <span><i style="background:var(--red)"></i> Red</span>
     </div>
   `;
 
@@ -812,7 +804,7 @@ function render(rows) {
   const riskRows = rows.filter(r => r.Section === 'RISK');
   const riskStrip = document.getElementById('riskStrip');
   riskStrip.innerHTML = '';
-  riskStrip.className = 'risk-panel';
+  riskStrip.className = 'risk-panel panel';
 
   const riskMap = {};
   riskRows.forEach(r => { riskMap[r.Name] = riskCount(r); });
@@ -820,7 +812,6 @@ function render(rows) {
   const high = riskMap['High'] || 0;
   const med = riskMap['Medium'] || 0;
   const totalOpen = riskMap['Total Open'] || (crit + high + med);
-  const riskTotal = crit + high + med || 1;
 
   const riskSegments = [
     { value: crit, color: STATUS_COLORS.red },
@@ -828,45 +819,33 @@ function render(rows) {
     { value: med, color: '#4A7CB5' },
   ];
   const riskDonut = svgSegmentedRing(riskSegments, {
-    size: 100,
-    stroke: 12,
+    size: 88,
+    stroke: 10,
     centerText: String(totalOpen),
-    centerSub: 'Total open',
-    centerSize: 18,
+    centerSub: 'Open',
+    centerSize: 16,
   });
 
-  const stackHtml = (crit + high + med) > 0
-    ? `<div class="risk-stack">
-        ${crit ? `<div class="risk-stack-seg critical" style="width:${(crit/riskTotal*100).toFixed(1)}%" title="Critical: ${crit}"></div>` : ''}
-        ${high ? `<div class="risk-stack-seg high" style="width:${(high/riskTotal*100).toFixed(1)}%" title="High: ${high}"></div>` : ''}
-        ${med ? `<div class="risk-stack-seg medium" style="width:${(med/riskTotal*100).toFixed(1)}%" title="Medium: ${med}"></div>` : ''}
-      </div>`
-    : `<div class="risk-stack-empty">No open risks by severity</div>`;
-
   riskStrip.innerHTML = `
-    <div class="risk-top">
+    <div class="risk-layout">
       <div class="risk-chart">${riskDonut}</div>
-      <div class="risk-stack-wrap">
-        <div class="risk-stack-label">Severity breakdown</div>
-        ${stackHtml}
-      </div>
-    </div>
-    <div class="risk-strip-counts">
-      <div class="risk-box critical">
-        <div class="count">${crit}</div>
-        <div class="rlabel">Critical</div>
-      </div>
-      <div class="risk-box high">
-        <div class="count">${high}</div>
-        <div class="rlabel">High</div>
-      </div>
-      <div class="risk-box medium">
-        <div class="count">${med}</div>
-        <div class="rlabel">Medium</div>
-      </div>
-      <div class="risk-box open-total">
-        <div class="count">${totalOpen}</div>
-        <div class="rlabel">Total open</div>
+      <div class="risk-strip-counts">
+        <div class="risk-box critical">
+          <div class="count">${crit}</div>
+          <div class="rlabel">Critical</div>
+        </div>
+        <div class="risk-box high">
+          <div class="count">${high}</div>
+          <div class="rlabel">High</div>
+        </div>
+        <div class="risk-box medium">
+          <div class="count">${med}</div>
+          <div class="rlabel">Medium</div>
+        </div>
+        <div class="risk-box open-total">
+          <div class="count">${totalOpen}</div>
+          <div class="rlabel">Total</div>
+        </div>
       </div>
     </div>
   `;

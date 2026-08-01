@@ -335,6 +335,48 @@
   .risk-box.medium .count{ color:#4A7CB5; }
   .risk-box.open-total .count{ color:var(--navy); }
 
+  .risk-details-toggle {
+    display:block; width:100%; margin-top:14px; padding:10px 12px;
+    font-family:var(--sans); font-size:12px; font-weight:600; color:var(--navy);
+    background:var(--grey-bg); border:1px solid var(--line); border-radius:6px;
+    cursor:pointer; text-align:center; transition:background 0.15s ease;
+  }
+  .risk-details-toggle:hover { background:#E8ECF2; }
+  .risk-details { margin-top:10px; }
+  .risk-details.hidden { display:none; }
+  .risk-filters { margin-bottom:8px; }
+  .risk-list { }
+  .risk-row {
+    padding:10px 12px; border-bottom:1px solid #F0F1F4; border-radius:4px;
+    transition:background 0.15s ease;
+  }
+  .risk-row:hover { background:#FAFBFC; }
+  .risk-row.hidden { display:none; }
+  .risk-row:last-child { border-bottom:none; }
+  .risk-row-head {
+    display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+    margin-bottom:5px;
+  }
+  .risk-name { font-family:var(--sans); font-size:13px; font-weight:700; color:#1A1D23; line-height:1.3; flex:1; min-width:0; }
+  .risk-detail { font-family:var(--sans); font-size:12px; color:#444; line-height:1.45; margin:0 0 8px; }
+  .risk-row-foot { display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
+  .risk-owner { font-family:var(--mono); font-size:10px; font-weight:500; color:var(--grey); }
+  .risk-track {
+    font-family:var(--mono); font-size:9px; font-weight:500; color:var(--slate);
+    padding:2px 6px; border-radius:4px; background:var(--grey-bg);
+  }
+  .risk-chase {
+    font-family:var(--mono); font-size:9px; font-weight:600;
+    padding:2px 7px; border-radius:4px; background:var(--amber-bg); color:var(--amber);
+  }
+  .priority-label {
+    display:inline-block; font-family:var(--mono); font-size:9px; font-weight:600;
+    padding:2px 7px; border-radius:4px; white-space:nowrap; letter-spacing:0.1px; flex-shrink:0;
+  }
+  .priority-label.priority-critical { background:var(--red-bg); color:var(--red); }
+  .priority-label.priority-high { background:var(--amber-bg); color:var(--amber); }
+  .priority-label.priority-medium { background:#E8F0FA; color:#4A7CB5; }
+
   .footnote{ margin-top:10px; font-size:9px; color:var(--grey); font-family:var(--mono); font-weight:500; border-top:1px solid var(--line); padding-top:6px; line-height:1.35; }
   .error-banner{ background:var(--red-bg); color:var(--red); border:1px solid #F3C6C4; border-radius:8px; padding:12px 16px; margin-bottom:18px; font-size:13px; font-family:var(--sans); display:none; }
 </style>
@@ -358,7 +400,7 @@
         <span>Refresh</span>
       </button>
       <div class="sync-footer">
-        <a class="header-link" href="https://docs.google.com/spreadsheets/d/1EWSX-LsXjh-hV55E3SSNpqS9FTBXpKlGnuzW15-J5Dc/edit?usp=sharing" target="_blank">Edit sheet</a>
+        <a class="header-link" href="https://docs.google.com/spreadsheets/d/1BZaSYjeHYIHbht3BDGm00BUbkK7bV6bUJN4cDKyL77k/edit?usp=sharing" target="_blank">Edit sheet</a>
         <div class="sync-status is-loading" id="syncStatus">
           <div class="sync-status-row">
             <span class="sync-label">Connecting</span>
@@ -404,7 +446,7 @@
 </div>
 
 <script>
-const SHEET_ID = '1EWSX-LsXjh-hV55E3SSNpqS9FTBXpKlGnuzW15-J5Dc';
+const SHEET_ID = '1BZaSYjeHYIHbht3BDGm00BUbkK7bV6bUJN4cDKyL77k';
 const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
 const HERO_SHORT = {
@@ -425,6 +467,9 @@ function heroText(name, detail) {
 let expandedTracks = new Set();
 let gateCutoverFilter = 'all';
 let gateTrackFilter = 'all';
+let riskListExpanded = false;
+let riskPriorityFilter = 'all';
+let riskTrackFilter = 'all';
 let activeTab = 'programme';
 
 function switchTab(tab) {
@@ -751,6 +796,79 @@ function riskCount(row) {
   return isNaN(n) ? 0 : Math.round(n);
 }
 
+function normalizeRiskPriority(status) {
+  const s = String(status || '').trim().toLowerCase();
+  if (s === 'critical') return 'critical';
+  if (s === 'high') return 'high';
+  if (s === 'medium') return 'medium';
+  return '';
+}
+
+function priorityLabelHtml(priority) {
+  const key = normalizeRiskPriority(priority);
+  if (!key) return '';
+  const labels = { critical: 'Critical', high: 'High', medium: 'Medium' };
+  return `<span class="priority-label priority-${key}">${labels[key]}</span>`;
+}
+
+function riskItemTrackKey(row) {
+  const t = String(row.Track || '').trim();
+  if (!t || t === 'None') return 'all-tracks';
+  const m = t.match(/track\s*(\d+)/i);
+  if (m) return m[1];
+  if (/all\s*tracks/i.test(t)) return 'all-tracks';
+  return t.toLowerCase();
+}
+
+function riskItemTrackLabel(row) {
+  const raw = String(row.Track || '').trim();
+  if (raw && raw !== 'None') return raw;
+  return 'All Tracks';
+}
+
+function applyRiskFilter() {
+  const rows = document.querySelectorAll('#riskList .risk-row');
+  const empty = document.getElementById('riskEmpty');
+  let visible = 0;
+
+  rows.forEach(row => {
+    const priority = row.dataset.priority || '';
+    const track = row.dataset.track || '';
+    let show = true;
+
+    if (riskPriorityFilter !== 'all') {
+      show = show && priority === riskPriorityFilter;
+    }
+
+    if (riskTrackFilter !== 'all') {
+      show = show && (track === riskTrackFilter || track === 'all-tracks');
+    }
+
+    row.classList.toggle('hidden', !show);
+    if (show) visible++;
+  });
+
+  if (empty) empty.classList.toggle('visible', visible === 0);
+}
+
+function onRiskPriorityFilterChange() {
+  riskPriorityFilter = document.getElementById('riskPriorityFilter').value;
+  applyRiskFilter();
+}
+
+function onRiskTrackFilterChange() {
+  riskTrackFilter = document.getElementById('riskTrackFilter').value;
+  applyRiskFilter();
+}
+
+function onRiskDetailsToggle() {
+  riskListExpanded = !riskListExpanded;
+  document.getElementById('riskDetails').classList.toggle('hidden', !riskListExpanded);
+  document.getElementById('riskDetailsToggle').textContent = riskListExpanded
+    ? 'Hide details ▴'
+    : 'Show details ▾';
+}
+
 function gateTrackNum(g) {
   if (g.Track != null && g.Track !== '') return String(g.Track);
   if (g.Num != null && g.Num !== '' && Number(g.Num) <= 6) return String(Number(g.Num));
@@ -1005,6 +1123,53 @@ function render(rows) {
 
   document.getElementById('riskTabBadge').textContent = totalOpen;
 
+  const riskItems = rows.filter(r => r.Section === 'RISKITEM');
+  const priorityOrder = { critical: 0, high: 1, medium: 2 };
+  riskItems.sort((a, b) => {
+    const pa = priorityOrder[normalizeRiskPriority(a.Status)] ?? 3;
+    const pb = priorityOrder[normalizeRiskPriority(b.Status)] ?? 3;
+    if (pa !== pb) return pa - pb;
+    return String(a.Name || '').localeCompare(String(b.Name || ''));
+  });
+
+  const riskRowsHtml = riskItems.map(r => {
+    const priority = normalizeRiskPriority(r.Status);
+    const trackKey = riskItemTrackKey(r);
+    const trackLabel = riskItemTrackLabel(r);
+    const owner = ownerName(r);
+    const detail = String(r.Detail || '').trim();
+    const chaseHtml = owner
+      ? `<span class="risk-chase">🔔 Chase ${escapeHtml(owner)}</span>`
+      : '';
+    return `
+      <div class="risk-row" data-priority="${escapeHtml(priority)}" data-track="${escapeHtml(trackKey)}">
+        <div class="risk-row-head">
+          <div class="risk-name">${escapeHtml(r.Name)}</div>
+          ${priorityLabelHtml(r.Status)}
+        </div>
+        ${detail ? `<p class="risk-detail">${escapeHtml(detail)}</p>` : ''}
+        <div class="risk-row-foot">
+          <span class="risk-track">${escapeHtml(trackLabel)}</span>
+          ${owner ? `<span class="risk-owner">${escapeHtml(owner)}</span>` : ''}
+          ${chaseHtml}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  const riskPriorityOptions = [
+    ['all', 'All Priorities'],
+    ['critical', 'Critical'],
+    ['high', 'High'],
+    ['medium', 'Medium'],
+  ].map(([val, label]) =>
+    `<option value="${val}"${riskPriorityFilter === val ? ' selected' : ''}>${label}</option>`
+  ).join('');
+
+  const riskTrackOptions = ['all', '2', '3', '4', '5', '6']
+    .map(n => `<option value="${n}"${riskTrackFilter === n ? ' selected' : ''}>${n === 'all' ? 'All Tracks' : 'Track ' + n}</option>`)
+    .join('');
+
   riskStrip.innerHTML = `
     <div class="risk-layout">
       <div class="risk-chart">${riskDonut}</div>
@@ -1027,7 +1192,27 @@ function render(rows) {
         </div>
       </div>
     </div>
+    <button type="button" class="risk-details-toggle" id="riskDetailsToggle">${riskListExpanded ? 'Hide details ▴' : 'Show details ▾'}</button>
+    <div class="risk-details${riskListExpanded ? '' : ' hidden'}" id="riskDetails">
+      <div class="tl-filters risk-filters">
+        <div class="tl-filter-group">
+          <label for="riskPriorityFilter">Priority</label>
+          <select id="riskPriorityFilter">${riskPriorityOptions}</select>
+        </div>
+        <div class="tl-filter-group">
+          <label for="riskTrackFilter">Track</label>
+          <select id="riskTrackFilter">${riskTrackOptions}</select>
+        </div>
+      </div>
+      <div class="risk-list" id="riskList">${riskRowsHtml}</div>
+      <div class="tl-empty" id="riskEmpty">No risks match this filter.</div>
+    </div>
   `;
+
+  document.getElementById('riskDetailsToggle').addEventListener('click', onRiskDetailsToggle);
+  document.getElementById('riskPriorityFilter').addEventListener('change', onRiskPriorityFilterChange);
+  document.getElementById('riskTrackFilter').addEventListener('change', onRiskTrackFilterChange);
+  applyRiskFilter();
 
   switchTab(activeTab);
 }

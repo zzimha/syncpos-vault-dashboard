@@ -613,6 +613,11 @@ const HERO_SHORT = {
   'Hero Note 2': 'Auto-unseal, LDAP Prod, DR & UAT after 9 Aug',
 };
 
+/** Track Num → status override when sheet lags behind reality */
+const TRACK_STATUS_OVERRIDE = {
+  '2': 'amber',
+};
+
 const STATUS_COLORS = { green: '#2F8F5B', amber: '#B8790A', red: '#B3261E', grey: '#6B7280' };
 const STATUS_LABELS = { green: 'Completed', amber: 'In Progress', red: 'Not Started', grey: 'Scheduled' };
 
@@ -707,6 +712,15 @@ function parseGviz(text) {
   return rows;
 }
 
+function applyRowOverrides(rows) {
+  return rows.map(r => {
+    if (r.Section !== 'TRACK') return r;
+    const num = trackKey(r.Num);
+    const status = TRACK_STATUS_OVERRIDE[num];
+    return status ? { ...r, Status: status } : r;
+  });
+}
+
 async function loadData() {
   const refreshBtn = document.getElementById('refreshBtn');
   if (refreshBtn) refreshBtn.classList.add('loading');
@@ -715,7 +729,7 @@ async function loadData() {
     const res = await fetch(GVIZ_URL, { cache: 'no-store' });
     if (!res.ok) throw new Error('Sheet not reachable — check it is shared as "Anyone with the link can view"');
     const text = await res.text();
-    const rows = parseGviz(text);
+    const rows = applyRowOverrides(parseGviz(text));
     render(rows);
     setSyncStatus('synced', { stamp: formatSyncStamp() });
   } catch (e) {

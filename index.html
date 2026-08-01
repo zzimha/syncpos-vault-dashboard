@@ -101,14 +101,17 @@
   .track-card .gate-list { margin-top:0; }
 
   .timeline{ background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:18px 20px; }
-  .tl-bar-wrap { margin-bottom:20px; padding-bottom:4px; }
-  .tl-bar-labels { display:flex; justify-content:space-between; font-family:var(--mono); font-size:10px; font-weight:500; color:var(--grey); margin-bottom:8px; }
-  .tl-bar { position:relative; height:10px; background:var(--grey-bg); border-radius:99px; overflow:visible; }
+  .tl-bar-wrap { margin-bottom:20px; padding:34px 12px 36px; }
+  .tl-bar-labels { display:flex; justify-content:space-between; font-family:var(--mono); font-size:10px; font-weight:500; color:var(--grey); margin-bottom:14px; padding:0 4px; }
+  .tl-bar { position:relative; height:10px; background:var(--grey-bg); border-radius:99px; overflow:visible; margin:0 4px; }
   .tl-bar-fill { position:absolute; left:0; top:0; height:100%; border-radius:99px; background:linear-gradient(90deg, var(--green) 0%, var(--amber) 55%, var(--red) 100%); opacity:0.25; }
-  .tl-bar-today { position:absolute; top:-6px; width:2px; height:22px; background:var(--navy); border-radius:1px; transform:translateX(-50%); z-index:3; }
-  .tl-bar-today::after { content:'TODAY'; position:absolute; top:-16px; left:50%; transform:translateX(-50%); font-family:var(--mono); font-size:9px; font-weight:700; color:var(--navy); white-space:nowrap; }
-  .tl-bar-cutover { position:absolute; top:-4px; width:3px; height:18px; background:var(--red); border-radius:1px; transform:translateX(-50%); z-index:2; }
-  .tl-bar-cutover::after { content:'CUTOVER'; position:absolute; bottom:-16px; left:50%; transform:translateX(-50%); font-family:var(--mono); font-size:9px; font-weight:700; color:var(--red); white-space:nowrap; }
+  .tl-marker { position:absolute; top:50%; transform:translate(-50%,-50%); z-index:3; pointer-events:none; }
+  .tl-marker-line { position:absolute; left:50%; transform:translateX(-50%); background:var(--navy); border-radius:1px; }
+  .tl-marker-label { position:absolute; left:50%; transform:translateX(-50%); font-family:var(--mono); font-size:9px; font-weight:700; white-space:nowrap; line-height:1; }
+  .tl-bar-today .tl-marker-line { top:-18px; width:2px; height:28px; background:var(--navy); }
+  .tl-bar-today .tl-marker-label { top:-32px; color:var(--navy); }
+  .tl-bar-cutover .tl-marker-line { top:-16px; width:3px; height:26px; background:var(--red); }
+  .tl-bar-cutover .tl-marker-label { bottom:-22px; top:auto; color:var(--red); }
   .tl-bar-dot { position:absolute; top:50%; width:10px; height:10px; border-radius:50%; border:2px solid var(--panel); transform:translate(-50%,-50%); z-index:1; box-shadow:0 0 0 1px var(--line); }
   .tl-bar-dot.status-green{ background:var(--green); }
   .tl-bar-dot.status-amber{ background:var(--amber); }
@@ -119,18 +122,17 @@
   .tl-bar-legend i { display:inline-block; width:10px; height:10px; border-radius:50%; }
 
   .tl-filters {
-    display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+    display:flex; flex-wrap:wrap; gap:16px 24px; align-items:flex-end;
     margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid #F0F1F4;
   }
+  .tl-filter-group { display:flex; flex-direction:column; gap:5px; }
   .tl-filters label { font-family:var(--mono); font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--grey); }
   .tl-filters select {
-    font-family:var(--mono); font-size:11px; font-weight:500; padding:6px 10px;
+    font-family:var(--mono); font-size:11px; font-weight:500; padding:6px 10px; min-width:148px;
     border:1px solid var(--line); border-radius:6px; background:var(--panel); color:#333;
     cursor:pointer;
   }
   .tl-filters select:focus { outline:2px solid #C7D2E8; outline-offset:1px; }
-  #gateTrackFilter { display:none; }
-  #gateTrackFilter.visible { display:inline-block; }
 
   .tl-list { }
   .tl-row{
@@ -139,7 +141,7 @@
   }
   .tl-row:last-child{ border-bottom:none; }
   .tl-row.hidden { display:none; }
-  .tl-date{ font-family:var(--mono); font-size:12px; color:var(--slate); font-weight:600; font-variant-numeric:tabular-nums; }
+  .tl-date{ font-family:var(--mono); font-size:12px; color:var(--slate); font-weight:600; font-variant-numeric:tabular-nums; padding-right:8px; }
   .tl-milestone{ font-family:var(--sans); font-size:14px; font-weight:600; color:#1A1D23; line-height:1.35; margin-bottom:4px; }
   .tl-milestone-detail { margin-top:2px; }
   .tl-badge{
@@ -153,19 +155,27 @@
   .tl-empty { font-family:var(--sans); font-size:13px; color:var(--grey); padding:12px 0; display:none; }
   .tl-empty.visible { display:block; }
 
-  .risk-panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:18px 20px; display:grid; grid-template-columns:auto 1fr; gap:24px; align-items:center; }
-  @media (max-width:600px){ .risk-panel{ grid-template-columns:1fr; justify-items:center; text-align:center; } }
+  .risk-panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:18px 20px; }
+  .risk-top { display:grid; grid-template-columns:auto 1fr; gap:24px; align-items:center; margin-bottom:18px; }
+  @media (max-width:600px){ .risk-top{ grid-template-columns:1fr; justify-items:center; text-align:center; } }
   .risk-chart svg { display:block; }
-  .risk-legend { display:flex; flex-direction:column; gap:10px; }
-  .risk-legend-item { display:flex; align-items:center; gap:10px; font-size:13px; }
-  .risk-legend-item .swatch { width:12px; height:12px; border-radius:3px; flex-shrink:0; }
-  .risk-legend-item .rlabel { color:#9CA3AF; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; font-family:var(--mono); min-width:72px; }
-  .risk-legend-item .count { font-family:var(--mono); font-weight:700; font-size:18px; min-width:28px; font-variant-numeric:tabular-nums; }
-  .risk-legend-item.critical .count { color:var(--red); }
-  .risk-legend-item.high .count { color:var(--amber); }
-  .risk-legend-item.medium .count { color:#4A7CB5; }
-  .risk-legend-item.total { margin-top:6px; padding-top:10px; border-top:1px solid var(--line); }
-  .risk-legend-item.total .count { color:var(--navy); font-size:22px; }
+  .risk-stack-wrap { flex:1; min-width:0; }
+  .risk-stack-label { font-family:var(--mono); font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--grey); margin-bottom:8px; }
+  .risk-stack { display:flex; height:14px; border-radius:99px; overflow:hidden; background:var(--grey-bg); }
+  .risk-stack-seg { height:100%; min-width:0; transition:width 0.3s ease; }
+  .risk-stack-seg.critical { background:var(--red); }
+  .risk-stack-seg.high { background:var(--amber); }
+  .risk-stack-seg.medium { background:#4A7CB5; }
+  .risk-stack-empty { font-family:var(--sans); font-size:12px; color:var(--grey); padding:4px 0; }
+  .risk-strip-counts { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  @media (max-width:600px){ .risk-strip-counts{ grid-template-columns:repeat(2,1fr); } }
+  .risk-box{ background:#FAFBFC; border:1px solid var(--line); border-radius:8px; padding:14px 16px; text-align:center; }
+  .risk-box .count{ font-family:var(--mono); font-size:28px; font-weight:700; font-variant-numeric:tabular-nums; line-height:1; }
+  .risk-box .rlabel{ font-size:10px; color:var(--grey); text-transform:uppercase; letter-spacing:0.5px; margin-top:6px; font-family:var(--mono); font-weight:600; }
+  .risk-box.critical .count{ color:var(--red); }
+  .risk-box.high .count{ color:var(--amber); }
+  .risk-box.medium .count{ color:#4A7CB5; }
+  .risk-box.open-total .count{ color:var(--navy); }
 
   .footnote{ margin-top:22px; font-size:11px; color:var(--grey); font-family:var(--mono); font-weight:500; border-top:1px solid var(--line); padding-top:12px; }
   .error-banner{ background:var(--red-bg); color:var(--red); border:1px solid #F3C6C4; border-radius:8px; padding:12px 16px; margin-bottom:18px; font-size:13px; font-family:var(--sans); display:none; }
@@ -217,8 +227,8 @@ const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx
 const STATUS_COLORS = { green: '#2F8F5B', amber: '#B8790A', red: '#B3261E', grey: '#6B7280' };
 
 let expandedTracks = new Set();
-let gateFilterMode = 'all';
-let gateTrackFilter = '1';
+let gateCutoverFilter = 'all';
+let gateTrackFilter = 'all';
 
 function setSyncStatus(text, isError) {
   document.getElementById('syncStatus').textContent = text;
@@ -234,7 +244,12 @@ function parseGviz(text) {
   const cols = json.table.cols.map(c => c.label || c.id);
   const rows = json.table.rows.map(r => {
     const obj = {};
-    r.c.forEach((cell, i) => { obj[cols[i]] = cell ? (cell.v ?? '') : ''; });
+    r.c.forEach((cell, i) => {
+      const key = cols[i];
+      if (!cell) { obj[key] = ''; return; }
+      obj[key] = cell.v ?? '';
+      if (cell.f != null && cell.f !== String(cell.v ?? '')) obj[key + '_fmt'] = cell.f;
+    });
     return obj;
   });
   return rows;
@@ -361,9 +376,22 @@ function svgStatusRing(status, size = 44) {
 }
 
 function parseSheetDate(val) {
-  if (!val) return null;
+  if (val == null || val === '') return null;
+  const str = String(val);
+  const m = str.match(/^Date\((\d+),(\d+),(\d+)\)$/);
+  if (m) return new Date(+m[1], +m[2], +m[3]);
   const d = new Date(val);
   return isNaN(d) ? null : d;
+}
+
+function formatDisplayDate(row, field = 'Date') {
+  if (row[field + '_fmt']) return row[field + '_fmt'];
+  const parsed = parseSheetDate(row[field]);
+  return parsed ? formatShortDate(parsed) : '—';
+}
+
+function markerPosition(pct) {
+  return Math.max(4, Math.min(96, pct));
 }
 
 function formatShortDate(d) {
@@ -377,7 +405,7 @@ function pctBetween(date, start, end) {
 
 function gateTrackNum(g) {
   if (g.Track != null && g.Track !== '') return String(g.Track);
-  if (g.Num != null && g.Num !== '') return String(g.Num);
+  if (g.Num != null && g.Num !== '' && Number(g.Num) <= 6) return String(Number(g.Num));
   const m = String(g.Name || '').match(/track\s*(\d+)/i);
   return m ? m[1] : '';
 }
@@ -393,12 +421,14 @@ function applyGateFilter() {
     const track = row.dataset.track || '';
     let show = true;
 
-    if (gateFilterMode === 'before') {
-      show = parsed && cutover ? parsed < cutover : false;
-    } else if (gateFilterMode === 'after') {
-      show = parsed && cutover ? parsed >= cutover : false;
-    } else if (gateFilterMode === 'track') {
-      show = track === gateTrackFilter;
+    if (gateCutoverFilter === 'before') {
+      show = show && parsed && cutover ? parsed < cutover : false;
+    } else if (gateCutoverFilter === 'after') {
+      show = show && parsed && cutover ? parsed >= cutover : false;
+    }
+
+    if (gateTrackFilter !== 'all') {
+      show = show && track === gateTrackFilter;
     }
 
     row.classList.toggle('hidden', !show);
@@ -408,11 +438,8 @@ function applyGateFilter() {
   empty.classList.toggle('visible', visible === 0);
 }
 
-function onGateFilterChange() {
-  const sel = document.getElementById('gateFilter');
-  const trackSel = document.getElementById('gateTrackFilter');
-  gateFilterMode = sel.value;
-  trackSel.classList.toggle('visible', gateFilterMode === 'track');
+function onGateCutoverFilterChange() {
+  gateCutoverFilter = document.getElementById('gateCutoverFilter').value;
   applyGateFilter();
 }
 
@@ -507,15 +534,16 @@ function render(rows) {
 
   const todayPct = pctBetween(today, rangeStart, rangeEnd);
   const cutoverPct = pctBetween(cutoverNorm, rangeStart, rangeEnd);
+  const todayPos = markerPosition(todayPct);
+  const cutoverPos = markerPosition(cutoverPct);
   const dotsHtml = gateDates.map(g => {
-    const p = pctBetween(g.parsed, rangeStart, rangeEnd);
-    const title = `${g.Name} (${g.Date})`;
+    const p = markerPosition(pctBetween(g.parsed, rangeStart, rangeEnd));
+    const title = `${g.Name} (${formatDisplayDate(g)})`;
     return `<div class="tl-bar-dot status-${g.Status || 'grey'}" style="left:${p}%" title="${escapeHtml(title)}"></div>`;
   }).join('');
 
-  const trackNums = [...new Set(gates.map(gateTrackNum).filter(Boolean))].sort((a, b) => Number(a) - Number(b));
-  const trackOptions = (trackNums.length ? trackNums : ['1','2','3','4','5','6'])
-    .map(n => `<option value="${n}"${n === gateTrackFilter ? ' selected' : ''}>Track ${n}</option>`).join('');
+  const trackOptions = ['all', '1', '2', '3', '4', '5', '6']
+    .map(n => `<option value="${n}"${n === gateTrackFilter ? ' selected' : ''}>${n === 'all' ? 'All tracks' : 'Track ' + n}</option>`).join('');
 
   const gateRowsHtml = gates.map(g => {
     const parsed = parseSheetDate(g.Date);
@@ -525,7 +553,7 @@ function render(rows) {
       : '';
     return `
       <div class="tl-row" data-parsed="${parsed ? parsed.getTime() : ''}" data-track="${escapeHtml(gateTrackNum(g))}">
-        <div class="tl-date">${escapeHtml(g.Date)}</div>
+        <div class="tl-date">${escapeHtml(formatDisplayDate(g))}</div>
         <div>
           <div class="tl-milestone">${escapeHtml(g.Name)}</div>
           ${detailHtml}
@@ -543,10 +571,16 @@ function render(rows) {
         <span>${formatShortDate(rangeEnd)}</span>
       </div>
       <div class="tl-bar">
-        <div class="tl-bar-fill" style="width:${Math.max(todayPct, cutoverPct)}%"></div>
+        <div class="tl-bar-fill" style="width:${Math.max(todayPos, cutoverPos)}%"></div>
         ${dotsHtml}
-        <div class="tl-bar-today" style="left:${todayPct}%"></div>
-        <div class="tl-bar-cutover" style="left:${cutoverPct}%"></div>
+        <div class="tl-bar-today tl-marker" style="left:${todayPos}%">
+          <span class="tl-marker-line"></span>
+          <span class="tl-marker-label">TODAY</span>
+        </div>
+        <div class="tl-bar-cutover tl-marker" style="left:${cutoverPos}%">
+          <span class="tl-marker-line"></span>
+          <span class="tl-marker-label">CUTOVER</span>
+        </div>
       </div>
       <div class="tl-bar-legend">
         <span><i style="background:var(--navy)"></i> Today</span>
@@ -557,35 +591,40 @@ function render(rows) {
       </div>
     </div>
     <div class="tl-filters">
-      <label for="gateFilter">Filter</label>
-      <select id="gateFilter">
-        <option value="all"${gateFilterMode === 'all' ? ' selected' : ''}>All milestones</option>
-        <option value="before"${gateFilterMode === 'before' ? ' selected' : ''}>Before cutover only</option>
-        <option value="after"${gateFilterMode === 'after' ? ' selected' : ''}>After cutover only</option>
-        <option value="track"${gateFilterMode === 'track' ? ' selected' : ''}>By track</option>
-      </select>
-      <select id="gateTrackFilter" class="${gateFilterMode === 'track' ? 'visible' : ''}">${trackOptions}</select>
+      <div class="tl-filter-group">
+        <label for="gateTrackFilter">Track</label>
+        <select id="gateTrackFilter">${trackOptions}</select>
+      </div>
+      <div class="tl-filter-group">
+        <label for="gateCutoverFilter">Cutover timing</label>
+        <select id="gateCutoverFilter">
+          <option value="all"${gateCutoverFilter === 'all' ? ' selected' : ''}>All milestones</option>
+          <option value="before"${gateCutoverFilter === 'before' ? ' selected' : ''}>Before cutover only</option>
+          <option value="after"${gateCutoverFilter === 'after' ? ' selected' : ''}>After cutover only</option>
+        </select>
+      </div>
     </div>
     <div class="tl-list" id="gateList">${gateRowsHtml}</div>
     <div class="tl-empty" id="gateEmpty">No milestones match this filter.</div>
   `;
 
-  document.getElementById('gateFilter').addEventListener('change', onGateFilterChange);
+  document.getElementById('gateCutoverFilter').addEventListener('change', onGateCutoverFilterChange);
   document.getElementById('gateTrackFilter').addEventListener('change', onGateTrackFilterChange);
   applyGateFilter();
 
-  /* 4 — Risk donut + legend */
+  /* 4 — Risk donut + stacked bar + count strip */
   const riskRows = rows.filter(r => r.Section === 'RISK');
   const riskStrip = document.getElementById('riskStrip');
   riskStrip.innerHTML = '';
   riskStrip.className = 'risk-panel';
 
   const riskMap = {};
-  riskRows.forEach(r => { riskMap[r.Name] = Number(r.Date) || 0; });
+  riskRows.forEach(r => { riskMap[r.Name] = Number(r.Num) || 0; });
   const crit = riskMap['Critical'] || 0;
   const high = riskMap['High'] || 0;
   const med = riskMap['Medium'] || 0;
   const totalOpen = riskMap['Total Open'] || (crit + high + med);
+  const riskTotal = crit + high + med || 1;
 
   const riskSegments = [
     { value: crit, color: STATUS_COLORS.red },
@@ -600,28 +639,38 @@ function render(rows) {
     centerSize: 22,
   });
 
+  const stackHtml = (crit + high + med) > 0
+    ? `<div class="risk-stack">
+        ${crit ? `<div class="risk-stack-seg critical" style="width:${(crit/riskTotal*100).toFixed(1)}%" title="Critical: ${crit}"></div>` : ''}
+        ${high ? `<div class="risk-stack-seg high" style="width:${(high/riskTotal*100).toFixed(1)}%" title="High: ${high}"></div>` : ''}
+        ${med ? `<div class="risk-stack-seg medium" style="width:${(med/riskTotal*100).toFixed(1)}%" title="Medium: ${med}"></div>` : ''}
+      </div>`
+    : `<div class="risk-stack-empty">No open risks by severity</div>`;
+
   riskStrip.innerHTML = `
-    <div class="risk-chart">${riskDonut}</div>
-    <div class="risk-legend">
-      <div class="risk-legend-item critical">
-        <span class="swatch" style="background:var(--red)"></span>
-        <span class="rlabel">Critical</span>
-        <span class="count">${crit}</span>
+    <div class="risk-top">
+      <div class="risk-chart">${riskDonut}</div>
+      <div class="risk-stack-wrap">
+        <div class="risk-stack-label">Severity breakdown</div>
+        ${stackHtml}
       </div>
-      <div class="risk-legend-item high">
-        <span class="swatch" style="background:var(--amber)"></span>
-        <span class="rlabel">High</span>
-        <span class="count">${high}</span>
+    </div>
+    <div class="risk-strip-counts">
+      <div class="risk-box critical">
+        <div class="count">${crit}</div>
+        <div class="rlabel">Critical</div>
       </div>
-      <div class="risk-legend-item medium">
-        <span class="swatch" style="background:#4A7CB5"></span>
-        <span class="rlabel">Medium</span>
-        <span class="count">${med}</span>
+      <div class="risk-box high">
+        <div class="count">${high}</div>
+        <div class="rlabel">High</div>
       </div>
-      <div class="risk-legend-item total">
-        <span class="swatch" style="background:var(--navy)"></span>
-        <span class="rlabel">Total open</span>
-        <span class="count">${totalOpen}</span>
+      <div class="risk-box medium">
+        <div class="count">${med}</div>
+        <div class="rlabel">Medium</div>
+      </div>
+      <div class="risk-box open-total">
+        <div class="count">${totalOpen}</div>
+        <div class="rlabel">Total open</div>
       </div>
     </div>
   `;

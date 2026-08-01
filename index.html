@@ -5,25 +5,51 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SyncPOS Vault Migration — Live Control Panel</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
   :root {
     --navy:#1F3864; --slate:#2E4057; --bg:#F5F6F8; --panel:#FFFFFF; --line:#E3E6EC;
     --green:#2F8F5B; --green-bg:#E7F5EC; --amber:#B8790A; --amber-bg:#FDF3DE;
     --red:#B3261E; --red-bg:#FCE8E6; --grey:#6B7280; --grey-bg:#EEF0F3;
-    --mono:'IBM Plex Mono',monospace; --sans:'IBM Plex Sans',sans-serif;
-    --display:'IBM Plex Sans',sans-serif;
+    --mono:'IBM Plex Mono',monospace; --sans:'Poppins',sans-serif;
+    --display:'Poppins',sans-serif;
   }
   * { box-sizing:border-box; margin:0; padding:0; }
   body { background:var(--bg); font-family:var(--sans); color:#1A1D23; padding:24px; line-height:1.45; font-size:14px; }
   .wrap { max-width:1180px; margin:0 auto; }
 
-  header { background:var(--navy); color:#fff; border-radius:10px; padding:20px 26px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:18px; }
-  header h1 { font-size:18px; font-weight:600; font-family:var(--sans); }
-  header .meta { font-size:11px; color:#C7D2E8; font-family:var(--mono); margin-top:4px; font-weight:500; }
+  header { background:var(--navy); color:#fff; border-radius:10px; padding:22px 28px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:18px; }
+  .header-brand { display:flex; flex-direction:column; gap:0; }
+  header h1 {
+    font-size:21px; font-weight:800; font-family:var(--sans);
+    letter-spacing:0.045em; line-height:1.25; text-transform:none;
+  }
+  .header-accent {
+    display:block; width:42px; height:2px; margin-top:7px;
+    background:linear-gradient(90deg, #8EB4E8 0%, rgba(142,180,232,0.15) 100%);
+    border-radius:99px;
+  }
+  header .meta { font-size:11px; color:#C7D2E8; font-family:var(--mono); margin-top:8px; font-weight:500; }
   .sync-box { text-align:right; }
   .sync-status { font-size:11px; font-family:var(--mono); color:#9FB0D0; }
-  .refresh-btn { font-family:var(--mono); font-size:11px; font-weight:600; background:#2E4A80; color:#fff; border:1px solid #3E5A90; border-radius:5px; padding:5px 12px; cursor:pointer; margin-top:6px; }
-  .refresh-btn:hover { background:#375690; }
+  .refresh-btn {
+    display:inline-flex; align-items:center; gap:7px;
+    font-family:var(--sans); font-size:12px; font-weight:600;
+    background:#FFFFFF; color:var(--navy);
+    border:none; border-radius:7px; padding:9px 16px; cursor:pointer; margin-top:6px;
+    box-shadow:0 1px 4px rgba(0,0,0,0.14);
+    transition:transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+  .refresh-btn:hover {
+    background:#F3F7FD; transform:translateY(-1px);
+    box-shadow:0 4px 12px rgba(0,0,0,0.18);
+  }
+  .refresh-btn:active { transform:translateY(0); box-shadow:0 1px 3px rgba(0,0,0,0.12); }
+  .refresh-btn .refresh-icon {
+    display:inline-block; font-size:14px; line-height:1;
+    transition:transform 0.2s ease;
+  }
+  .refresh-btn.loading .refresh-icon { animation:refresh-spin 0.75s linear infinite; }
+  @keyframes refresh-spin { to { transform:rotate(360deg); } }
   .edit-link { font-family:var(--mono); font-size:10.5px; color:#C7D2E8; display:block; margin-top:4px; }
   .edit-link a { color:#C7D2E8; }
 
@@ -200,13 +226,17 @@
 <div class="wrap">
 
   <header>
-    <div>
+    <div class="header-brand">
       <h1>SyncPOS Vault Enterprise Migration</h1>
+      <span class="header-accent" aria-hidden="true"></span>
       <div class="meta">TPM: Hamzi · Programme Owner: Prabodha</div>
     </div>
     <div class="sync-box">
       <div class="sync-status" id="syncStatus">connecting…</div>
-      <button class="refresh-btn" onclick="loadData()">↻ Refresh now</button>
+      <button class="refresh-btn" id="refreshBtn" type="button" onclick="loadData()">
+        <span class="refresh-icon" aria-hidden="true">↻</span>
+        <span>Refresh now</span>
+      </button>
       <span class="edit-link">✎ <a href="https://docs.google.com/spreadsheets/d/1AXrOH5bdHM74t3SVLmDgNDH2VePiHPjCOd40Xx-iF40/edit" target="_blank">Edit source sheet</a></span>
     </div>
   </header>
@@ -271,6 +301,8 @@ function parseGviz(text) {
 }
 
 async function loadData() {
+  const refreshBtn = document.getElementById('refreshBtn');
+  if (refreshBtn) refreshBtn.classList.add('loading');
   setSyncStatus('refreshing…', false);
   try {
     const res = await fetch(GVIZ_URL, { cache: 'no-store' });
@@ -281,6 +313,8 @@ async function loadData() {
     setSyncStatus('synced ✓ ' + new Date().toLocaleTimeString(), false);
   } catch (e) {
     setSyncStatus(e.message || 'Failed to load — check sheet sharing settings', true);
+  } finally {
+    if (refreshBtn) refreshBtn.classList.remove('loading');
   }
 }
 

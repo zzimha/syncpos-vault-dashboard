@@ -126,7 +126,9 @@
   .track-details {
     display:none; padding:0 16px 14px 16px; border-top:1px solid #F0F1F4;
   }
+  .track-card.collapsed .track-details { display:none; }
   .track-card.expanded .track-details { display:block; padding-top:12px; }
+  .track-card .track-ring svg { pointer-events:none; }
   .track-card .gate-list { margin-top:0; }
 
   .timeline{ background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:18px 20px; }
@@ -372,12 +374,32 @@ function bulletsHtml(items, className = 'content-list compact') {
   return `<ul class="${className}">${items.map(li => `<li>${escapeHtml(li)}</li>`).join('')}</ul>`;
 }
 
+function trackKey(num) {
+  return String(Number(num));
+}
+
 function toggleTrackCard(card, trackNum) {
-  const isExpanded = card.classList.toggle('expanded');
-  card.classList.toggle('collapsed', !isExpanded);
-  card.querySelector('.track-header').setAttribute('aria-expanded', isExpanded);
-  if (isExpanded) expandedTracks.add(String(trackNum));
-  else expandedTracks.delete(String(trackNum));
+  const key = trackKey(trackNum);
+  const willExpand = !card.classList.contains('expanded');
+  card.classList.toggle('expanded', willExpand);
+  card.classList.toggle('collapsed', !willExpand);
+  const header = card.querySelector('.track-header');
+  if (header) header.setAttribute('aria-expanded', String(willExpand));
+  if (willExpand) expandedTracks.add(key);
+  else expandedTracks.delete(key);
+}
+
+function bindTrackGridEvents() {
+  const trackGrid = document.getElementById('trackGrid');
+  if (!trackGrid || trackGrid.dataset.bound) return;
+  trackGrid.dataset.bound = '1';
+  trackGrid.addEventListener('click', (e) => {
+    const header = e.target.closest('.track-header');
+    if (!header || !trackGrid.contains(header)) return;
+    const card = header.closest('.track-card');
+    if (!card) return;
+    toggleTrackCard(card, card.dataset.trackNum);
+  });
 }
 
 /* ── SVG helpers (pure inline, no external libs) ── */
@@ -559,11 +581,12 @@ function render(rows) {
   const trackGrid = document.getElementById('trackGrid');
   trackGrid.innerHTML = '';
   tracks.forEach(t => {
-    const num = String(t.Num);
+    const num = trackKey(t.Num);
     const isExpanded = expandedTracks.has(num);
     const detailBullets = textToBullets(t.Detail);
     const el = document.createElement('div');
     el.className = `track-card status-${t.Status} ${isExpanded ? 'expanded' : 'collapsed'}`;
+    el.dataset.trackNum = num;
 
     el.innerHTML = `
       <button type="button" class="track-header" aria-expanded="${isExpanded}">
@@ -580,9 +603,9 @@ function render(rows) {
       </div>
     `;
 
-    el.querySelector('.track-header').addEventListener('click', () => toggleTrackCard(el, num));
     trackGrid.appendChild(el);
   });
+  bindTrackGridEvents();
 
   /* 3 — Horizontal timeline bar + filterable list */
   const gates = rows.filter(r => r.Section === 'GATE');
@@ -738,6 +761,7 @@ function render(rows) {
 }
 
 loadData();
+bindTrackGridEvents();
 setInterval(loadData, 60000);
 </script>
 </body>

@@ -83,10 +83,34 @@
   }
   .header-link:hover { color:#fff; text-decoration:underline; }
   .sync-status {
-    font-family:var(--sans); font-size:10px; font-weight:500;
-    color:#A8C4E8; letter-spacing:0.01em;
+    text-align:right; line-height:1.25; min-width:108px;
   }
-  .sync-status.is-error { color:#FFB4AB; }
+  .sync-status-row {
+    display:flex; align-items:center; justify-content:flex-end; gap:6px;
+  }
+  .sync-label {
+    font-family:var(--sans); font-size:11px; font-weight:700;
+    color:#fff; letter-spacing:0.02em;
+  }
+  .sync-check {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:16px; height:16px; border-radius:50%;
+    background:#2F8F5B; color:#fff;
+    font-size:10px; font-weight:800; line-height:1;
+    box-shadow:0 0 0 2px rgba(47,143,91,0.35);
+  }
+  .sync-time {
+    font-family:var(--sans); font-size:11px; font-weight:600;
+    color:#D8E6F8; margin-top:3px; letter-spacing:0.01em;
+  }
+  .sync-status.is-loading .sync-spin {
+    display:inline-block; font-size:12px; color:#A8C4E8; line-height:1;
+    animation:refresh-spin 0.75s linear infinite;
+  }
+  .sync-status.is-error {
+    font-family:var(--sans); font-size:10px; font-weight:500;
+    color:#FFB4AB; letter-spacing:0.01em;
+  }
 
   .hero { padding:16px 20px; margin-bottom:8px; display:grid; grid-template-columns:auto auto 1fr; gap:20px; align-items:center; }
   @media (max-width:760px){ .hero{ grid-template-columns:1fr; } .countdown,.hero-ring{ border-right:none !important; padding-right:0 !important; border-bottom:1px solid var(--line); padding-bottom:12px; } }
@@ -335,7 +359,12 @@
       </button>
       <div class="sync-footer">
         <a class="header-link" href="https://docs.google.com/spreadsheets/d/1EWSX-LsXjh-hV55E3SSNpqS9FTBXpKlGnuzW15-J5Dc/edit?usp=sharing" target="_blank">Edit sheet</a>
-        <div class="sync-status" id="syncStatus">connecting…</div>
+        <div class="sync-status is-loading" id="syncStatus">
+          <div class="sync-status-row">
+            <span class="sync-label">Connecting</span>
+            <span class="sync-spin" aria-hidden="true">↻</span>
+          </div>
+        </div>
       </div>
     </div>
   </header>
@@ -414,12 +443,41 @@ function bindTabEvents() {
   document.getElementById('tabRisks').addEventListener('click', () => switchTab('risks'));
 }
 
-function setSyncStatus(text, isError) {
+function setSyncStatus(state, opts = {}) {
   const el = document.getElementById('syncStatus');
-  el.textContent = text;
-  el.classList.toggle('is-error', !!isError);
-  document.getElementById('errorBanner').style.display = isError ? 'block' : 'none';
-  if (isError) document.getElementById('errorBanner').textContent = text;
+  el.classList.remove('is-error', 'is-synced', 'is-loading');
+
+  if (opts.error) {
+    el.classList.add('is-error');
+    el.textContent = state;
+    document.getElementById('errorBanner').style.display = 'block';
+    document.getElementById('errorBanner').textContent = state;
+    return;
+  }
+
+  document.getElementById('errorBanner').style.display = 'none';
+
+  if (state === 'synced') {
+    el.classList.add('is-synced');
+    const stamp = opts.stamp || formatSyncStamp();
+    el.innerHTML = `
+      <div class="sync-status-row">
+        <span class="sync-label">Synced</span>
+        <span class="sync-check" aria-hidden="true">✓</span>
+      </div>
+      <div class="sync-time">${escapeHtml(stamp)}</div>
+    `;
+    return;
+  }
+
+  el.classList.add('is-loading');
+  const label = state === 'refreshing' ? 'Syncing' : 'Connecting';
+  el.innerHTML = `
+    <div class="sync-status-row">
+      <span class="sync-label">${label}</span>
+      <span class="sync-spin" aria-hidden="true">↻</span>
+    </div>
+  `;
 }
 
 function parseGviz(text) {
@@ -444,16 +502,16 @@ function parseGviz(text) {
 async function loadData() {
   const refreshBtn = document.getElementById('refreshBtn');
   if (refreshBtn) refreshBtn.classList.add('loading');
-  setSyncStatus('refreshing…', false);
+  setSyncStatus('refreshing');
   try {
     const res = await fetch(GVIZ_URL, { cache: 'no-store' });
     if (!res.ok) throw new Error('Sheet not reachable — check it is shared as "Anyone with the link can view"');
     const text = await res.text();
     const rows = parseGviz(text);
     render(rows);
-    setSyncStatus('synced ✓ ' + formatSyncStamp(), false);
+    setSyncStatus('synced', { stamp: formatSyncStamp() });
   } catch (e) {
-    setSyncStatus(e.message || 'Failed to load — check sheet sharing settings', true);
+    setSyncStatus(e.message || 'Failed to load — check sheet sharing settings', { error: true });
   } finally {
     if (refreshBtn) refreshBtn.classList.remove('loading');
   }

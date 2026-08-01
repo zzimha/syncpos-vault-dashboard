@@ -404,6 +404,56 @@
   .priority-label.priority-high { background:var(--amber-bg); color:var(--amber); }
   .priority-label.priority-medium { background:#E8F0FA; color:#4A7CB5; }
 
+  .follow-panel { padding:14px 16px; }
+  .follow-intro {
+    font-family:var(--sans); font-size:13px; color:var(--grey); margin-bottom:12px; line-height:1.4;
+  }
+  .follow-section-title {
+    font-family:var(--mono); font-size:10px; font-weight:600; text-transform:uppercase;
+    letter-spacing:0.8px; color:var(--grey); margin:14px 0 6px;
+  }
+  .follow-section-title:first-of-type { margin-top:0; }
+  .follow-list { display:flex; flex-direction:column; }
+  .follow-row {
+    display:grid; grid-template-columns:54px minmax(0,1fr) auto auto auto auto;
+    gap:8px; align-items:center; width:100%;
+    padding:8px 6px; border:none; border-bottom:1px solid #F0F1F4; border-radius:4px;
+    background:transparent; cursor:pointer; text-align:left; font:inherit;
+    transition:background 0.15s ease;
+  }
+  .follow-row:hover { background:#FAFBFC; }
+  .follow-row:last-child { border-bottom:none; }
+  .follow-date {
+    font-family:var(--mono); font-size:11px; font-weight:600; color:var(--slate);
+    font-variant-numeric:tabular-nums;
+  }
+  .follow-date.is-empty { color:#C4C9D4; }
+  .follow-title {
+    font-family:var(--sans); font-size:13px; font-weight:600; color:#1A1D23;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0;
+  }
+  .follow-source {
+    font-family:var(--mono); font-size:9px; font-weight:500; color:var(--slate);
+    padding:2px 6px; border-radius:4px; background:var(--grey-bg); white-space:nowrap;
+  }
+  .follow-owner {
+    font-family:var(--mono); font-size:10px; font-weight:500; color:var(--grey); white-space:nowrap;
+  }
+  .follow-chase {
+    font-family:var(--mono); font-size:9px; font-weight:600; white-space:nowrap;
+    padding:2px 7px; border-radius:4px; background:var(--amber-bg); color:var(--amber);
+  }
+  .follow-empty {
+    font-family:var(--sans); font-size:14px; color:var(--grey); padding:16px 0; text-align:center;
+  }
+  @media (max-width:760px){
+    .follow-row { grid-template-columns:44px minmax(0,1fr) auto; grid-template-rows:auto auto; gap:4px 8px; }
+    .follow-row .follow-source { grid-column:2; grid-row:2; justify-self:start; }
+    .follow-row .follow-badge { grid-column:3; grid-row:1; }
+    .follow-row .follow-owner { display:none; }
+    .follow-row .follow-chase { grid-column:3; grid-row:2; justify-self:end; }
+  }
+
   .footnote{ margin-top:10px; font-size:9px; color:var(--grey); font-family:var(--mono); font-weight:500; border-top:1px solid var(--line); padding-top:6px; line-height:1.35; }
   .error-banner{ background:var(--red-bg); color:var(--red); border:1px solid #F3C6C4; border-radius:8px; padding:12px 16px; margin-bottom:18px; font-size:13px; font-family:var(--sans); display:none; }
 </style>
@@ -454,6 +504,9 @@
     <button type="button" class="dash-tab" id="tabRisks" role="tab" aria-selected="false" aria-controls="panelRisks">
       Open Risks <span class="tab-badge" id="riskTabBadge">–</span>
     </button>
+    <button type="button" class="dash-tab" id="tabFollowups" role="tab" aria-selected="false" aria-controls="panelFollowups">
+      Follow-ups <span class="tab-badge" id="followTabBadge">–</span>
+    </button>
   </nav>
 
   <div id="panelProgramme" class="tab-panel" role="tabpanel" aria-labelledby="tabProgramme">
@@ -466,6 +519,10 @@
 
   <div id="panelRisks" class="tab-panel hidden" role="tabpanel" aria-labelledby="tabRisks">
     <div class="risk-strip" id="riskStrip"></div>
+  </div>
+
+  <div id="panelFollowups" class="tab-panel hidden" role="tabpanel" aria-labelledby="tabFollowups">
+    <div class="follow-panel panel" id="followPanel"></div>
   </div>
 
   <div class="footnote">Live from Google Sheet · auto-refreshes every 60s · edit the sheet and hit Refresh</div>
@@ -501,11 +558,12 @@ let activeTab = 'programme';
 
 function switchTab(tab) {
   activeTab = tab;
-  const isProgramme = tab === 'programme';
-  document.getElementById('tabProgramme').setAttribute('aria-selected', String(isProgramme));
-  document.getElementById('tabRisks').setAttribute('aria-selected', String(!isProgramme));
-  document.getElementById('panelProgramme').classList.toggle('hidden', !isProgramme);
-  document.getElementById('panelRisks').classList.toggle('hidden', isProgramme);
+  document.getElementById('tabProgramme').setAttribute('aria-selected', String(tab === 'programme'));
+  document.getElementById('tabRisks').setAttribute('aria-selected', String(tab === 'risks'));
+  document.getElementById('tabFollowups').setAttribute('aria-selected', String(tab === 'followups'));
+  document.getElementById('panelProgramme').classList.toggle('hidden', tab !== 'programme');
+  document.getElementById('panelRisks').classList.toggle('hidden', tab !== 'risks');
+  document.getElementById('panelFollowups').classList.toggle('hidden', tab !== 'followups');
 }
 
 function bindTabEvents() {
@@ -513,6 +571,7 @@ function bindTabEvents() {
   document.body.dataset.tabsBound = '1';
   document.getElementById('tabProgramme').addEventListener('click', () => switchTab('programme'));
   document.getElementById('tabRisks').addEventListener('click', () => switchTab('risks'));
+  document.getElementById('tabFollowups').addEventListener('click', () => switchTab('followups'));
 }
 
 function setSyncStatus(state, opts = {}) {
@@ -918,6 +977,139 @@ function onRiskDetailsToggle() {
     : 'Show details ▾';
 }
 
+function followRiskKey(name, index) {
+  const base = String(name || index).trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return base.slice(0, 48) || `item-${index}`;
+}
+
+function buildFollowUpItems(rows) {
+  const items = [];
+
+  rows.filter(r => r.Section === 'TRACK' && (r.Status === 'red' || r.Status === 'amber')).forEach(r => {
+    const trackNum = trackKey(r.Num);
+    items.push({
+      key: `track-${trackNum}`,
+      source: 'track',
+      sourceLabel: 'Track',
+      name: String(r.Name || '').trim(),
+      status: r.Status,
+      owner: ownerName(r),
+      date: null,
+      dateParsed: null,
+      trackNum,
+    });
+  });
+
+  rows.filter(r => r.Section === 'GATE' && (r.Status === 'red' || r.Status === 'amber')).forEach(r => {
+    const parsed = parseSortDate(r);
+    items.push({
+      key: `gate-${Number(r.Num)}`,
+      source: 'gate',
+      sourceLabel: 'Gate',
+      name: String(r.Name || '').trim(),
+      status: r.Status,
+      owner: ownerName(r),
+      date: parsed ? formatListDate(parsed) : null,
+      dateParsed: parsed,
+    });
+  });
+
+  rows.filter(r => r.Section === 'RISKITEM').forEach((r, i) => {
+    const priority = normalizeRiskPriority(r.Status);
+    if (priority !== 'critical' && priority !== 'high') return;
+    const riskKey = followRiskKey(r.Name, i);
+    items.push({
+      key: `risk-${riskKey}`,
+      source: 'risk',
+      sourceLabel: 'Risk',
+      name: String(r.Name || '').trim(),
+      priority,
+      owner: ownerName(r),
+      date: null,
+      dateParsed: null,
+    });
+  });
+
+  const undated = items.filter(i => !i.dateParsed).sort((a, b) => a.name.localeCompare(b.name));
+  const dated = items.filter(i => i.dateParsed).sort((a, b) => a.dateParsed - b.dateParsed);
+  return { undated, dated, total: items.length };
+}
+
+function renderFollowRow(item) {
+  const owner = item.owner;
+  const chaseHtml = owner ? `<span class="follow-chase">🔔 Chase ${escapeHtml(owner)}</span>` : '';
+  const ownerHtml = owner ? `<span class="follow-owner">${escapeHtml(owner)}</span>` : '<span class="follow-owner"></span>';
+  const dateHtml = item.date
+    ? `<span class="follow-date">${escapeHtml(item.date)}</span>`
+    : `<span class="follow-date is-empty">—</span>`;
+  const badgeHtml = item.source === 'risk'
+    ? priorityLabelHtml(item.priority === 'critical' ? 'Critical' : 'High')
+    : statusLabelHtml(item.status);
+  const trackAttr = item.trackNum ? ` data-track-num="${escapeHtml(item.trackNum)}"` : '';
+  return `
+    <button type="button" class="follow-row" data-source="${item.source}" data-follow-key="${escapeHtml(item.key)}"${trackAttr}>
+      ${dateHtml}
+      <span class="follow-title">${escapeHtml(item.name)}</span>
+      <span class="follow-source">${item.sourceLabel}</span>
+      <span class="follow-badge">${badgeHtml}</span>
+      ${ownerHtml}
+      ${chaseHtml}
+    </button>
+  `;
+}
+
+function handleFollowUpClick(e) {
+  const row = e.target.closest('.follow-row');
+  if (!row) return;
+  const source = row.dataset.source;
+  const key = row.dataset.followKey;
+
+  if (source === 'track') {
+    const num = row.dataset.trackNum;
+    if (num) expandedTracks.add(num);
+    switchTab('programme');
+    requestAnimationFrame(() => {
+      const card = document.querySelector(`.track-card[data-track-num="${num}"]`);
+      if (card) {
+        syncTrackCardState(card, true);
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+    return;
+  }
+
+  if (source === 'gate') {
+    switchTab('programme');
+    requestAnimationFrame(() => {
+      const gateRow = document.querySelector(`#gateList .tl-row[data-follow-key="${key}"]`);
+      if (gateRow) gateRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    return;
+  }
+
+  if (source === 'risk') {
+    riskListExpanded = true;
+    switchTab('risks');
+    const details = document.getElementById('riskDetails');
+    const toggle = document.getElementById('riskDetailsToggle');
+    if (details) details.classList.remove('hidden');
+    if (toggle) toggle.textContent = 'Hide details ▴';
+    requestAnimationFrame(() => {
+      const riskRow = document.querySelector(`#riskList .risk-row[data-follow-key="${key}"]`);
+      if (riskRow) riskRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }
+}
+
+function bindFollowUpEvents() {
+  if (document.body.dataset.followBound) return;
+  document.body.dataset.followBound = '1';
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#followPanel')) return;
+    handleFollowUpClick(e);
+  });
+}
+
 function gateTrackNum(g) {
   if (g.Track != null && g.Track !== '') return String(g.Track);
   if (g.Num != null && g.Num !== '' && Number(g.Num) <= 6) return String(Number(g.Num));
@@ -1096,7 +1288,7 @@ function render(rows) {
     const isOverdue = status === 'amber' && parsed && parsed < today;
     const rowClass = isOverdue ? 'tl-row tl-row-overdue' : 'tl-row';
     return `
-      <div class="${rowClass}" data-parsed="${parsed ? parsed.getTime() : ''}" data-track="${escapeHtml(gateTrackNum(g))}"${detail}>
+      <div class="${rowClass}" data-parsed="${parsed ? parsed.getTime() : ''}" data-track="${escapeHtml(gateTrackNum(g))}" data-follow-key="gate-${Number(g.Num)}"${detail}>
         <div class="tl-date">${escapeHtml(displayDate || '—')}</div>
         <div class="tl-milestone">${escapeHtml(g.Name)}${ownerInline}</div>
         <div class="tl-badges">${statusLabelHtml(status)}</div>
@@ -1198,17 +1390,18 @@ function render(rows) {
     return String(a.Name || '').localeCompare(String(b.Name || ''));
   });
 
-  const riskRowsHtml = riskItems.map(r => {
+  const riskRowsHtml = riskItems.map((r, i) => {
     const priority = normalizeRiskPriority(r.Status);
-    const trackKey = riskItemTrackKey(r);
+    const trackKeyVal = riskItemTrackKey(r);
     const trackLabel = riskItemTrackLabel(r);
     const owner = ownerName(r);
     const detail = String(r.Detail || '').trim();
     const chaseHtml = owner
       ? `<span class="risk-chase">🔔 Chase ${escapeHtml(owner)}</span>`
       : '';
+    const riskFollowKey = followRiskKey(r.Name, i);
     return `
-      <div class="risk-row" data-priority="${escapeHtml(priority)}" data-track="${escapeHtml(trackKey)}">
+      <div class="risk-row" data-priority="${escapeHtml(priority)}" data-track="${escapeHtml(trackKeyVal)}" data-follow-key="risk-${escapeHtml(riskFollowKey)}">
         <div class="risk-row-head">
           <div class="risk-name">${escapeHtml(r.Name)}</div>
           ${priorityLabelHtml(r.Status)}
@@ -1278,12 +1471,34 @@ function render(rows) {
   bindRiskEvents();
   applyRiskFilter();
 
+  /* 5 — Follow-ups action list */
+  const followUps = buildFollowUpItems(rows);
+  document.getElementById('followTabBadge').textContent = followUps.total;
+  const undatedHtml = followUps.undated.map(renderFollowRow).join('');
+  const datedHtml = followUps.dated.map(renderFollowRow).join('');
+  let followBody = '';
+  if (!followUps.total) {
+    followBody = '<div class="follow-empty">Nothing to chase right now — all clear.</div>';
+  } else {
+    if (followUps.undated.length) {
+      followBody += `<div class="follow-section-title">Ongoing / No fixed date</div><div class="follow-list">${undatedHtml}</div>`;
+    }
+    if (followUps.dated.length) {
+      followBody += `<div class="follow-section-title">By date</div><div class="follow-list">${datedHtml}</div>`;
+    }
+  }
+  document.getElementById('followPanel').innerHTML = `
+    <p class="follow-intro">Who to chase today — tracks, gates, and high-priority risks in one list. Tap a row to jump to details.</p>
+    ${followBody}
+  `;
+
   switchTab(activeTab);
 }
 
 loadData();
 bindTrackGridEvents();
 bindTabEvents();
+bindFollowUpEvents();
 setInterval(loadData, 60000);
 </script>
 </body>

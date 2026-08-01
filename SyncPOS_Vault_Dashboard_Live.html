@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SyncPOS Vault Migration — Live Control Panel</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+  :root {
+    --navy:#1F3864; --slate:#2E4057; --bg:#F5F6F8; --panel:#FFFFFF; --line:#E3E6EC;
+    --green:#2F8F5B; --green-bg:#E7F5EC; --amber:#B8790A; --amber-bg:#FDF3DE;
+    --red:#B3261E; --red-bg:#FCE8E6; --grey:#6B7280; --grey-bg:#EEF0F3;
+    --mono:'IBM Plex Mono',monospace; --sans:'IBM Plex Sans',sans-serif;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); font-family:var(--sans); color:#1A1D23; padding:24px; line-height:1.45; }
+  .wrap { max-width:1180px; margin:0 auto; }
+
+  header { background:var(--navy); color:#fff; border-radius:10px; padding:20px 26px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:18px; }
+  header h1 { font-size:19px; font-weight:600; }
+  header .meta { font-size:12px; color:#C7D2E8; font-family:var(--mono); margin-top:4px; }
+  .sync-box { text-align:right; }
+  .sync-status { font-size:11px; font-family:var(--mono); color:#9FB0D0; }
+  .refresh-btn { font-family:var(--mono); font-size:11px; background:#2E4A80; color:#fff; border:1px solid #3E5A90; border-radius:5px; padding:5px 12px; cursor:pointer; margin-top:6px; }
+  .refresh-btn:hover { background:#375690; }
+  .edit-link { font-family:var(--mono); font-size:10.5px; color:#C7D2E8; display:block; margin-top:4px; }
+  .edit-link a { color:#C7D2E8; }
+
+  .hero { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:22px 26px; margin-bottom:18px; display:grid; grid-template-columns:auto 1fr; gap:28px; align-items:center; }
+  .countdown { font-family:var(--mono); text-align:center; padding-right:26px; border-right:1px solid var(--line); min-width:150px; }
+  .countdown .num { font-size:52px; font-weight:700; color:var(--navy); line-height:1; }
+  .countdown .label { font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--grey); margin-top:6px; }
+  .hero-detail h2 { font-size:15px; font-weight:600; margin-bottom:6px; }
+  .hero-detail p { font-size:13px; color:#444; margin-bottom:4px; }
+  .hero-detail p.warn { color:#B3261E; font-weight:600; }
+
+  .section-title { font-size:12px; text-transform:uppercase; letter-spacing:1px; color:var(--grey); margin:26px 0 10px 2px; font-family:var(--mono); font-weight:600; }
+  .tracks { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  @media (max-width:900px){ .tracks{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:600px){ .tracks{grid-template-columns:1fr;} }
+  .track-card { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; border-left:4px solid var(--grey); }
+  .track-card.status-green{ border-left-color:var(--green); }
+  .track-card.status-amber{ border-left-color:var(--amber); }
+  .track-card.status-red{ border-left-color:var(--red); }
+  .track-card .tnum{ font-family:var(--mono); font-size:11px; color:var(--grey); }
+  .track-card h3{ font-size:13px; font-weight:600; margin:2px 0 8px; }
+  .pill{ display:inline-block; font-family:var(--mono); font-size:10.5px; font-weight:600; padding:2px 8px; border-radius:20px; margin-bottom:8px; }
+  .pill.status-green{ background:var(--green-bg); color:var(--green); }
+  .pill.status-amber{ background:var(--amber-bg); color:var(--amber); }
+  .pill.status-red{ background:var(--red-bg); color:var(--red); }
+  .track-card .gate{ font-size:11.5px; color:#555; }
+
+  .timeline{ background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:18px 20px; }
+  .tl-row{ display:grid; grid-template-columns:96px 1fr auto; gap:14px; align-items:center; padding:9px 0; border-bottom:1px solid #F0F1F4; }
+  .tl-row:last-child{ border-bottom:none; }
+  .tl-date{ font-family:var(--mono); font-size:11.5px; color:var(--slate); font-weight:600; }
+  .tl-milestone{ font-size:12.5px; color:#333; }
+  .tl-badge{ font-family:var(--mono); font-size:10px; font-weight:700; padding:3px 9px; border-radius:4px; white-space:nowrap; }
+  .tl-badge.status-green{ background:var(--green-bg); color:var(--green); }
+  .tl-badge.status-amber{ background:var(--amber-bg); color:var(--amber); }
+  .tl-badge.status-red{ background:var(--red-bg); color:var(--red); }
+  .tl-badge.status-grey{ background:var(--grey-bg); color:var(--grey); }
+
+  .risk-strip{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .risk-box{ background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; text-align:center; }
+  .risk-box .count{ font-family:var(--mono); font-size:26px; font-weight:700; }
+  .risk-box .rlabel{ font-size:11px; color:var(--grey); text-transform:uppercase; letter-spacing:0.5px; margin-top:2px; }
+  .risk-box.critical .count{ color:var(--red); }
+  .risk-box.high .count{ color:var(--amber); }
+  .risk-box.medium .count{ color:#4A7CB5; }
+  .risk-box.open-total .count{ color:var(--navy); }
+
+  .footnote{ margin-top:22px; font-size:11px; color:var(--grey); font-family:var(--mono); border-top:1px solid var(--line); padding-top:12px; }
+  .error-banner{ background:var(--red-bg); color:var(--red); border:1px solid #F3C6C4; border-radius:8px; padding:12px 16px; margin-bottom:18px; font-size:12.5px; display:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <h1>SyncPOS Vault Enterprise Migration</h1>
+      <div class="meta">TPM: Hamzi · Programme Owner: Prabodha</div>
+    </div>
+    <div class="sync-box">
+      <div class="sync-status" id="syncStatus">connecting…</div>
+      <button class="refresh-btn" onclick="loadData()">↻ Refresh now</button>
+      <span class="edit-link">✎ <a href="https://docs.google.com/spreadsheets/d/1AXrOH5bdHM74t3SVLmDgNDH2VePiHPjCOd40Xx-iF40/edit" target="_blank">Edit source sheet</a></span>
+    </div>
+  </header>
+
+  <div class="error-banner" id="errorBanner"></div>
+
+  <div class="hero">
+    <div class="countdown">
+      <div class="num" id="daysToCutover">–</div>
+      <div class="label">days to cutover start</div>
+    </div>
+    <div class="hero-detail" id="heroDetail"></div>
+  </div>
+
+  <div class="section-title">Track Status</div>
+  <div class="tracks" id="trackGrid"></div>
+
+  <div class="section-title">Key Gates &amp; Milestones — chronological</div>
+  <div class="timeline" id="timeline"></div>
+
+  <div class="section-title">Open Risks</div>
+  <div class="risk-strip" id="riskStrip"></div>
+
+  <div class="footnote">Live from Google Sheet — edit the sheet directly (link above) and hit Refresh to see changes here. Auto-refreshes every 60s while this page is open.</div>
+
+</div>
+
+<script>
+const SHEET_ID = '1AXrOH5bdHM74t3SVLmDgNDH2VePiHPjCOd40Xx-iF40';
+const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+
+function setSyncStatus(text, isError) {
+  document.getElementById('syncStatus').textContent = text;
+  document.getElementById('errorBanner').style.display = isError ? 'block' : 'none';
+  if (isError) document.getElementById('errorBanner').textContent = text;
+}
+
+function parseGviz(text) {
+  // Response looks like: google.visualization.Query.setResponse({...});
+  const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);?\s*$/);
+  if (!match) throw new Error('Unexpected response format from Google Sheets');
+  const json = JSON.parse(match[1]);
+  const cols = json.table.cols.map(c => c.label || c.id);
+  const rows = json.table.rows.map(r => {
+    const obj = {};
+    r.c.forEach((cell, i) => { obj[cols[i]] = cell ? (cell.v ?? '') : ''; });
+    return obj;
+  });
+  return rows;
+}
+
+async function loadData() {
+  setSyncStatus('refreshing…', false);
+  try {
+    const res = await fetch(GVIZ_URL, { cache: 'no-store' });
+    if (!res.ok) throw new Error('Sheet not reachable — check it is shared as "Anyone with the link can view"');
+    const text = await res.text();
+    const rows = parseGviz(text);
+    render(rows);
+    setSyncStatus('synced ✓ ' + new Date().toLocaleTimeString(), false);
+  } catch (e) {
+    setSyncStatus(e.message || 'Failed to load — check sheet sharing settings', true);
+  }
+}
+
+function render(rows) {
+  const meta = {};
+  rows.filter(r => r.Section === 'META').forEach(r => { meta[r.Name] = r.Detail; });
+  const cutoverDateRaw = rows.find(r => r.Section === 'META' && r.Name === 'Cutover Window');
+
+  // Countdown — parse the Date column on the Cutover Window META row
+  let cutoverStart = new Date('2026-08-09');
+  const dateCell = rows.find(r => r.Section === 'META' && r.Name === 'Cutover Window');
+  if (dateCell && dateCell.Date) {
+    const d = new Date(dateCell.Date);
+    if (!isNaN(d)) cutoverStart = d;
+  }
+  const today = new Date(); today.setHours(0,0,0,0);
+  const days = Math.round((cutoverStart - today) / 86400000);
+  document.getElementById('daysToCutover').textContent = days;
+
+  document.getElementById('heroDetail').innerHTML = `
+    <h2>Production Cutover — ${meta['Cutover Window'] || ''}</h2>
+    <p>${meta['Hero Note 1'] || ''}</p>
+    <p class="warn">${meta['Hero Note 2'] ? '⚠ ' + meta['Hero Note 2'] : ''}</p>
+  `;
+
+  const trackGrid = document.getElementById('trackGrid');
+  trackGrid.innerHTML = '';
+  rows.filter(r => r.Section === 'TRACK').forEach(t => {
+    const el = document.createElement('div');
+    el.className = `track-card status-${t.Status}`;
+    el.innerHTML = `
+      <div class="tnum">TRACK ${t.Num}</div>
+      <h3>${t.Name}</h3>
+      <span class="pill status-${t.Status}">${(t.Status||'').toUpperCase()}</span>
+      <div class="gate">${t.Detail}</div>
+    `;
+    trackGrid.appendChild(el);
+  });
+
+  const timeline = document.getElementById('timeline');
+  timeline.innerHTML = '';
+  rows.filter(r => r.Section === 'GATE').forEach(g => {
+    const el = document.createElement('div');
+    el.className = 'tl-row';
+    el.innerHTML = `
+      <div class="tl-date">${g.Date}</div>
+      <div class="tl-milestone">${g.Name}</div>
+      <div class="tl-badge status-${g.Status}">${(g.Status||'').toUpperCase()}</div>
+    `;
+    timeline.appendChild(el);
+  });
+
+  const riskRows = rows.filter(r => r.Section === 'RISK');
+  const riskStrip = document.getElementById('riskStrip');
+  riskStrip.innerHTML = '';
+  const clsMap = { 'Critical':'critical', 'High':'high', 'Medium':'medium', 'Total Open':'open-total' };
+  riskRows.forEach(r => {
+    const el = document.createElement('div');
+    el.className = `risk-box ${clsMap[r.Name] || ''}`;
+    el.innerHTML = `<div class="count">${r.Date}</div><div class="rlabel">${r.Name}</div>`;
+    riskStrip.appendChild(el);
+  });
+}
+
+loadData();
+setInterval(loadData, 60000);
+</script>
+</body>
+</html>

@@ -41,17 +41,20 @@
   .hero-detail h2 { font-family:var(--sans); font-size:15px; font-weight:600; margin-bottom:8px; line-height:1.35; }
   .hero-detail .content-list { font-family:var(--sans); font-size:14px; color:#333; line-height:1.5; margin-bottom:6px; }
   .hero-detail .content-list.warn { color:var(--red); }
-  .hero-detail .content-list.warn li::marker { color:var(--red); }
 
   .section-title {
     font-size:10.5px; text-transform:uppercase; letter-spacing:1.3px; color:#9CA3AF;
     margin:28px 0 10px 2px; font-family:var(--mono); font-weight:500;
   }
 
-  .content-list { list-style:disc; padding-left:18px; margin:0; }
-  .content-list li { margin-bottom:4px; }
+  .content-list { list-style:none; padding-left:0; margin:0; }
+  .content-list li { position:relative; padding-left:16px; margin-bottom:4px; }
+  .content-list li::before {
+    content:'•'; position:absolute; left:0; top:0; color:var(--grey); font-weight:700;
+  }
   .content-list li:last-child { margin-bottom:0; }
   .content-list.compact { font-size:13px; color:#444; line-height:1.45; }
+  .content-list.warn li::before { color:var(--grey); }
 
   .tracks { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
   @media (max-width:900px){ .tracks{grid-template-columns:repeat(2,1fr);} }
@@ -101,17 +104,29 @@
   .track-card .gate-list { margin-top:0; }
 
   .timeline{ background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:18px 20px; }
-  .tl-bar-wrap { margin-bottom:20px; padding:34px 12px 36px; }
-  .tl-bar-labels { display:flex; justify-content:space-between; font-family:var(--mono); font-size:10px; font-weight:500; color:var(--grey); margin-bottom:14px; padding:0 4px; }
-  .tl-bar { position:relative; height:10px; background:var(--grey-bg); border-radius:99px; overflow:visible; margin:0 4px; }
+  .tl-bar-wrap { margin-bottom:20px; padding:40px 16px 12px; }
+  .tl-bar-range { display:flex; justify-content:space-between; font-family:var(--mono); font-size:10px; font-weight:500; color:var(--grey); margin-top:10px; padding:0 2px; }
+  .tl-bar { position:relative; height:10px; background:var(--grey-bg); border-radius:99px; overflow:visible; }
   .tl-bar-fill { position:absolute; left:0; top:0; height:100%; border-radius:99px; background:linear-gradient(90deg, var(--green) 0%, var(--amber) 55%, var(--red) 100%); opacity:0.25; }
-  .tl-marker { position:absolute; top:50%; transform:translate(-50%,-50%); z-index:3; pointer-events:none; }
-  .tl-marker-line { position:absolute; left:50%; transform:translateX(-50%); background:var(--navy); border-radius:1px; }
-  .tl-marker-label { position:absolute; left:50%; transform:translateX(-50%); font-family:var(--mono); font-size:9px; font-weight:700; white-space:nowrap; line-height:1; }
-  .tl-bar-today .tl-marker-line { top:-18px; width:2px; height:28px; background:var(--navy); }
-  .tl-bar-today .tl-marker-label { top:-32px; color:var(--navy); }
-  .tl-bar-cutover .tl-marker-line { top:-16px; width:3px; height:26px; background:var(--red); }
-  .tl-bar-cutover .tl-marker-label { bottom:-22px; top:auto; color:var(--red); }
+  .tl-marker { position:absolute; top:50%; z-index:3; pointer-events:none; }
+  .tl-marker.align-center { transform:translate(-50%,-50%); }
+  .tl-marker.align-left { transform:translate(0,-50%); }
+  .tl-marker.align-right { transform:translate(-100%,-50%); }
+  .tl-marker-callout { position:absolute; bottom:14px; display:flex; flex-direction:column; gap:3px; white-space:nowrap; line-height:1.1; }
+  .tl-marker.align-center .tl-marker-callout { left:50%; transform:translateX(-50%); align-items:center; }
+  .tl-marker.align-left .tl-marker-callout { left:0; align-items:flex-start; }
+  .tl-marker.align-right .tl-marker-callout { right:0; align-items:flex-end; }
+  .tl-marker-line { position:absolute; top:50%; transform:translateY(-50%); border-radius:1px; }
+  .tl-marker.align-center .tl-marker-line { left:50%; transform:translate(-50%,-50%); }
+  .tl-marker.align-left .tl-marker-line { left:0; transform:translateY(-50%); }
+  .tl-marker.align-right .tl-marker-line { right:0; left:auto; transform:translateY(-50%); }
+  .tl-marker-label { font-family:var(--mono); font-size:9px; font-weight:700; letter-spacing:0.3px; }
+  .tl-marker-date { font-family:var(--mono); font-size:9px; font-weight:500; color:var(--grey); }
+  .tl-bar-today .tl-marker-line { width:2px; height:28px; background:var(--navy); }
+  .tl-bar-today .tl-marker-label { color:var(--navy); }
+  .tl-bar-cutover .tl-marker-callout { top:14px; bottom:auto; }
+  .tl-bar-cutover .tl-marker-line { width:3px; height:26px; background:var(--red); }
+  .tl-bar-cutover .tl-marker-label { color:var(--red); }
   .tl-bar-dot { position:absolute; top:50%; width:10px; height:10px; border-radius:50%; border:2px solid var(--panel); transform:translate(-50%,-50%); z-index:1; box-shadow:0 0 0 1px var(--line); }
   .tl-bar-dot.status-green{ background:var(--green); }
   .tl-bar-dot.status-amber{ background:var(--amber); }
@@ -394,6 +409,24 @@ function markerPosition(pct) {
   return Math.max(4, Math.min(96, pct));
 }
 
+function markerAlignClass(pos) {
+  if (pos <= 14) return 'align-left';
+  if (pos >= 86) return 'align-right';
+  return 'align-center';
+}
+
+function timelineMarkerHtml(type, pos, label, dateStr) {
+  const align = markerAlignClass(pos);
+  return `
+    <div class="tl-bar-${type} tl-marker ${align}" style="left:${pos}%">
+      <div class="tl-marker-callout">
+        <span class="tl-marker-label">${label}</span>
+        <span class="tl-marker-date">${escapeHtml(dateStr)}</span>
+      </div>
+      <span class="tl-marker-line"></span>
+    </div>`;
+}
+
 function formatShortDate(d) {
   return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: '2-digit' });
 }
@@ -439,7 +472,7 @@ function applyGateFilter() {
 }
 
 function onGateCutoverFilterChange() {
-  gateCutoverFilter = document.getElementById('gateCutoverFilter').value;
+  gateCutoverFilter = document.getElementById('gateTimingFilter').value;
   applyGateFilter();
 }
 
@@ -543,7 +576,7 @@ function render(rows) {
   }).join('');
 
   const trackOptions = ['all', '1', '2', '3', '4', '5', '6']
-    .map(n => `<option value="${n}"${n === gateTrackFilter ? ' selected' : ''}>${n === 'all' ? 'All tracks' : 'Track ' + n}</option>`).join('');
+    .map(n => `<option value="${n}"${n === gateTrackFilter ? ' selected' : ''}>${n === 'all' ? 'All Tracks' : 'Track ' + n}</option>`).join('');
 
   const gateRowsHtml = gates.map(g => {
     const parsed = parseSheetDate(g.Date);
@@ -566,21 +599,15 @@ function render(rows) {
   const timeline = document.getElementById('timeline');
   timeline.innerHTML = `
     <div class="tl-bar-wrap">
-      <div class="tl-bar-labels">
-        <span>${formatShortDate(rangeStart)}</span>
-        <span>${formatShortDate(rangeEnd)}</span>
-      </div>
       <div class="tl-bar">
         <div class="tl-bar-fill" style="width:${Math.max(todayPos, cutoverPos)}%"></div>
         ${dotsHtml}
-        <div class="tl-bar-today tl-marker" style="left:${todayPos}%">
-          <span class="tl-marker-line"></span>
-          <span class="tl-marker-label">TODAY</span>
-        </div>
-        <div class="tl-bar-cutover tl-marker" style="left:${cutoverPos}%">
-          <span class="tl-marker-line"></span>
-          <span class="tl-marker-label">CUTOVER</span>
-        </div>
+        ${timelineMarkerHtml('today', todayPos, 'TODAY', formatShortDate(today))}
+        ${timelineMarkerHtml('cutover', cutoverPos, 'CUTOVER', formatShortDate(cutoverNorm))}
+      </div>
+      <div class="tl-bar-range">
+        <span>${formatShortDate(rangeStart)}</span>
+        <span>${formatShortDate(rangeEnd)}</span>
       </div>
       <div class="tl-bar-legend">
         <span><i style="background:var(--navy)"></i> Today</span>
@@ -596,11 +623,11 @@ function render(rows) {
         <select id="gateTrackFilter">${trackOptions}</select>
       </div>
       <div class="tl-filter-group">
-        <label for="gateCutoverFilter">Cutover timing</label>
-        <select id="gateCutoverFilter">
-          <option value="all"${gateCutoverFilter === 'all' ? ' selected' : ''}>All milestones</option>
-          <option value="before"${gateCutoverFilter === 'before' ? ' selected' : ''}>Before cutover only</option>
-          <option value="after"${gateCutoverFilter === 'after' ? ' selected' : ''}>After cutover only</option>
+        <label for="gateTimingFilter">Timing</label>
+        <select id="gateTimingFilter">
+          <option value="all"${gateCutoverFilter === 'all' ? ' selected' : ''}>All</option>
+          <option value="before"${gateCutoverFilter === 'before' ? ' selected' : ''}>Before Cutover</option>
+          <option value="after"${gateCutoverFilter === 'after' ? ' selected' : ''}>After Cutover</option>
         </select>
       </div>
     </div>
@@ -608,7 +635,7 @@ function render(rows) {
     <div class="tl-empty" id="gateEmpty">No milestones match this filter.</div>
   `;
 
-  document.getElementById('gateCutoverFilter').addEventListener('change', onGateCutoverFilterChange);
+  document.getElementById('gateTimingFilter').addEventListener('change', onGateCutoverFilterChange);
   document.getElementById('gateTrackFilter').addEventListener('change', onGateTrackFilterChange);
   applyGateFilter();
 

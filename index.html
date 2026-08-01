@@ -459,6 +459,7 @@
   .follow-chip {
     font-family:var(--mono); font-size:10px; font-weight:600; white-space:nowrap;
     padding:4px 9px; border-radius:99px; flex-shrink:0;
+    max-width:148px; overflow:hidden; text-overflow:ellipsis;
   }
   .follow-chip.chip-critical { background:var(--red); color:#fff; }
   .follow-chip.chip-high { background:var(--amber); color:#fff; }
@@ -466,8 +467,8 @@
   .follow-empty {
     font-family:var(--sans); font-size:14px; color:var(--grey); padding:16px 0; text-align:center;
   }
-  .follow-section-empty { display:none; font-family:var(--sans); font-size:12px; color:var(--grey); padding:6px 0 10px; }
-  .follow-section-empty.visible { display:block; }
+  .follow-section-empty { display:none; }
+  .follow-section-block.hidden { display:none; }
   @media (max-width:760px){
     .follow-row { grid-template-columns:44px 14px minmax(0,1fr); grid-template-rows:auto auto; }
     .follow-row .follow-chip { grid-column:2 / -1; grid-row:2; justify-self:start; margin-left:22px; }
@@ -575,6 +576,7 @@ let riskPriorityFilter = 'all';
 let riskTrackFilter = 'all';
 let followViewMode = 'today';
 let followOwnerFilter = 'all';
+let followPriorityFilter = 'critical';
 let activeTab = 'programme';
 
 function switchTab(tab) {
@@ -1113,6 +1115,13 @@ function followItemMatchesOwner(item) {
   return followOwnerParts(item.owner).some(o => o.toLowerCase() === needle);
 }
 
+function followChipLabel(item) {
+  const label = followPriorityLabel(item);
+  const owner = followOwnerParts(item.owner)[0];
+  if (owner) return `🔔 ${owner} · ${label}`;
+  return label;
+}
+
 function applyFollowFilter() {
   const rows = document.querySelectorAll('#followPanel .follow-row');
   let visible = 0;
@@ -1120,43 +1129,46 @@ function applyFollowFilter() {
     const tier = row.dataset.tier;
     const ownerKey = row.dataset.ownerKey || '';
     let show = true;
-    if (followViewMode === 'today') {
+
+    if (followPriorityFilter !== 'all' && tier !== followPriorityFilter) show = false;
+
+    if (show && followViewMode === 'today' && followPriorityFilter === 'all') {
       if (tier === 'medium') show = false;
-      else if (tier === 'critical') show = true;
-      else show = ownerKey.length > 0;
-    } else if (tier === 'medium' && followViewMode !== 'all') {
-      show = false;
+      else if (tier !== 'critical') show = ownerKey.length > 0;
     }
+
     if (show && followOwnerFilter !== 'all') {
       const parts = ownerKey ? ownerKey.split('|') : [];
       show = parts.includes(followOwnerFilter.toLowerCase());
     }
+
     row.classList.toggle('hidden', !show);
     if (show) visible++;
   });
 
   ['followUndated', 'followDated'].forEach(id => {
+    const block = document.getElementById(`${id}Block`);
     const list = document.getElementById(id);
-    const empty = document.getElementById(`${id}Empty`);
-    if (!list || !empty) return;
+    if (!block || !list) return;
     const anyVisible = [...list.querySelectorAll('.follow-row')].some(r => !r.classList.contains('hidden'));
-    empty.classList.toggle('visible', !anyVisible);
+    block.classList.toggle('hidden', !anyVisible);
   });
 
   const globalEmpty = document.getElementById('followGlobalEmpty');
   if (globalEmpty) globalEmpty.style.display = visible ? 'none' : 'block';
 
   const countNote = document.getElementById('followCountNote');
-  if (countNote) countNote.textContent = `${visible} item${visible === 1 ? '' : 's'} shown`;
+  if (countNote) {
+    const viewLabel = followViewMode === 'today' ? 'My chase list today' : 'All ongoing';
+    countNote.textContent = `${visible} item${visible === 1 ? '' : 's'} · ${viewLabel}`;
+  }
 
   document.getElementById('followTabBadge').textContent = visible;
 }
 
 function renderFollowRow(item) {
   const tier = followPriorityTier(item);
-  const label = followPriorityLabel(item);
-  const owner = item.owner;
-  const chipText = owner ? `🔔 ${owner} · ${label}` : `🔔 · ${label}`;
+  const chipText = followChipLabel(item);
   const dateHtml = item.date
     ? `<span class="follow-date">${escapeHtml(item.date)}</span>`
     : `<span class="follow-date is-empty">—</span>`;
@@ -1166,7 +1178,7 @@ function renderFollowRow(item) {
       ${dateHtml}
       <span class="follow-type" title="${item.source === 'track' ? 'Track' : item.source === 'gate' ? 'Gate' : 'Risk'}">${followTypeIcon(item.source)}</span>
       <span class="follow-title">${escapeHtml(item.name)}</span>
-      <span class="follow-chip chip-${tier}">${escapeHtml(chipText)}</span>
+      <span class="follow-chip chip-${tier}" title="${escapeHtml(chipText)}">${escapeHtml(chipText)}</span>
     </button>
   `;
 }
@@ -1175,6 +1187,11 @@ function bindFollowToolbarEvents() {
   document.querySelectorAll('.follow-view-btn').forEach(btn => {
     btn.onclick = () => {
       followViewMode = btn.dataset.view;
+      if (followViewMode === 'today' && followPriorityFilter === 'all') {
+        followPriorityFilter = 'critical';
+        const pri = document.getElementById('followPriorityFilter');
+        if (pri) pri.value = 'critical';
+      }
       document.querySelectorAll('.follow-view-btn').forEach(b => b.classList.toggle('is-active', b.dataset.view === followViewMode));
       applyFollowFilter();
     };
@@ -1182,6 +1199,11 @@ function bindFollowToolbarEvents() {
   const ownerSel = document.getElementById('followOwnerFilter');
   if (ownerSel) ownerSel.onchange = () => {
     followOwnerFilter = ownerSel.value;
+    applyFollowFilter();
+  };
+  const priSel = document.getElementById('followPriorityFilter');
+  if (priSel) priSel.onchange = () => {
+    followPriorityFilter = priSel.value;
     applyFollowFilter();
   };
 }
@@ -1606,15 +1628,26 @@ function render(rows) {
   const ownerSelectHtml = ['all', ...ownerOptions]
     .map(o => `<option value="${escapeHtml(o)}"${followOwnerFilter === o ? ' selected' : ''}>${o === 'all' ? 'All owners' : escapeHtml(o)}</option>`)
     .join('');
+  const prioritySelectHtml = [
+    ['critical', 'Critical only'],
+    ['high', 'High only'],
+    ['all', 'All priorities'],
+  ].map(([val, label]) =>
+    `<option value="${val}"${followPriorityFilter === val ? ' selected' : ''}>${label}</option>`
+  ).join('');
   const undatedHtml = followUps.undated.map(renderFollowRow).join('');
   const datedHtml = followUps.dated.map(renderFollowRow).join('');
 
   document.getElementById('followPanel').innerHTML = `
-    <p class="follow-intro">Who to chase today — your top action items in one scannable list. Tap a row to jump to details.</p>
+    <p class="follow-intro">One action per row — filter down to what you need to chase. Tap a row for full details.</p>
     <div class="follow-toolbar">
       <div class="follow-view-toggle">
         <button type="button" class="follow-view-btn${followViewMode === 'today' ? ' is-active' : ''}" data-view="today">My chase list today</button>
         <button type="button" class="follow-view-btn${followViewMode === 'all' ? ' is-active' : ''}" data-view="all">All ongoing</button>
+      </div>
+      <div class="tl-filter-group">
+        <label for="followPriorityFilter">Priority</label>
+        <select id="followPriorityFilter">${prioritySelectHtml}</select>
       </div>
       <div class="tl-filter-group">
         <label for="followOwnerFilter">Owner</label>
@@ -1622,14 +1655,16 @@ function render(rows) {
       </div>
     </div>
     <div class="follow-count-note" id="followCountNote"></div>
-    <div class="follow-empty" id="followGlobalEmpty" style="display:none">Nothing matches this view — try All ongoing or a different owner.</div>
+    <div class="follow-empty" id="followGlobalEmpty" style="display:none">Nothing matches — try All ongoing or change the filters above.</div>
     ${followUps.total ? `
-      <div class="follow-section-title">Ongoing / No fixed date</div>
-      <div class="follow-section-empty" id="followUndatedEmpty">No items in this section for this view.</div>
-      <div class="follow-list" id="followUndated">${undatedHtml}</div>
-      <div class="follow-section-title">By date</div>
-      <div class="follow-section-empty" id="followDatedEmpty">No items in this section for this view.</div>
-      <div class="follow-list" id="followDated">${datedHtml}</div>
+      <div class="follow-section-block" id="followUndatedBlock">
+        <div class="follow-section-title">Ongoing / No fixed date</div>
+        <div class="follow-list" id="followUndated">${undatedHtml}</div>
+      </div>
+      <div class="follow-section-block" id="followDatedBlock">
+        <div class="follow-section-title">By date</div>
+        <div class="follow-list" id="followDated">${datedHtml}</div>
+      </div>
     ` : '<div class="follow-empty">Nothing to chase right now — all clear.</div>'}
   `;
 

@@ -491,7 +491,6 @@
     font-family:var(--sans); font-size:12px; font-weight:500; white-space:nowrap;
     padding:7px 12px; border-radius:99px; max-width:200px;
     border:none; color:#fff;
-    transition:opacity 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
     user-select:none;
   }
   .follow-task:hover { filter:brightness(1.06); }
@@ -500,7 +499,7 @@
     appearance:none; -webkit-appearance:none;
     width:16px; height:16px; margin:0; flex-shrink:0; cursor:pointer;
     border:1.5px solid rgba(255,255,255,0.65); border-radius:4px; background:rgba(255,255,255,0.12);
-    position:relative; transition:background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+    position:relative;
   }
   .follow-task input:hover { border-color:#fff; background:rgba(255,255,255,0.22); }
   .follow-task input:checked {
@@ -627,6 +626,11 @@ const HERO_SHORT = {
 /** Track Num → status override when sheet lags behind reality */
 const TRACK_STATUS_OVERRIDE = {
   '2': 'amber',
+};
+
+/** Track Num → preferred person to chase in Daily Task */
+const TRACK_CHASE_OWNER = {
+  '5': 'Sruthi',
 };
 
 const STATUS_COLORS = { green: '#2F8F5B', amber: '#B8790A', red: '#B3261E', grey: '#6B7280' };
@@ -1238,8 +1242,24 @@ function heroDailyItemMatches(item) {
   return !!item.owner;
 }
 
+function heroChaseOwner(item) {
+  const parts = followOwnerParts(item.owner);
+  const preferred = TRACK_CHASE_OWNER[item.trackNum];
+  if (preferred) {
+    const match = parts.find(p => p.toLowerCase() === preferred.toLowerCase());
+    if (match) return match;
+    return preferred;
+  }
+  return parts[0] || '';
+}
+
+function itemHasChaseOwner(item, name) {
+  const needle = name.toLowerCase();
+  return followOwnerParts(item.owner).some(p => p.toLowerCase() === needle);
+}
+
 function heroTaskLabel(item) {
-  const owner = followOwnerParts(item.owner)[0];
+  const owner = heroChaseOwner(item);
   const chase = owner ? `chase ${owner}` : 'follow up';
   return `Track ${item.trackNum} · ${chase}`;
 }
@@ -1250,13 +1270,24 @@ function followTrackSortKey(item) {
 }
 
 function pickBestPerTrack(items) {
-  const byTrack = new Map();
+  const byTrackNum = new Map();
   items.forEach(item => {
     if (!item.trackNum) return;
-    const cur = byTrack.get(item.trackNum);
-    if (!cur || followTierSort(item, cur) < 0) byTrack.set(item.trackNum, item);
+    if (!byTrackNum.has(item.trackNum)) byTrackNum.set(item.trackNum, []);
+    byTrackNum.get(item.trackNum).push(item);
   });
-  return [...byTrack.values()].sort((a, b) => followTrackSortKey(a) - followTrackSortKey(b));
+  const result = [];
+  byTrackNum.forEach((trackItems, trackNum) => {
+    const preferred = TRACK_CHASE_OWNER[trackNum];
+    let pool = trackItems;
+    if (preferred) {
+      const preferredItems = trackItems.filter(i => itemHasChaseOwner(i, preferred));
+      if (preferredItems.length) pool = preferredItems;
+    }
+    pool.sort(followTierSort);
+    if (pool[0]) result.push(pool[0]);
+  });
+  return result.sort((a, b) => followTrackSortKey(a) - followTrackSortKey(b));
 }
 
 function pickHeroDailyTasks(allItems) {
@@ -1317,6 +1348,26 @@ function syncFollowTaskUI(key, done) {
   });
 }
 
+function updateFollowCounts() {
+  const rows = document.querySelectorAll('#followPanel .follow-row');
+  let visible = 0;
+  let remaining = 0;
+  rows.forEach(row => {
+    if (row.classList.contains('hidden')) return;
+    visible++;
+    if (!row.classList.contains('is-done')) remaining++;
+  });
+  const countNote = document.getElementById('followCountNote');
+  if (countNote) {
+    const left = remaining === visible
+      ? `${visible} item${visible === 1 ? '' : 's'}`
+      : `${remaining} left · ${visible} item${visible === 1 ? '' : 's'}`;
+    countNote.textContent = left;
+  }
+  const badge = document.getElementById('followTabBadge');
+  if (badge) badge.textContent = remaining;
+}
+
 function applyFollowFilter() {
   const rows = document.querySelectorAll('#followPanel .follow-row');
   let visible = 0;
@@ -1347,21 +1398,7 @@ function applyFollowFilter() {
   const globalEmpty = document.getElementById('followGlobalEmpty');
   if (globalEmpty) globalEmpty.style.display = visible ? 'none' : 'block';
 
-  let remaining = 0;
-  rows.forEach(row => {
-    if (row.classList.contains('hidden')) return;
-    if (!row.classList.contains('is-done')) remaining++;
-  });
-
-  const countNote = document.getElementById('followCountNote');
-  if (countNote) {
-    const left = remaining === visible
-      ? `${visible} item${visible === 1 ? '' : 's'}`
-      : `${remaining} left · ${visible} item${visible === 1 ? '' : 's'}`;
-    countNote.textContent = left;
-  }
-
-  document.getElementById('followTabBadge').textContent = remaining;
+  updateFollowCounts();
 }
 
 function renderFollowRow(item) {
@@ -1452,9 +1489,10 @@ function bindFollowUpEvents() {
     if (!input.matches('#followPanel .follow-task input[type="checkbox"], #heroDaily .follow-task input[type="checkbox"]')) return;
     const key = input.closest('[data-follow-key]')?.dataset.followKey;
     if (!key) return;
-    setFollowTaskDone(key, input.checked);
-    syncFollowTaskUI(key, input.checked);
-    applyFollowFilter();
+    const done = input.checked;
+    setFollowTaskDone(key, done);
+    syncFollowTaskUI(key, done);
+    updateFollowCounts();
   });
   document.addEventListener('click', (e) => {
     if (e.target.closest('.follow-task')) return;

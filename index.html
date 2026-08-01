@@ -236,8 +236,15 @@
 
   .track-details {
     display:none; padding:0 10px 8px 10px; border-top:1px solid #F0F1F4;
+    overflow:hidden;
   }
-  .track-card.collapsed .track-details { display:none; }
+  .track-card:not(.expanded) .track-details {
+    display:none !important;
+    max-height:0;
+    padding-top:0;
+    padding-bottom:0;
+    border-top-color:transparent;
+  }
   .track-card.expanded .track-details { display:block; padding-top:8px; }
   .track-card .track-ring svg { pointer-events:none; width:36px; height:36px; }
   .track-card .gate-list { margin-top:0; }
@@ -623,24 +630,27 @@ function trackKey(num) {
   return String(Number(num));
 }
 
+function syncTrackCardState(card, isExpanded) {
+  card.classList.toggle('expanded', isExpanded);
+  card.classList.toggle('collapsed', !isExpanded);
+  const header = card.querySelector('.track-header');
+  if (header) header.setAttribute('aria-expanded', String(isExpanded));
+}
+
 function toggleTrackCard(card, trackNum) {
   const key = trackKey(trackNum);
-  const willExpand = !card.classList.contains('expanded');
-  card.classList.toggle('expanded', willExpand);
-  card.classList.toggle('collapsed', !willExpand);
-  const header = card.querySelector('.track-header');
-  if (header) header.setAttribute('aria-expanded', String(willExpand));
+  const willExpand = !expandedTracks.has(key);
   if (willExpand) expandedTracks.add(key);
   else expandedTracks.delete(key);
+  syncTrackCardState(card, willExpand);
 }
 
 function bindTrackGridEvents() {
-  const trackGrid = document.getElementById('trackGrid');
-  if (!trackGrid || trackGrid.dataset.bound) return;
-  trackGrid.dataset.bound = '1';
-  trackGrid.addEventListener('click', (e) => {
-    const header = e.target.closest('.track-header');
-    if (!header || !trackGrid.contains(header)) return;
+  if (document.body.dataset.trackGridBound) return;
+  document.body.dataset.trackGridBound = '1';
+  document.addEventListener('click', (e) => {
+    const header = e.target.closest('#trackGrid .track-header');
+    if (!header) return;
     const card = header.closest('.track-card');
     if (!card) return;
     toggleTrackCard(card, card.dataset.trackNum);
@@ -743,7 +753,9 @@ function formatSyncStamp(d = new Date()) {
 function ownerName(row) {
   const o = row?.Owner;
   if (o == null || o === '') return '';
-  return String(o).trim();
+  const s = String(o).trim();
+  if (s === 'None') return '';
+  return s;
 }
 
 /** Display-only: DisplayDate text from sheet. SortDate is never shown here. */
@@ -859,6 +871,17 @@ function onRiskPriorityFilterChange() {
 function onRiskTrackFilterChange() {
   riskTrackFilter = document.getElementById('riskTrackFilter').value;
   applyRiskFilter();
+}
+
+function bindRiskEvents() {
+  const toggle = document.getElementById('riskDetailsToggle');
+  if (toggle) {
+    toggle.onclick = onRiskDetailsToggle;
+  }
+  const pf = document.getElementById('riskPriorityFilter');
+  const tf = document.getElementById('riskTrackFilter');
+  if (pf) pf.onchange = onRiskPriorityFilterChange;
+  if (tf) tf.onchange = onRiskTrackFilterChange;
 }
 
 function onRiskDetailsToggle() {
@@ -991,6 +1014,7 @@ function render(rows) {
     `;
 
     trackGrid.appendChild(el);
+    syncTrackCardState(el, isExpanded);
   });
   bindTrackGridEvents();
 
@@ -1209,9 +1233,7 @@ function render(rows) {
     </div>
   `;
 
-  document.getElementById('riskDetailsToggle').addEventListener('click', onRiskDetailsToggle);
-  document.getElementById('riskPriorityFilter').addEventListener('change', onRiskPriorityFilterChange);
-  document.getElementById('riskTrackFilter').addEventListener('change', onRiskTrackFilterChange);
+  bindRiskEvents();
   applyRiskFilter();
 
   switchTab(activeTab);

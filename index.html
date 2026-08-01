@@ -11,54 +11,98 @@
     --green:#2F8F5B; --green-bg:#E7F5EC; --amber:#B8790A; --amber-bg:#FDF3DE;
     --red:#B3261E; --red-bg:#FCE8E6; --grey:#6B7280; --grey-bg:#EEF0F3;
     --mono:'IBM Plex Mono',monospace; --sans:'IBM Plex Sans',sans-serif;
+    --display:'IBM Plex Sans',sans-serif;
   }
   * { box-sizing:border-box; margin:0; padding:0; }
-  body { background:var(--bg); font-family:var(--sans); color:#1A1D23; padding:24px; line-height:1.45; }
+  body { background:var(--bg); font-family:var(--sans); color:#1A1D23; padding:24px; line-height:1.45; font-size:14px; }
   .wrap { max-width:1180px; margin:0 auto; }
 
   header { background:var(--navy); color:#fff; border-radius:10px; padding:20px 26px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:18px; }
-  header h1 { font-size:19px; font-weight:600; }
-  header .meta { font-size:12px; color:#C7D2E8; font-family:var(--mono); margin-top:4px; }
+  header h1 { font-size:18px; font-weight:600; font-family:var(--sans); }
+  header .meta { font-size:11px; color:#C7D2E8; font-family:var(--mono); margin-top:4px; font-weight:500; }
   .sync-box { text-align:right; }
   .sync-status { font-size:11px; font-family:var(--mono); color:#9FB0D0; }
-  .refresh-btn { font-family:var(--mono); font-size:11px; background:#2E4A80; color:#fff; border:1px solid #3E5A90; border-radius:5px; padding:5px 12px; cursor:pointer; margin-top:6px; }
+  .refresh-btn { font-family:var(--mono); font-size:11px; font-weight:600; background:#2E4A80; color:#fff; border:1px solid #3E5A90; border-radius:5px; padding:5px 12px; cursor:pointer; margin-top:6px; }
   .refresh-btn:hover { background:#375690; }
   .edit-link { font-family:var(--mono); font-size:10.5px; color:#C7D2E8; display:block; margin-top:4px; }
   .edit-link a { color:#C7D2E8; }
 
   .hero { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:22px 26px; margin-bottom:18px; display:grid; grid-template-columns:auto auto 1fr; gap:28px; align-items:center; }
   @media (max-width:760px){ .hero{ grid-template-columns:1fr; } .countdown,.hero-ring{ border-right:none !important; padding-right:0 !important; border-bottom:1px solid var(--line); padding-bottom:18px; } }
-  .countdown { font-family:var(--mono); text-align:center; padding-right:26px; border-right:1px solid var(--line); min-width:130px; }
-  .countdown .num { font-size:52px; font-weight:700; color:var(--navy); line-height:1; }
-  .countdown .label { font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--grey); margin-top:6px; }
+  .countdown { text-align:center; padding-right:26px; border-right:1px solid var(--line); min-width:140px; }
+  .countdown .num {
+    font-family:var(--display); font-size:76px; font-weight:700; color:var(--navy);
+    line-height:0.95; letter-spacing:-0.03em; font-variant-numeric:tabular-nums;
+  }
+  .countdown .label { font-family:var(--mono); font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:1.2px; color:var(--grey); margin-top:8px; }
   .hero-ring { text-align:center; padding-right:26px; border-right:1px solid var(--line); min-width:148px; }
-  .hero-ring .ring-label { font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:0.8px; color:var(--grey); margin-top:6px; }
+  .hero-ring .ring-label { font-family:var(--mono); font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:1px; color:var(--grey); margin-top:6px; }
   .hero-ring svg { display:block; margin:0 auto; }
-  .hero-detail h2 { font-size:15px; font-weight:600; margin-bottom:6px; }
-  .hero-detail p { font-size:13px; color:#444; margin-bottom:4px; }
-  .hero-detail p.warn { color:#B3261E; font-weight:600; }
+  .hero-detail h2 { font-family:var(--sans); font-size:15px; font-weight:600; margin-bottom:8px; line-height:1.35; }
+  .hero-detail .content-list { font-family:var(--sans); font-size:14px; color:#333; line-height:1.5; margin-bottom:6px; }
+  .hero-detail .content-list.warn { color:var(--red); }
+  .hero-detail .content-list.warn li::marker { color:var(--red); }
 
-  .section-title { font-size:12px; text-transform:uppercase; letter-spacing:1px; color:var(--grey); margin:26px 0 10px 2px; font-family:var(--mono); font-weight:600; }
+  .section-title {
+    font-size:10.5px; text-transform:uppercase; letter-spacing:1.3px; color:#9CA3AF;
+    margin:28px 0 10px 2px; font-family:var(--mono); font-weight:500;
+  }
+
+  .content-list { list-style:disc; padding-left:18px; margin:0; }
+  .content-list li { margin-bottom:4px; }
+  .content-list li:last-child { margin-bottom:0; }
+  .content-list.compact { font-size:13px; color:#444; line-height:1.45; }
+
   .tracks { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
   @media (max-width:900px){ .tracks{grid-template-columns:repeat(2,1fr);} }
   @media (max-width:600px){ .tracks{grid-template-columns:1fr;} }
-  .track-card { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; border-left:4px solid var(--grey); display:grid; grid-template-columns:1fr auto; gap:8px 12px; align-items:start; }
+
+  .track-card {
+    background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    border-left:4px solid var(--grey); overflow:hidden;
+  }
   .track-card.status-green{ border-left-color:var(--green); }
   .track-card.status-amber{ border-left-color:var(--amber); }
   .track-card.status-red{ border-left-color:var(--red); }
-  .track-card .tnum{ font-family:var(--mono); font-size:11px; color:var(--grey); grid-column:1; }
-  .track-card h3{ font-size:13px; font-weight:600; margin:2px 0 4px; grid-column:1; }
-  .track-card .track-body { grid-column:1; }
-  .track-card .track-ring { grid-column:2; grid-row:1 / span 3; align-self:start; }
-  .pill{ display:inline-block; font-family:var(--mono); font-size:10.5px; font-weight:600; padding:2px 8px; border-radius:20px; margin-bottom:8px; }
+
+  .track-header {
+    width:100%; display:grid; grid-template-columns:1fr auto auto; gap:10px; align-items:center;
+    padding:14px 16px; background:none; border:none; cursor:pointer; text-align:left;
+    font-family:inherit; color:inherit;
+  }
+  .track-header:hover { background:#FAFBFC; }
+  .track-header-main { min-width:0; }
+  .track-card .tnum{ font-family:var(--mono); font-size:10px; font-weight:500; color:#9CA3AF; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:4px; display:none; }
+  .track-card.expanded .tnum { display:block; }
+  .track-card h3{
+    font-family:var(--sans); font-size:14px; font-weight:600; line-height:1.35;
+    color:#1A1D23; margin:0 0 6px;
+  }
+  .track-card.collapsed h3 { margin-bottom:0; }
+  .track-card .track-ring { flex-shrink:0; }
+  .track-chevron {
+    font-size:11px; color:var(--grey); transition:transform 0.2s ease; line-height:1;
+    font-family:var(--mono); user-select:none;
+  }
+  .track-card.expanded .track-chevron { transform:rotate(180deg); }
+
+  .pill{
+    display:inline-block; font-family:var(--mono); font-size:10px; font-weight:700;
+    padding:3px 9px; border-radius:20px; letter-spacing:0.4px;
+  }
   .pill.status-green{ background:var(--green-bg); color:var(--green); }
   .pill.status-amber{ background:var(--amber-bg); color:var(--amber); }
   .pill.status-red{ background:var(--red-bg); color:var(--red); }
-  .track-card .gate{ font-size:11.5px; color:#555; }
+
+  .track-details {
+    display:none; padding:0 16px 14px 16px; border-top:1px solid #F0F1F4;
+  }
+  .track-card.expanded .track-details { display:block; padding-top:12px; }
+  .track-card .gate-list { margin-top:0; }
 
   .timeline{ background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:18px 20px; }
   .tl-bar-wrap { margin-bottom:20px; padding-bottom:4px; }
-  .tl-bar-labels { display:flex; justify-content:space-between; font-family:var(--mono); font-size:10px; color:var(--grey); margin-bottom:8px; }
+  .tl-bar-labels { display:flex; justify-content:space-between; font-family:var(--mono); font-size:10px; font-weight:500; color:var(--grey); margin-bottom:8px; }
   .tl-bar { position:relative; height:10px; background:var(--grey-bg); border-radius:99px; overflow:visible; }
   .tl-bar-fill { position:absolute; left:0; top:0; height:100%; border-radius:99px; background:linear-gradient(90deg, var(--green) 0%, var(--amber) 55%, var(--red) 100%); opacity:0.25; }
   .tl-bar-today { position:absolute; top:-6px; width:2px; height:22px; background:var(--navy); border-radius:1px; transform:translateX(-50%); z-index:3; }
@@ -70,18 +114,44 @@
   .tl-bar-dot.status-amber{ background:var(--amber); }
   .tl-bar-dot.status-red{ background:var(--red); }
   .tl-bar-dot.status-grey{ background:var(--grey); }
-  .tl-bar-legend { display:flex; flex-wrap:wrap; gap:14px; margin-top:28px; font-family:var(--mono); font-size:10px; color:var(--grey); }
+  .tl-bar-legend { display:flex; flex-wrap:wrap; gap:14px; margin-top:28px; font-family:var(--mono); font-size:10px; font-weight:500; color:var(--grey); }
   .tl-bar-legend span { display:inline-flex; align-items:center; gap:5px; }
   .tl-bar-legend i { display:inline-block; width:10px; height:10px; border-radius:50%; }
-  .tl-row{ display:grid; grid-template-columns:96px 1fr auto; gap:14px; align-items:center; padding:9px 0; border-bottom:1px solid #F0F1F4; }
+
+  .tl-filters {
+    display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+    margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid #F0F1F4;
+  }
+  .tl-filters label { font-family:var(--mono); font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--grey); }
+  .tl-filters select {
+    font-family:var(--mono); font-size:11px; font-weight:500; padding:6px 10px;
+    border:1px solid var(--line); border-radius:6px; background:var(--panel); color:#333;
+    cursor:pointer;
+  }
+  .tl-filters select:focus { outline:2px solid #C7D2E8; outline-offset:1px; }
+  #gateTrackFilter { display:none; }
+  #gateTrackFilter.visible { display:inline-block; }
+
+  .tl-list { }
+  .tl-row{
+    display:grid; grid-template-columns:96px 1fr auto; gap:14px; align-items:start;
+    padding:10px 0; border-bottom:1px solid #F0F1F4;
+  }
   .tl-row:last-child{ border-bottom:none; }
-  .tl-date{ font-family:var(--mono); font-size:11.5px; color:var(--slate); font-weight:600; }
-  .tl-milestone{ font-size:12.5px; color:#333; }
-  .tl-badge{ font-family:var(--mono); font-size:10px; font-weight:700; padding:3px 9px; border-radius:4px; white-space:nowrap; }
+  .tl-row.hidden { display:none; }
+  .tl-date{ font-family:var(--mono); font-size:12px; color:var(--slate); font-weight:600; font-variant-numeric:tabular-nums; }
+  .tl-milestone{ font-family:var(--sans); font-size:14px; font-weight:600; color:#1A1D23; line-height:1.35; margin-bottom:4px; }
+  .tl-milestone-detail { margin-top:2px; }
+  .tl-badge{
+    font-family:var(--mono); font-size:10px; font-weight:700; padding:3px 9px;
+    border-radius:4px; white-space:nowrap; letter-spacing:0.3px;
+  }
   .tl-badge.status-green{ background:var(--green-bg); color:var(--green); }
   .tl-badge.status-amber{ background:var(--amber-bg); color:var(--amber); }
   .tl-badge.status-red{ background:var(--red-bg); color:var(--red); }
   .tl-badge.status-grey{ background:var(--grey-bg); color:var(--grey); }
+  .tl-empty { font-family:var(--sans); font-size:13px; color:var(--grey); padding:12px 0; display:none; }
+  .tl-empty.visible { display:block; }
 
   .risk-panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:18px 20px; display:grid; grid-template-columns:auto 1fr; gap:24px; align-items:center; }
   @media (max-width:600px){ .risk-panel{ grid-template-columns:1fr; justify-items:center; text-align:center; } }
@@ -89,16 +159,16 @@
   .risk-legend { display:flex; flex-direction:column; gap:10px; }
   .risk-legend-item { display:flex; align-items:center; gap:10px; font-size:13px; }
   .risk-legend-item .swatch { width:12px; height:12px; border-radius:3px; flex-shrink:0; }
-  .risk-legend-item .rlabel { color:var(--grey); font-size:11px; text-transform:uppercase; letter-spacing:0.4px; font-family:var(--mono); min-width:72px; }
-  .risk-legend-item .count { font-family:var(--mono); font-weight:700; font-size:18px; min-width:28px; }
+  .risk-legend-item .rlabel { color:#9CA3AF; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; font-family:var(--mono); min-width:72px; }
+  .risk-legend-item .count { font-family:var(--mono); font-weight:700; font-size:18px; min-width:28px; font-variant-numeric:tabular-nums; }
   .risk-legend-item.critical .count { color:var(--red); }
   .risk-legend-item.high .count { color:var(--amber); }
   .risk-legend-item.medium .count { color:#4A7CB5; }
   .risk-legend-item.total { margin-top:6px; padding-top:10px; border-top:1px solid var(--line); }
   .risk-legend-item.total .count { color:var(--navy); font-size:22px; }
 
-  .footnote{ margin-top:22px; font-size:11px; color:var(--grey); font-family:var(--mono); border-top:1px solid var(--line); padding-top:12px; }
-  .error-banner{ background:var(--red-bg); color:var(--red); border:1px solid #F3C6C4; border-radius:8px; padding:12px 16px; margin-bottom:18px; font-size:12.5px; display:none; }
+  .footnote{ margin-top:22px; font-size:11px; color:var(--grey); font-family:var(--mono); font-weight:500; border-top:1px solid var(--line); padding-top:12px; }
+  .error-banner{ background:var(--red-bg); color:var(--red); border:1px solid #F3C6C4; border-radius:8px; padding:12px 16px; margin-bottom:18px; font-size:13px; font-family:var(--sans); display:none; }
 </style>
 </head>
 <body>
@@ -130,7 +200,7 @@
   <div class="section-title">Track Status</div>
   <div class="tracks" id="trackGrid"></div>
 
-  <div class="section-title">Key Gates &amp; Milestones — chronological</div>
+  <div class="section-title">Key Gates &amp; Milestones</div>
   <div class="timeline" id="timeline"></div>
 
   <div class="section-title">Open Risks</div>
@@ -145,6 +215,10 @@ const SHEET_ID = '1AXrOH5bdHM74t3SVLmDgNDH2VePiHPjCOd40Xx-iF40';
 const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
 const STATUS_COLORS = { green: '#2F8F5B', amber: '#B8790A', red: '#B3261E', grey: '#6B7280' };
+
+let expandedTracks = new Set();
+let gateFilterMode = 'all';
+let gateTrackFilter = '1';
 
 function setSyncStatus(text, isError) {
   document.getElementById('syncStatus').textContent = text;
@@ -180,6 +254,68 @@ async function loadData() {
   }
 }
 
+function escapeHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function textToBullets(text) {
+  if (!text || !String(text).trim()) return [];
+  let raw = String(text).trim();
+
+  const bullets = [];
+  const dashParts = raw.split(/\s*[—–]\s*/);
+
+  dashParts.forEach((part, idx) => {
+    let segment = part.trim();
+    if (!segment) return;
+
+    if (idx > 0) {
+      if (/^blocked\b/i.test(segment)) segment = 'Blocker: ' + segment.replace(/^blocked on\s*/i, '');
+      else if (!/^blocker:/i.test(segment)) segment = 'Blocker: ' + segment;
+      bullets.push(segment);
+      return;
+    }
+
+    const slashParts = segment.split(/\s*\/\s*/);
+    if (slashParts.length > 1) {
+      const prefixMatch = slashParts[0].match(/^(.+?:)\s*(.+)$/);
+      if (prefixMatch) {
+        const prefix = prefixMatch[1];
+        bullets.push(prefix + ' ' + prefixMatch[2].trim());
+        slashParts.slice(1).forEach(sp => {
+          const trimmed = sp.trim();
+          bullets.push(prefix + ' ' + trimmed);
+        });
+      } else {
+        slashParts.forEach(sp => bullets.push(sp.trim()));
+      }
+    } else {
+      const semiParts = segment.split(/\s*;\s*/);
+      if (semiParts.length > 1) semiParts.forEach(sp => bullets.push(sp.trim()));
+      else bullets.push(segment);
+    }
+  });
+
+  return bullets.filter(Boolean);
+}
+
+function bulletsHtml(items, className = 'content-list compact') {
+  if (!items.length) return '';
+  return `<ul class="${className}">${items.map(li => `<li>${escapeHtml(li)}</li>`).join('')}</ul>`;
+}
+
+function toggleTrackCard(card, trackNum) {
+  const isExpanded = card.classList.toggle('expanded');
+  card.classList.toggle('collapsed', !isExpanded);
+  card.querySelector('.track-header').setAttribute('aria-expanded', isExpanded);
+  if (isExpanded) expandedTracks.add(String(trackNum));
+  else expandedTracks.delete(String(trackNum));
+}
+
 /* ── SVG helpers (pure inline, no external libs) ── */
 
 function svgSegmentedRing(segments, opts = {}) {
@@ -192,11 +328,10 @@ function svgSegmentedRing(segments, opts = {}) {
   const total = segments.reduce((s, seg) => s + seg.value, 0) || 1;
   let angle = -90;
   const arcs = segments.filter(s => s.value > 0).map(seg => {
-    const sweep = (seg.value / total) * 360;
     const dash = (seg.value / total) * circ;
     const gap = circ - dash;
     const rot = angle;
-    angle += sweep;
+    angle += (seg.value / total) * 360;
     return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${seg.color}" stroke-width="${stroke}" stroke-linecap="butt" stroke-dasharray="${dash} ${gap}" transform="rotate(${rot} ${cx} ${cy})"/>`;
   }).join('');
   const track = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#EEF0F3" stroke-width="${stroke}"/>`;
@@ -240,6 +375,52 @@ function pctBetween(date, start, end) {
   return Math.max(0, Math.min(100, ((date - start) / (end - start)) * 100));
 }
 
+function gateTrackNum(g) {
+  if (g.Track != null && g.Track !== '') return String(g.Track);
+  if (g.Num != null && g.Num !== '') return String(g.Num);
+  const m = String(g.Name || '').match(/track\s*(\d+)/i);
+  return m ? m[1] : '';
+}
+
+function applyGateFilter() {
+  const cutover = window._cutoverNorm;
+  const rows = document.querySelectorAll('#gateList .tl-row');
+  const empty = document.getElementById('gateEmpty');
+  let visible = 0;
+
+  rows.forEach(row => {
+    const parsed = row.dataset.parsed ? new Date(Number(row.dataset.parsed)) : null;
+    const track = row.dataset.track || '';
+    let show = true;
+
+    if (gateFilterMode === 'before') {
+      show = parsed && cutover ? parsed < cutover : false;
+    } else if (gateFilterMode === 'after') {
+      show = parsed && cutover ? parsed >= cutover : false;
+    } else if (gateFilterMode === 'track') {
+      show = track === gateTrackFilter;
+    }
+
+    row.classList.toggle('hidden', !show);
+    if (show) visible++;
+  });
+
+  empty.classList.toggle('visible', visible === 0);
+}
+
+function onGateFilterChange() {
+  const sel = document.getElementById('gateFilter');
+  const trackSel = document.getElementById('gateTrackFilter');
+  gateFilterMode = sel.value;
+  trackSel.classList.toggle('visible', gateFilterMode === 'track');
+  applyGateFilter();
+}
+
+function onGateTrackFilterChange() {
+  gateTrackFilter = document.getElementById('gateTrackFilter').value;
+  applyGateFilter();
+}
+
 function render(rows) {
   const meta = {};
   rows.filter(r => r.Section === 'META').forEach(r => { meta[r.Name] = r.Detail; });
@@ -256,10 +437,12 @@ function render(rows) {
   const days = Math.round((cutoverStart - today) / 86400000);
   document.getElementById('daysToCutover').textContent = days;
 
+  const heroNote1 = textToBullets(meta['Hero Note 1'] || '');
+  const heroNote2 = textToBullets(meta['Hero Note 2'] || '');
   document.getElementById('heroDetail').innerHTML = `
-    <h2>Production Cutover — ${meta['Cutover Window'] || ''}</h2>
-    <p>${meta['Hero Note 1'] || ''}</p>
-    <p class="warn">${meta['Hero Note 2'] ? '⚠ ' + meta['Hero Note 2'] : ''}</p>
+    <h2>Production Cutover — ${escapeHtml(meta['Cutover Window'] || '')}</h2>
+    ${heroNote1.length ? bulletsHtml(heroNote1) : ''}
+    ${heroNote2.length ? bulletsHtml(heroNote2.map(n => '⚠ ' + n), 'content-list warn') : ''}
   `;
 
   /* 1 — Programme progress ring */
@@ -278,30 +461,43 @@ function render(rows) {
     <div class="ring-label">Track health</div>
   `;
 
-  /* 2 — Track cards with status rings */
+  /* 2 — Collapsible track cards */
   const trackGrid = document.getElementById('trackGrid');
   trackGrid.innerHTML = '';
   tracks.forEach(t => {
+    const num = String(t.Num);
+    const isExpanded = expandedTracks.has(num);
+    const detailBullets = textToBullets(t.Detail);
     const el = document.createElement('div');
-    el.className = `track-card status-${t.Status}`;
+    el.className = `track-card status-${t.Status} ${isExpanded ? 'expanded' : 'collapsed'}`;
+
     el.innerHTML = `
-      <div class="track-ring">${svgStatusRing(t.Status)}</div>
-      <div class="tnum">TRACK ${t.Num}</div>
-      <h3>${t.Name}</h3>
-      <div class="track-body">
-        <span class="pill status-${t.Status}">${(t.Status || '').toUpperCase()}</span>
-        <div class="gate">${t.Detail}</div>
+      <button type="button" class="track-header" aria-expanded="${isExpanded}">
+        <div class="track-header-main">
+          <span class="pill status-${t.Status}">${(t.Status || '').toUpperCase()}</span>
+          <h3>${escapeHtml(t.Name)}</h3>
+        </div>
+        <div class="track-ring">${svgStatusRing(t.Status)}</div>
+        <span class="track-chevron" aria-hidden="true">▼</span>
+      </button>
+      <div class="track-details">
+        <div class="tnum">Track ${escapeHtml(t.Num)}</div>
+        ${detailBullets.length ? bulletsHtml(detailBullets, 'content-list compact gate-list') : '<p class="content-list compact" style="list-style:none;color:#888;">No details</p>'}
       </div>
     `;
+
+    el.querySelector('.track-header').addEventListener('click', () => toggleTrackCard(el, num));
     trackGrid.appendChild(el);
   });
 
-  /* 3 — Horizontal timeline bar + list */
+  /* 3 — Horizontal timeline bar + filterable list */
   const gates = rows.filter(r => r.Section === 'GATE');
   const gateDates = gates.map(g => ({ ...g, parsed: parseSheetDate(g.Date) })).filter(g => g.parsed);
   gateDates.sort((a, b) => a.parsed - b.parsed);
 
   const cutoverNorm = new Date(cutoverStart); cutoverNorm.setHours(0, 0, 0, 0);
+  window._cutoverNorm = cutoverNorm;
+
   const allDates = [...gateDates.map(g => g.parsed), cutoverNorm, today];
   const rangeStart = new Date(Math.min(...allDates.map(d => d.getTime())));
   const rangeEnd = new Date(Math.max(...allDates.map(d => d.getTime())));
@@ -314,7 +510,29 @@ function render(rows) {
   const dotsHtml = gateDates.map(g => {
     const p = pctBetween(g.parsed, rangeStart, rangeEnd);
     const title = `${g.Name} (${g.Date})`;
-    return `<div class="tl-bar-dot status-${g.Status || 'grey'}" style="left:${p}%" title="${title.replace(/"/g, '&quot;')}"></div>`;
+    return `<div class="tl-bar-dot status-${g.Status || 'grey'}" style="left:${p}%" title="${escapeHtml(title)}"></div>`;
+  }).join('');
+
+  const trackNums = [...new Set(gates.map(gateTrackNum).filter(Boolean))].sort((a, b) => Number(a) - Number(b));
+  const trackOptions = (trackNums.length ? trackNums : ['1','2','3','4','5','6'])
+    .map(n => `<option value="${n}"${n === gateTrackFilter ? ' selected' : ''}>Track ${n}</option>`).join('');
+
+  const gateRowsHtml = gates.map(g => {
+    const parsed = parseSheetDate(g.Date);
+    const detailBullets = textToBullets(g.Detail || '');
+    const detailHtml = detailBullets.length
+      ? `<div class="tl-milestone-detail">${bulletsHtml(detailBullets)}</div>`
+      : '';
+    return `
+      <div class="tl-row" data-parsed="${parsed ? parsed.getTime() : ''}" data-track="${escapeHtml(gateTrackNum(g))}">
+        <div class="tl-date">${escapeHtml(g.Date)}</div>
+        <div>
+          <div class="tl-milestone">${escapeHtml(g.Name)}</div>
+          ${detailHtml}
+        </div>
+        <div class="tl-badge status-${g.Status}">${(g.Status || '').toUpperCase()}</div>
+      </div>
+    `;
   }).join('');
 
   const timeline = document.getElementById('timeline');
@@ -338,17 +556,23 @@ function render(rows) {
         <span><i style="background:var(--red);opacity:0.7"></i> Gate — red</span>
       </div>
     </div>
+    <div class="tl-filters">
+      <label for="gateFilter">Filter</label>
+      <select id="gateFilter">
+        <option value="all"${gateFilterMode === 'all' ? ' selected' : ''}>All milestones</option>
+        <option value="before"${gateFilterMode === 'before' ? ' selected' : ''}>Before cutover only</option>
+        <option value="after"${gateFilterMode === 'after' ? ' selected' : ''}>After cutover only</option>
+        <option value="track"${gateFilterMode === 'track' ? ' selected' : ''}>By track</option>
+      </select>
+      <select id="gateTrackFilter" class="${gateFilterMode === 'track' ? 'visible' : ''}">${trackOptions}</select>
+    </div>
+    <div class="tl-list" id="gateList">${gateRowsHtml}</div>
+    <div class="tl-empty" id="gateEmpty">No milestones match this filter.</div>
   `;
-  gates.forEach(g => {
-    const el = document.createElement('div');
-    el.className = 'tl-row';
-    el.innerHTML = `
-      <div class="tl-date">${g.Date}</div>
-      <div class="tl-milestone">${g.Name}</div>
-      <div class="tl-badge status-${g.Status}">${(g.Status || '').toUpperCase()}</div>
-    `;
-    timeline.appendChild(el);
-  });
+
+  document.getElementById('gateFilter').addEventListener('change', onGateFilterChange);
+  document.getElementById('gateTrackFilter').addEventListener('change', onGateTrackFilterChange);
+  applyGateFilter();
 
   /* 4 — Risk donut + legend */
   const riskRows = rows.filter(r => r.Section === 'RISK');

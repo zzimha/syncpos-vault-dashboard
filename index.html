@@ -498,13 +498,21 @@ function parseSortDate(row) {
   return parseSheetDate(row.SortDate);
 }
 
+function formatShortDate(d) {
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: '2-digit' });
+}
+
+function formatListDate(d) {
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+}
+
 function formatGateDisplayDate(row) {
   if (row.Date_fmt) return String(row.Date_fmt);
   if (row.Date != null && row.Date !== '' && !String(row.Date).startsWith('Date(')) {
     return String(row.Date);
   }
   const sortParsed = parseSortDate(row);
-  return sortParsed ? formatShortDate(sortParsed) : '';
+  return sortParsed ? formatListDate(sortParsed) : '';
 }
 
 function markerPosition(pct) {
@@ -527,10 +535,6 @@ function timelineMarkerHtml(type, pos, label, dateStr) {
       </div>
       <span class="tl-marker-line"></span>
     </div>`;
-}
-
-function formatShortDate(d) {
-  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: '2-digit' });
 }
 
 function pctBetween(date, start, end) {

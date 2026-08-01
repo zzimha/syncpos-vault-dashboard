@@ -153,8 +153,19 @@
   }
   .hero-daily-list { display:flex; flex-direction:column; gap:6px; }
   .hero-daily-list .follow-task {
-    max-width:none; width:100%; font-size:11px; padding:6px 10px;
+    max-width:none; width:100%; font-size:12px; font-weight:500; padding:7px 12px;
+    border-radius:6px; background:var(--panel); border:1px solid var(--line); color:var(--slate);
+    filter:none;
   }
+  .hero-daily-list .follow-task:hover { background:#FAFBFC; border-color:#C7D2E8; filter:none; }
+  .hero-daily-list .follow-task.tier-critical,
+  .hero-daily-list .follow-task.tier-high,
+  .hero-daily-list .follow-task.tier-medium { background:var(--panel); }
+  .hero-daily-list .follow-task-text { color:var(--slate); }
+  .hero-daily-list .follow-task.is-checked { opacity:1; background:var(--grey-bg); border-color:var(--line); }
+  .hero-daily-list .follow-task.is-checked .follow-task-text { text-decoration:line-through; color:var(--grey); opacity:1; }
+  .hero-daily-list .follow-task input { border-color:#C4C9D4; background:#fff; }
+  .hero-daily-list .follow-task input:hover { border-color:var(--navy); background:#fff; }
   @media (max-width:760px){
     .hero-detail { flex-direction:column; }
     .hero-daily { max-width:none; width:100%; flex-basis:auto; }

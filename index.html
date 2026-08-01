@@ -165,14 +165,13 @@
   }
   .track-card.expanded .track-chevron { transform:rotate(180deg); }
 
-  .status-dot {
-    display:inline-block; width:11px; height:11px; border-radius:50%; flex-shrink:0;
-    box-shadow:0 0 0 1px rgba(0,0,0,0.06);
+  .status-label {
+    display:inline-block; font-family:var(--mono); font-size:9px; font-weight:600;
+    padding:2px 7px; border-radius:4px; white-space:nowrap; letter-spacing:0.1px;
   }
-  .status-dot.status-green { background:var(--green); }
-  .status-dot.status-amber { background:var(--amber); }
-  .status-dot.status-red { background:var(--red); }
-  .status-dot.status-grey { background:var(--grey); }
+  .status-label.status-green { background:var(--green-bg); color:var(--green); }
+  .status-label.status-amber { background:var(--amber-bg); color:var(--amber); }
+  .status-label.status-red { background:var(--red-bg); color:var(--red); }
 
   .track-meta { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
   .track-owner {
@@ -255,7 +254,7 @@
   }
   .tl-milestone{ font-family:var(--sans); font-size:12px; font-weight:500; color:#1A1D23; line-height:1.25; }
   .tl-owner { font-weight:500; color:var(--grey); font-size:11px; }
-  .tl-badges { display:flex; align-items:center; justify-content:flex-end; min-width:11px; }
+  .tl-badges { display:flex; align-items:center; justify-content:flex-end; min-width:72px; }
   .tl-empty { font-family:var(--sans); font-size:13px; color:var(--grey); padding:12px 0; display:none; }
   .tl-empty.visible { display:block; }
 
@@ -341,6 +340,9 @@ const HERO_SHORT = {
   'Hero Note 1': 'Start on track · end may slip ~1 wk',
   'Hero Note 2': 'Auto-unseal, LDAP Prod, DR & UAT after 9 Aug',
 };
+
+const STATUS_COLORS = { green: '#2F8F5B', amber: '#B8790A', red: '#B3261E', grey: '#6B7280' };
+const STATUS_LABELS = { green: 'Completed', amber: 'In Progress', red: 'Not Started' };
 
 function heroText(name, detail) {
   const d = String(detail || '').trim();
@@ -593,10 +595,10 @@ function formatGateDisplayDate(row) {
   return sortParsed ? formatListDate(sortParsed) : '';
 }
 
-function statusDotHtml(status, title) {
-  const s = status || 'grey';
-  const label = title || s.charAt(0).toUpperCase() + s.slice(1);
-  return `<span class="status-dot status-${s}" title="${escapeHtml(label)}" aria-label="${escapeHtml(label)}"></span>`;
+function statusLabelHtml(status) {
+  const s = status || '';
+  if (!STATUS_LABELS[s]) return '';
+  return `<span class="status-label status-${s}">${STATUS_LABELS[s]}</span>`;
 }
 
 function markerPosition(pct) {
@@ -737,7 +739,7 @@ function render(rows) {
         <div class="track-header-main">
           <h3>${escapeHtml(t.Name)}</h3>
           <div class="track-meta">
-            ${statusDotHtml(t.Status)}
+            ${statusLabelHtml(t.Status)}
             ${ownerHtml}
           </div>
         </div>
@@ -780,10 +782,10 @@ function render(rows) {
   const cutoverPct = pctBetween(cutoverNorm, rangeStart, rangeEnd);
   const todayPos = markerPosition(todayPct);
   const cutoverPos = markerPosition(cutoverPct);
-  const dotsHtml = gateDates.map(g => {
+  const dotsHtml = gateDates.filter(g => g.Status && g.Status !== 'grey').map(g => {
     const p = markerPosition(pctBetween(g.parsed, rangeStart, rangeEnd));
-    const title = `${g.Name} (${formatGateDisplayDate(g) || ''})`;
-    return `<div class="tl-bar-dot status-${g.Status || 'grey'}" style="left:${p}%" title="${escapeHtml(title)}"></div>`;
+    const label = `${g.Name} (${formatGateDisplayDate(g) || ''}) — ${STATUS_LABELS[g.Status] || ''}`;
+    return `<div class="tl-bar-dot status-${g.Status}" style="left:${p}%" title="${escapeHtml(label)}"></div>`;
   }).join('');
 
   const trackOptions = ['all', '1', '2', '3', '4', '5', '6']
@@ -794,13 +796,13 @@ function render(rows) {
     const displayDate = formatGateDisplayDate(g);
     const owner = ownerName(g);
     const ownerInline = owner ? `<span class="tl-owner"> · ${escapeHtml(owner)}</span>` : '';
-    const status = g.Status || 'grey';
+    const status = g.Status || '';
     const detail = g.Detail ? ` title="${escapeHtml(g.Detail)}"` : '';
     return `
       <div class="tl-row" data-parsed="${parsed ? parsed.getTime() : ''}" data-track="${escapeHtml(gateTrackNum(g))}"${detail}>
         <div class="tl-date">${escapeHtml(displayDate || '—')}</div>
         <div class="tl-milestone">${escapeHtml(g.Name)}${ownerInline}</div>
-        <div class="tl-badges">${statusDotHtml(status, g.Name)}</div>
+        <div class="tl-badges">${statusLabelHtml(status)}</div>
       </div>
     `;
   }).join('');
@@ -838,9 +840,9 @@ function render(rows) {
     <div class="tl-bar-legend">
       <span><i style="background:var(--navy)"></i> Today</span>
       <span><i style="background:var(--cutover-orange)"></i> Cutover</span>
-      <span><i style="background:var(--green)"></i> Green</span>
-      <span><i style="background:var(--amber)"></i> Amber</span>
-      <span><i style="background:var(--red)"></i> Red</span>
+      <span class="status-label status-green">Completed</span>
+      <span class="status-label status-amber">In Progress</span>
+      <span class="status-label status-red">Not Started</span>
     </div>
   `;
 

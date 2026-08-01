@@ -112,7 +112,7 @@
     color:#FFB4AB; letter-spacing:0.01em;
   }
 
-  .hero { padding:16px 20px; margin-bottom:8px; display:grid; grid-template-columns:auto auto 1fr; gap:20px; align-items:center; }
+  .hero { padding:18px 22px; margin-bottom:8px; display:grid; grid-template-columns:auto auto 1fr; gap:22px; align-items:center; }
   @media (max-width:760px){ .hero{ grid-template-columns:1fr; } .countdown,.hero-ring{ border-right:none !important; padding-right:0 !important; border-bottom:1px solid var(--line); padding-bottom:12px; } }
   .countdown { text-align:center; padding-right:20px; border-right:1px solid var(--line); min-width:120px; }
   .countdown .num {
@@ -133,8 +133,12 @@
   @keyframes hero-ring-load {
     to { stroke-dashoffset: 0; }
   }
-  .hero-detail h2 { font-family:var(--sans); font-size:15px; font-weight:700; margin-bottom:6px; line-height:1.35; color:var(--navy); }
-  .hero-warn { font-family:var(--sans); font-size:13px; color:var(--red); line-height:1.45; margin-top:6px; padding:6px 10px; background:var(--red-bg); border-radius:6px; border-left:3px solid var(--red); }
+  .hero-detail h2 { font-family:var(--sans); font-size:18px; font-weight:700; margin-bottom:8px; line-height:1.35; color:var(--navy); }
+  .hero-note {
+    font-family:var(--sans); font-size:14px; color:#444; line-height:1.5; margin-top:8px;
+    padding:9px 12px; background:var(--grey-bg); border-radius:6px; border-left:3px solid var(--amber);
+  }
+  .hero-note-icon { color:var(--amber); font-weight:700; margin-right:5px; }
 
   .dash-tabs {
     display:flex; gap:4px; margin-bottom:8px; padding:4px;
@@ -226,6 +230,7 @@
   .status-label.status-green { background:var(--green-bg); color:var(--green); }
   .status-label.status-amber { background:var(--amber-bg); color:var(--amber); }
   .status-label.status-red { background:var(--red-bg); color:var(--red); }
+  .status-label.status-grey { background:var(--grey-bg); color:var(--grey); }
 
   .track-meta { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
   .track-owner {
@@ -252,8 +257,19 @@
   .timeline{ padding:10px 12px; }
   .tl-bar-wrap { margin-bottom:8px; padding:22px 8px 4px; }
   .tl-bar-range { display:flex; justify-content:space-between; font-family:var(--mono); font-size:10px; font-weight:500; color:var(--grey); margin-top:10px; padding:0 2px; }
-  .tl-bar { position:relative; height:10px; background:var(--grey-bg); border-radius:99px; overflow:visible; }
-  .tl-bar-fill { position:absolute; left:0; top:0; height:100%; border-radius:99px; background:linear-gradient(90deg, var(--green) 0%, var(--amber) 55%, var(--red) 100%); opacity:0.25; }
+  .tl-bar { position:relative; height:10px; background:transparent; border-radius:99px; overflow:visible; }
+  .tl-bar-past {
+    position:absolute; left:0; top:0; height:100%; z-index:0;
+    background:#D5DAE3; border-radius:99px 0 0 99px;
+  }
+  .tl-bar-past.is-full { border-radius:99px; }
+  .tl-bar-future {
+    position:absolute; top:0; height:100%; z-index:0;
+    background-color:#F5F6F8;
+    background-image:repeating-linear-gradient(90deg, #E3E6EC 0, #E3E6EC 5px, transparent 5px, transparent 10px);
+    border-radius:0 99px 99px 0;
+  }
+  .tl-bar-future.is-full { border-radius:99px; background-image:none; background-color:#E3E6EC; }
   .tl-marker { position:absolute; top:50%; z-index:3; pointer-events:none; }
   .tl-marker.align-center { transform:translate(-50%,-50%); }
   .tl-marker.align-left { transform:translate(0,-50%); }
@@ -273,7 +289,7 @@
   .tl-bar-cutover .tl-marker-callout { top:14px; bottom:auto; }
   .tl-bar-cutover .tl-marker-line { width:3px; height:26px; background:var(--cutover-orange); }
   .tl-bar-cutover .tl-marker-label { color:var(--cutover-orange); }
-  .tl-bar-dot { position:absolute; top:50%; width:10px; height:10px; border-radius:50%; border:2px solid var(--panel); transform:translate(-50%,-50%); z-index:1; box-shadow:0 0 0 1px var(--line); }
+  .tl-bar-dot { position:absolute; top:50%; width:10px; height:10px; border-radius:50%; border:2px solid var(--panel); transform:translate(-50%,-50%); z-index:2; box-shadow:0 0 0 1px var(--line); }
   .tl-bar-dot.status-green{ background:var(--green); }
   .tl-bar-dot.status-amber{ background:var(--amber); }
   .tl-bar-dot.status-red{ background:var(--red); }
@@ -457,12 +473,12 @@ const SHEET_ID = '1BZaSYjeHYIHbht3BDGm00BUbkK7bV6bUJN4cDKyL77k';
 const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
 const HERO_SHORT = {
-  'Cutover Window': 'Cutover 9 Aug · * may delay to ~27 Aug',
+  'Cutover Window': 'Cutover 9 Aug (may delay to ~27 Aug)***',
   'Hero Note 2': 'Auto-unseal, LDAP Prod, DR & UAT after 9 Aug',
 };
 
 const STATUS_COLORS = { green: '#2F8F5B', amber: '#B8790A', red: '#B3261E', grey: '#6B7280' };
-const STATUS_LABELS = { green: 'Completed', amber: 'In Progress', red: 'Not Started' };
+const STATUS_LABELS = { green: 'Completed', amber: 'In Progress', red: 'Not Started', grey: 'Scheduled' };
 
 function heroText(name, detail) {
   if (HERO_SHORT[name]) return HERO_SHORT[name];
@@ -951,12 +967,13 @@ function render(rows) {
 
   const heroTitle = heroText('Cutover Window', meta['Cutover Window']);
   const heroNote2 = heroText('Hero Note 2', meta['Hero Note 2']);
-  const warnLine = heroNote2
-    ? `<p class="hero-warn">${escapeHtml(heroNote2.startsWith('⚠') ? heroNote2 : '⚠ ' + heroNote2)}</p>`
+  const noteText = heroNote2 ? heroNote2.replace(/^⚠\s*/, '').trim() : '';
+  const noteLine = noteText
+    ? `<p class="hero-note"><span class="hero-note-icon" aria-hidden="true">⚠</span>${escapeHtml(noteText)}</p>`
     : '';
   document.getElementById('heroDetail').innerHTML = `
     <h2>${escapeHtml(heroTitle)}</h2>
-    ${warnLine}
+    ${noteLine}
   `;
 
   /* 1 — Programme progress ring */
@@ -1044,11 +1061,17 @@ function render(rows) {
   const cutoverPct = pctBetween(cutoverNorm, rangeStart, rangeEnd);
   const todayPos = markerPosition(todayPct);
   const cutoverPos = markerPosition(cutoverPct);
-  const dotsHtml = gateDates.filter(g => g.Status && g.Status !== 'grey').map(g => {
+  const dotsHtml = gateDates.filter(g => g.Status).map(g => {
     const p = markerPosition(pctBetween(g.parsed, rangeStart, rangeEnd));
-    const label = `${g.Name} (${formatGateDisplayDate(g) || ''}) — ${STATUS_LABELS[g.Status] || ''}`;
+    const statusLabel = STATUS_LABELS[g.Status] || g.Status;
+    const label = `${g.Name} (${formatGateDisplayDate(g) || ''}) — ${statusLabel}`;
     return `<div class="tl-bar-dot status-${g.Status}" style="left:${p}%" title="${escapeHtml(label)}"></div>`;
   }).join('');
+
+  const pastWidth = Math.max(0, Math.min(100, todayPos));
+  const futureWidth = Math.max(0, 100 - pastWidth);
+  const pastClass = pastWidth >= 100 ? 'tl-bar-past is-full' : 'tl-bar-past';
+  const futureClass = futureWidth >= 100 ? 'tl-bar-future is-full' : 'tl-bar-future';
 
   const trackOptions = ['all', '1', '2', '3', '4', '5', '6']
     .map(n => `<option value="${n}"${n === gateTrackFilter ? ' selected' : ''}>${n === 'all' ? 'All Tracks' : 'Track ' + n}</option>`).join('');
@@ -1075,7 +1098,8 @@ function render(rows) {
   timeline.innerHTML = `
     <div class="tl-bar-wrap">
       <div class="tl-bar">
-        <div class="tl-bar-fill" style="width:${Math.max(todayPos, cutoverPos)}%"></div>
+        <div class="${pastClass}" style="width:${pastWidth}%"></div>
+        <div class="${futureClass}" style="left:${pastWidth}%; width:${futureWidth}%"></div>
         ${dotsHtml}
         ${timelineMarkerHtml('today', todayPos, 'TODAY', formatShortDate(today))}
         ${timelineMarkerHtml('cutover', cutoverPos, 'CUTOVER', formatShortDate(cutoverNorm))}
@@ -1112,6 +1136,7 @@ function render(rows) {
       <span class="status-label status-green">Completed</span>
       <span class="status-label status-amber">In Progress</span>
       <span class="status-label status-red">Not Started</span>
+      <span class="status-label status-grey">Scheduled</span>
     </div>
   `;
 

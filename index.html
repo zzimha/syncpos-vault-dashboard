@@ -9,7 +9,8 @@
   :root {
     --navy:#1F3864; --slate:#2E4057; --bg:#F5F6F8; --panel:#FFFFFF; --line:#E3E6EC;
     --green:#2F8F5B; --green-bg:#E7F5EC; --amber:#B8790A; --amber-bg:#FDF3DE;
-    --red:#B3261E; --red-bg:#FCE8E6; --grey:#6B7280; --grey-bg:#EEF0F3;
+    --red:#B3261E; --red-bg:#FCE8E6; --cutover-orange:#E67E22;
+    --grey:#6B7280; --grey-bg:#EEF0F3;
     --mono:'IBM Plex Mono',monospace; --sans:'Poppins',sans-serif;
     --display:'Poppins',sans-serif;
   }
@@ -76,6 +77,7 @@
   .hero-ring svg { display:block; margin:0 auto; }
   .hero-detail h2 { font-family:var(--sans); font-size:15px; font-weight:600; margin-bottom:8px; line-height:1.35; }
   .hero-detail .content-list { font-family:var(--sans); font-size:14px; color:#333; line-height:1.5; margin-bottom:6px; }
+  .hero-warn { font-family:var(--sans); font-size:14px; color:var(--red); line-height:1.5; margin-top:6px; }
 
   .section-title {
     font-size:10.5px; text-transform:uppercase; letter-spacing:1.3px; color:#9CA3AF;
@@ -143,6 +145,12 @@
   .pill.status-amber{ background:var(--amber-bg); color:var(--amber); }
   .pill.status-red{ background:var(--red-bg); color:var(--red); }
 
+  .track-status-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:6px; }
+  .track-card.collapsed .track-status-row { margin-bottom:4px; }
+  .track-owner {
+    font-family:var(--mono); font-size:10px; font-weight:500; color:var(--grey);
+  }
+
   .track-details {
     display:none; padding:0 16px 14px 16px; border-top:1px solid #F0F1F4;
   }
@@ -173,15 +181,15 @@
   .tl-bar-today .tl-marker-line { width:2px; height:28px; background:var(--navy); }
   .tl-bar-today .tl-marker-label { color:var(--navy); }
   .tl-bar-cutover .tl-marker-callout { top:14px; bottom:auto; }
-  .tl-bar-cutover .tl-marker-line { width:3px; height:26px; background:var(--red); }
-  .tl-bar-cutover .tl-marker-label { color:var(--red); }
+  .tl-bar-cutover .tl-marker-line { width:3px; height:26px; background:var(--cutover-orange); }
+  .tl-bar-cutover .tl-marker-label { color:var(--cutover-orange); }
   .tl-bar-dot { position:absolute; top:50%; width:10px; height:10px; border-radius:50%; border:2px solid var(--panel); transform:translate(-50%,-50%); z-index:1; box-shadow:0 0 0 1px var(--line); }
   .tl-bar-dot.status-green{ background:var(--green); }
   .tl-bar-dot.status-amber{ background:var(--amber); }
   .tl-bar-dot.status-red{ background:var(--red); }
   .tl-bar-dot.status-grey{ background:var(--grey); }
   .tl-bar-legend {
-    display:inline-flex; flex-wrap:wrap; gap:10px 16px; margin-top:16px;
+    display:inline-flex; flex-wrap:wrap; gap:10px 16px; margin-top:18px;
     font-family:var(--mono); font-size:10px; font-weight:500; color:var(--slate);
     background:var(--grey-bg); border:1px solid var(--line);
     border-radius:8px; padding:10px 14px;
@@ -214,7 +222,15 @@
     font-variant-numeric:tabular-nums; padding-right:8px; min-width:4.5em;
   }
   .tl-milestone{ font-family:var(--sans); font-size:14px; font-weight:600; color:#1A1D23; line-height:1.35; margin-bottom:4px; }
+  .tl-owner { font-weight:500; color:var(--grey); font-size:13px; }
   .tl-milestone-detail { margin-top:2px; }
+  .tl-badges { display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+  .tl-chase {
+    font-family:var(--mono); font-size:9px; font-weight:600; padding:3px 8px;
+    border-radius:4px; white-space:nowrap; letter-spacing:0.2px;
+  }
+  .tl-chase.status-amber { color:var(--amber); background:var(--amber-bg); }
+  .tl-chase.status-red { color:var(--red); background:var(--red-bg); }
   .tl-badge{
     font-family:var(--mono); font-size:10px; font-weight:700; padding:3px 9px;
     border-radius:4px; white-space:nowrap; letter-spacing:0.3px;
@@ -267,7 +283,7 @@
         <span class="refresh-icon" aria-hidden="true">↻</span>
         <span>Refresh now</span>
       </button>
-      <span class="edit-link">✎ <a href="https://docs.google.com/spreadsheets/d/1mPZrtR8TY0InLexpg9xE2phBjNiVx1lcc7hEhKsyMVU/edit" target="_blank">Edit source sheet</a></span>
+      <span class="edit-link">✎ <a href="https://docs.google.com/spreadsheets/d/1EWSX-LsXjh-hV55E3SSNpqS9FTBXpKlGnuzW15-J5Dc/edit?usp=sharing" target="_blank">Edit source sheet</a></span>
     </div>
   </header>
 
@@ -296,7 +312,7 @@
 </div>
 
 <script>
-const SHEET_ID = '1mPZrtR8TY0InLexpg9xE2phBjNiVx1lcc7hEhKsyMVU';
+const SHEET_ID = '1EWSX-LsXjh-hV55E3SSNpqS9FTBXpKlGnuzW15-J5Dc';
 const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
 const STATUS_COLORS = { green: '#2F8F5B', amber: '#B8790A', red: '#B3261E', grey: '#6B7280' };
@@ -477,28 +493,32 @@ function svgStatusRing(status, size = 44) {
   </svg>`;
 }
 
-function parseSheetDate(val) {
+/** Parse SortDate only — YYYY-MM-DD plain text or legacy gviz Date(y,m,d). */
+function parseSortDateValue(val) {
   if (val == null || val === '') return null;
-  const str = String(val);
-  const m = str.match(/^Date\((\d+),(\d+),(\d+)\)$/);
-  if (m) {
-    const d = new Date(+m[1], +m[2], +m[3]);
+  const str = String(val).trim();
+  const legacy = str.match(/^Date\((\d+),(\d+),(\d+)\)$/);
+  if (legacy) {
+    const d = new Date(+legacy[1], +legacy[2], +legacy[3]);
     d.setHours(0, 0, 0, 0);
     return d;
   }
-  const d = new Date(val);
-  if (isNaN(d)) return null;
-  d.setHours(0, 0, 0, 0);
-  return d;
+  const iso = str.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (iso) {
+    const d = new Date(+iso[1], +iso[2] - 1, +iso[3]);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+  return null;
 }
 
 function parseSortDate(row) {
   if (!row) return null;
   if (row.SortDate_fmt) {
-    const d = new Date(row.SortDate_fmt);
-    if (!isNaN(d)) { d.setHours(0, 0, 0, 0); return d; }
+    const fromFmt = parseSortDateValue(row.SortDate_fmt);
+    if (fromFmt) return fromFmt;
   }
-  return parseSheetDate(row.SortDate);
+  return parseSortDateValue(row.SortDate);
 }
 
 function formatShortDate(d) {
@@ -509,21 +529,25 @@ function formatListDate(d) {
   return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 }
 
-function normalizeListDateText(text) {
-  const t = String(text ?? '').trim();
-  if (!t) return '';
-  // Strip trailing year if present (e.g. "3 Aug 26" → "3 Aug")
-  const withoutYear = t.replace(/^(\d{1,2}\s+[A-Za-z]{3})\s+\d{2,4}$/, '$1');
-  return withoutYear;
+function ownerName(row) {
+  const o = row?.Owner;
+  if (o == null || o === '') return '';
+  return String(o).trim();
 }
 
+/** Display-only: DisplayDate text from sheet. SortDate is never shown here. */
 function formatGateDisplayDate(row) {
-  if (row.Date_fmt) return normalizeListDateText(row.Date_fmt);
-  if (row.Date != null && row.Date !== '' && !String(row.Date).startsWith('Date(')) {
-    return normalizeListDateText(String(row.Date));
+  const raw = row.DisplayDate_fmt ?? row.DisplayDate;
+  if (raw != null && raw !== '' && !String(raw).startsWith('Date(')) {
+    return String(raw).trim();
   }
   const sortParsed = parseSortDate(row);
   return sortParsed ? formatListDate(sortParsed) : '';
+}
+
+function chaseBadgeHtml(status, owner) {
+  if (!owner || (status !== 'red' && status !== 'amber')) return '';
+  return `<span class="tl-chase status-${status}">🔔 Chase ${escapeHtml(owner)}</span>`;
 }
 
 function markerPosition(pct) {
@@ -554,17 +578,10 @@ function pctBetween(date, start, end) {
 }
 
 function riskCount(row) {
-  const raw = row.Value ?? '';
-  if (raw !== '' && raw != null) {
-    if (typeof raw === 'number') return raw;
-    const n = Number(raw);
-    if (!isNaN(n)) return n;
-  }
-  if (row.Value_fmt) {
-    const f = Number(row.Value_fmt);
-    if (!isNaN(f)) return f;
-  }
-  return 0;
+  const raw = row.Value;
+  if (raw === '' || raw == null) return 0;
+  const n = typeof raw === 'number' ? raw : Number(raw);
+  return isNaN(n) ? 0 : Math.round(n);
 }
 
 function gateTrackNum(g) {
@@ -615,30 +632,25 @@ function onGateTrackFilterChange() {
 function render(rows) {
   const meta = {};
   rows.filter(r => r.Section === 'META').forEach(r => { meta[r.Name] = r.Detail; });
-  const cutoverDateRaw = rows.find(r => r.Section === 'META' && r.Name === 'Cutover Window');
-
-  // Countdown — SortDate on Cutover Window META row (fallback: legacy Date column)
+  // Countdown — SortDate on Cutover Window META row only
   let cutoverStart = new Date('2026-08-09');
-  const dateCell = rows.find(r => r.Section === 'META' && r.Name === 'Cutover Window');
-  const cutoverParsed = dateCell ? parseSortDate(dateCell) : null;
+  const cutoverRow = rows.find(r => r.Section === 'META' && r.Name === 'Cutover Window');
+  const cutoverParsed = cutoverRow ? parseSortDate(cutoverRow) : null;
   if (cutoverParsed) cutoverStart = cutoverParsed;
-  else if (dateCell && dateCell.Date) {
-    const d = parseSheetDate(dateCell.Date);
-    if (d) cutoverStart = d;
-  }
   const today = new Date(); today.setHours(0,0,0,0);
   const days = Math.round((cutoverStart - today) / 86400000);
   document.getElementById('daysToCutover').textContent = days;
 
-  const heroCopy = {
-    title: '9–20 Aug 2026 (end date unconfirmed, may shift to ~27 Aug)',
-    note1: 'Per Hazmei: end date may push a week. Start date (9 Aug) not at risk — pending Prabodha\'s confirmation.',
-    note2: '⚠️ Auto-unseal, LDAP (Prod), DR validation, and UAT sign-off are all estimated to land after 9 Aug.',
-  };
+  const heroTitle = meta['Cutover Window'] || '9–20 Aug 2026 (end date unconfirmed, may shift to ~27 Aug)';
+  const heroNote1 = meta['Hero Note 1'] || '';
+  const heroNote2 = meta['Hero Note 2'] || '';
+  const warnLine = heroNote2
+    ? `<p class="hero-warn">${escapeHtml(heroNote2.startsWith('⚠') ? heroNote2 : '⚠️ ' + heroNote2)}</p>`
+    : '';
   document.getElementById('heroDetail').innerHTML = `
-    <h2>Production Cutover — ${escapeHtml(heroCopy.title)}</h2>
-    ${bulletsHtml([heroCopy.note1], 'content-list')}
-    ${bulletsHtml([heroCopy.note2], 'content-list', true)}
+    <h2>Production Cutover — ${escapeHtml(heroTitle)}</h2>
+    ${heroNote1 ? bulletsHtml([heroNote1], 'content-list') : ''}
+    ${warnLine}
   `;
 
   /* 1 — Programme progress ring */
@@ -668,10 +680,16 @@ function render(rows) {
     el.className = `track-card status-${t.Status} ${isExpanded ? 'expanded' : 'collapsed'}`;
     el.dataset.trackNum = num;
 
+    const owner = ownerName(t);
+    const ownerHtml = owner ? `<span class="track-owner">→ ${escapeHtml(owner)}</span>` : '';
+
     el.innerHTML = `
       <button type="button" class="track-header" aria-expanded="${isExpanded}">
         <div class="track-header-main">
-          <span class="pill status-${t.Status}">${(t.Status || '').toUpperCase()}</span>
+          <div class="track-status-row">
+            <span class="pill status-${t.Status}">${(t.Status || '').toUpperCase()}</span>
+            ${ownerHtml}
+          </div>
           <h3>${escapeHtml(t.Name)}</h3>
         </div>
         <div class="track-ring">${svgStatusRing(t.Status)}</div>
@@ -715,7 +733,7 @@ function render(rows) {
   const cutoverPos = markerPosition(cutoverPct);
   const dotsHtml = gateDates.map(g => {
     const p = markerPosition(pctBetween(g.parsed, rangeStart, rangeEnd));
-    const title = `${g.Name} (${formatGateDisplayDate(g) || g.SortDate_fmt || ''})`;
+    const title = `${g.Name} (${formatGateDisplayDate(g) || ''})`;
     return `<div class="tl-bar-dot status-${g.Status || 'grey'}" style="left:${p}%" title="${escapeHtml(title)}"></div>`;
   }).join('');
 
@@ -729,14 +747,20 @@ function render(rows) {
       ? `<div class="tl-milestone-detail">${bulletsHtml(detailBullets)}</div>`
       : '';
     const displayDate = formatGateDisplayDate(g);
+    const owner = ownerName(g);
+    const ownerInline = owner ? `<span class="tl-owner"> · ${escapeHtml(owner)}</span>` : '';
+    const status = g.Status || 'grey';
     return `
       <div class="tl-row" data-parsed="${parsed ? parsed.getTime() : ''}" data-track="${escapeHtml(gateTrackNum(g))}">
         <div class="tl-date">${escapeHtml(displayDate)}</div>
         <div>
-          <div class="tl-milestone">${escapeHtml(g.Name)}</div>
+          <div class="tl-milestone">${escapeHtml(g.Name)}${ownerInline}</div>
           ${detailHtml}
         </div>
-        <div class="tl-badge status-${g.Status}">${(g.Status || '').toUpperCase()}</div>
+        <div class="tl-badges">
+          <span class="tl-badge status-${status}">${status.toUpperCase()}</span>
+          ${chaseBadgeHtml(status, owner)}
+        </div>
       </div>
     `;
   }).join('');
@@ -753,13 +777,6 @@ function render(rows) {
       <div class="tl-bar-range">
         <span>${formatShortDate(rangeStart)}</span>
         <span>${formatShortDate(rangeEnd)}</span>
-      </div>
-      <div class="tl-bar-legend">
-        <span><i style="background:var(--navy)"></i> Today</span>
-        <span><i style="background:var(--red)"></i> Cutover start</span>
-        <span><i style="background:var(--green)"></i> Gate — green</span>
-        <span><i style="background:var(--amber)"></i> Gate — amber</span>
-        <span><i style="background:var(--red);opacity:0.7"></i> Gate — red</span>
       </div>
     </div>
     <div class="tl-filters">
@@ -778,6 +795,13 @@ function render(rows) {
     </div>
     <div class="tl-list" id="gateList">${gateRowsHtml}</div>
     <div class="tl-empty" id="gateEmpty">No milestones match this filter.</div>
+    <div class="tl-bar-legend">
+      <span><i style="background:var(--navy)"></i> Today</span>
+      <span><i style="background:var(--cutover-orange)"></i> Cutover start</span>
+      <span><i style="background:var(--green)"></i> Gate — green</span>
+      <span><i style="background:var(--amber)"></i> Gate — amber</span>
+      <span><i style="background:var(--red)"></i> Gate — red</span>
+    </div>
   `;
 
   document.getElementById('gateTimingFilter').addEventListener('change', onGateCutoverFilterChange);

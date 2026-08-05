@@ -567,7 +567,7 @@
         <span>Refresh</span>
       </button>
       <div class="sync-footer">
-        <a class="header-link" href="https://docs.google.com/spreadsheets/d/1BZaSYjeHYIHbht3BDGm00BUbkK7bV6bUJN4cDKyL77k/edit?usp=sharing" target="_blank">Edit sheet</a>
+        <a class="header-link" href="https://docs.google.com/spreadsheets/d/1Caaa0C7_WzUqItN8A7OfM5ZngHKDkLgTEgZhjVjHhpc/edit?usp=sharing" target="_blank">Edit sheet</a>
         <div class="sync-status is-loading" id="syncStatus">
           <div class="sync-status-row">
             <span class="sync-label">Connecting</span>
@@ -620,7 +620,7 @@
 </div>
 
 <script>
-const SHEET_ID = '1BZaSYjeHYIHbht3BDGm00BUbkK7bV6bUJN4cDKyL77k';
+const SHEET_ID = '1Caaa0C7_WzUqItN8A7OfM5ZngHKDkLgTEgZhjVjHhpc';
 const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
 const HERO_SHORT = {
@@ -629,9 +629,7 @@ const HERO_SHORT = {
 };
 
 /** Track Num → status override when sheet lags behind reality */
-const TRACK_STATUS_OVERRIDE = {
-  '2': 'amber',
-};
+const TRACK_STATUS_OVERRIDE = {};
 
 const STATUS_COLORS = { green: '#2F8F5B', amber: '#B8790A', red: '#B3261E', grey: '#6B7280' };
 const STATUS_LABELS = { green: 'Completed', amber: 'In Progress', red: 'Not Started', grey: 'Scheduled' };

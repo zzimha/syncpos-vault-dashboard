@@ -661,6 +661,7 @@ let riskPriorityFilter = 'all';
 let riskTrackFilter = 'all';
 let followOwnerFilter = 'all';
 let followPriorityFilter = 'critical';
+let cachedFollowUpAll = [];
 let activeTab = 'programme';
 
 function switchTab(tab) {
@@ -1281,19 +1282,21 @@ function pickBestPerTrack(items) {
 
 function pickHeroDailyTasks(allItems) {
   const eligible = allItems.filter(i => heroDailyItemMatches(i) && i.trackNum);
-  const byTrack = pickBestPerTrack(eligible);
-  const unchecked = byTrack.filter(i => !isFollowTaskDone(i.key));
-  const picked = [...unchecked.slice(0, 5)];
-  if (picked.length < 3) {
-    const checked = byTrack.filter(i => isFollowTaskDone(i.key));
-    for (const item of checked) {
-      if (picked.length >= 5) break;
-      if (picked.some(p => p.trackNum === item.trackNum)) continue;
-      picked.push(item);
-    }
+  return pickBestPerTrack(eligible)
+    .sort((a, b) => followTrackSortKey(a) - followTrackSortKey(b))
+    .slice(0, 5);
+}
+
+function refreshHeroDailySection() {
+  const tasks = pickHeroDailyTasks(cachedFollowUpAll);
+  const existing = document.getElementById('heroDaily');
+  if (!tasks.length) {
+    if (existing) existing.remove();
+    return;
   }
-  picked.sort((a, b) => followTrackSortKey(a) - followTrackSortKey(b));
-  return picked.slice(0, 5);
+  const html = renderHeroDailySection(tasks);
+  if (existing) existing.outerHTML = html;
+  else document.getElementById('heroDetail')?.insertAdjacentHTML('beforeend', html);
 }
 
 function renderHeroDailyTask(item) {
@@ -1490,6 +1493,7 @@ function handleFollowTaskToggle(input) {
   if (row) row.classList.toggle('is-done', done);
   setFollowTaskDone(key, done);
   syncFollowTaskUI(key, done);
+  refreshHeroDailySection();
   updateFollowCounts();
 }
 
@@ -1583,7 +1587,8 @@ function render(rows) {
     ? `<p class="hero-note"><span class="hero-note-icon" aria-hidden="true">⚠</span>${escapeHtml(noteText)}</p>`
     : '';
   const followUps = buildFollowUpItems(rows);
-  const heroDailyTasks = pickHeroDailyTasks(followUps.all);
+  cachedFollowUpAll = followUps.all;
+  const heroDailyTasks = pickHeroDailyTasks(cachedFollowUpAll);
   document.getElementById('heroDetail').innerHTML = `
     <div class="hero-main">
       <h2>${escapeHtml(heroTitle)}</h2>

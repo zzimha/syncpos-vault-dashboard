@@ -146,6 +146,7 @@
   .hero-note-icon { color:var(--amber); font-weight:700; margin-right:5px; }
   .hero-daily {
     flex:0 1 240px; min-width:210px; max-width:280px;
+    position:relative; z-index:2;
   }
   .hero-daily-label {
     font-family:var(--sans); font-size:13px; font-weight:700; color:var(--navy);
@@ -155,16 +156,19 @@
   .hero-daily-list .follow-task {
     max-width:none; width:100%; font-size:12px; font-weight:500; padding:7px 12px;
     border-radius:6px; background:#fff; border:1px solid var(--line); color:var(--navy);
-    filter:none;
+    filter:none; cursor:pointer; position:relative; z-index:1;
   }
   .hero-daily-list .follow-task:hover { background:#FAFBFC; border-color:#C7D2E8; filter:none; }
   .hero-daily-list .follow-task.tier-critical,
   .hero-daily-list .follow-task.tier-high,
   .hero-daily-list .follow-task.tier-medium { background:#fff; }
-  .hero-daily-list .follow-task-text { color:var(--navy); }
+  .hero-daily-list .follow-task-text { color:var(--navy); pointer-events:none; flex:1; min-width:0; }
   .hero-daily-list .follow-task.is-checked { opacity:1; background:var(--grey-bg); border-color:var(--line); }
   .hero-daily-list .follow-task.is-checked .follow-task-text { text-decoration:line-through; color:var(--grey); opacity:1; }
-  .hero-daily-list .follow-task input { border-color:#C4C9D4; background:#fff; }
+  .hero-daily-list .follow-task input {
+    border-color:#C4C9D4; background:#fff; width:18px; height:18px;
+    pointer-events:auto; flex-shrink:0;
+  }
   .hero-daily-list .follow-task input:hover { border-color:var(--navy); background:#fff; }
   @media (max-width:760px){
     .hero-detail { flex-direction:column; }
@@ -567,7 +571,7 @@
         <span>Refresh</span>
       </button>
       <div class="sync-footer">
-        <a class="header-link" href="https://docs.google.com/spreadsheets/d/1Caaa0C7_WzUqItN8A7OfM5ZngHKDkLgTEgZhjVjHhpc/edit?usp=sharing" target="_blank">Edit sheet</a>
+        <a class="header-link" href="https://docs.google.com/spreadsheets/d/1mnlM2IlkEqvU-n9yRminEwCaiXxOwWSyesVksX0DdYY/edit?usp=sharing" target="_blank">Edit sheet</a>
         <div class="sync-status is-loading" id="syncStatus">
           <div class="sync-status-row">
             <span class="sync-label">Connecting</span>
@@ -620,7 +624,7 @@
 </div>
 
 <script>
-const SHEET_ID = '1Caaa0C7_WzUqItN8A7OfM5ZngHKDkLgTEgZhjVjHhpc';
+const SHEET_ID = '1mnlM2IlkEqvU-n9yRminEwCaiXxOwWSyesVksX0DdYY';
 const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
 const HERO_SHORT = {
@@ -1463,18 +1467,26 @@ function handleFollowUpClick(e) {
   }
 }
 
+function handleFollowTaskToggle(input) {
+  const key = input.closest('[data-follow-key]')?.dataset.followKey;
+  if (!key) return;
+  const done = input.checked;
+  const task = input.closest('.follow-task');
+  if (task) task.classList.toggle('is-checked', done);
+  const row = input.closest('.follow-row');
+  if (row) row.classList.toggle('is-done', done);
+  setFollowTaskDone(key, done);
+  syncFollowTaskUI(key, done);
+  updateFollowCounts();
+}
+
 function bindFollowUpEvents() {
   if (document.body.dataset.followBound) return;
   document.body.dataset.followBound = '1';
-  document.addEventListener('change', (e) => {
+  document.addEventListener('input', (e) => {
     const input = e.target;
     if (!input.matches('#followPanel .follow-task input[type="checkbox"], #heroDaily .follow-task input[type="checkbox"]')) return;
-    const key = input.closest('[data-follow-key]')?.dataset.followKey;
-    if (!key) return;
-    const done = input.checked;
-    setFollowTaskDone(key, done);
-    syncFollowTaskUI(key, done);
-    updateFollowCounts();
+    handleFollowTaskToggle(input);
   });
   document.addEventListener('click', (e) => {
     if (e.target.closest('.follow-task')) return;

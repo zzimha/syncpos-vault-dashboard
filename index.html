@@ -477,10 +477,16 @@
     letter-spacing:0.8px; color:var(--navy); margin:14px 0 6px;
   }
   .follow-section-title:first-of-type { margin-top:0; }
+  .follow-list-head {
+    display:grid; grid-template-columns:54px 16px minmax(0,1fr) minmax(240px,1fr); gap:8px 10px;
+    align-items:center; padding:8px 6px; margin-bottom:4px; border-bottom:1px solid var(--line);
+    font-family:var(--sans); font-size:11px; font-weight:600; color:var(--navy);
+  }
+  .follow-list-head > div:last-child { text-align:left; }
   .follow-list { display:flex; flex-direction:column; }
   .follow-row {
-    display:grid; grid-template-columns:minmax(0,1fr) auto; gap:10px; align-items:center;
-    width:100%; padding:8px 6px; border-bottom:1px solid #F0F1F4; border-radius:4px;
+    display:grid; grid-template-columns:54px 16px minmax(0,1fr) minmax(240px,1fr); gap:8px 10px;
+    align-items:center; width:100%; padding:8px 6px; border-bottom:1px solid #F0F1F4; border-radius:4px;
     transition:background 0.15s ease;
   }
   .follow-row:hover { background:#FAFBFC; }
@@ -489,24 +495,23 @@
   .follow-row.is-done .follow-title { text-decoration:line-through; color:var(--grey); }
   .follow-row.is-done .follow-task-text { text-decoration:line-through; opacity:0.75; }
   .follow-row:last-child { border-bottom:none; }
-  .follow-row-link {
-    display:grid; grid-template-columns:54px 16px minmax(0,1fr); gap:8px; align-items:center;
-    border:none; background:transparent; cursor:pointer; text-align:left; font:inherit; padding:0; min-width:0;
-    border-radius:4px; transition:opacity 0.15s ease;
+  .follow-title {
+    font-family:var(--sans); font-size:13px; font-weight:600; color:#1A1D23;
+    line-height:1.35; min-width:0; text-align:left;
+    border:none; background:transparent; cursor:pointer; padding:0; font:inherit;
   }
-  .follow-row-link:hover { opacity:0.88; }
+  .follow-title:hover { color:var(--navy); }
   .follow-task {
-    display:inline-flex; align-items:center; gap:8px; cursor:pointer; flex-shrink:0;
-    font-family:var(--sans); font-size:12px; font-weight:500; white-space:nowrap;
-    padding:7px 12px; border-radius:99px; max-width:200px;
-    border:none; color:#fff;
-    user-select:none;
+    display:inline-flex; align-items:flex-start; gap:8px; cursor:pointer; flex-shrink:0;
+    font-family:var(--sans); font-size:12px; font-weight:500;
+    padding:7px 12px; border-radius:6px; width:100%; min-width:0;
+    border:none; color:#fff; user-select:none;
   }
   .follow-task:hover { filter:brightness(1.06); }
   .follow-task:focus-within { outline:2px solid #C7D2E8; outline-offset:1px; }
   .follow-task input {
     appearance:none; -webkit-appearance:none;
-    width:16px; height:16px; margin:0; flex-shrink:0; cursor:pointer;
+    width:16px; height:16px; margin:2px 0 0; flex-shrink:0; cursor:pointer;
     border:1.5px solid rgba(255,255,255,0.65); border-radius:4px; background:rgba(255,255,255,0.12);
     position:relative;
   }
@@ -520,10 +525,11 @@
     transform:rotate(45deg);
   }
   .follow-task input:active { transform:scale(0.92); }
-  .follow-task-text { overflow:hidden; text-overflow:ellipsis; line-height:1.3; color:#fff; }
-  .follow-task.tier-critical { background:var(--red); }
-  .follow-task.tier-high { background:var(--amber); }
-  .follow-task.tier-medium { background:#4A7CB5; }
+  .follow-task-text { line-height:1.35; color:#fff; white-space:normal; word-break:break-word; }
+  .follow-task.source-track.tier-critical { background:var(--red); }
+  .follow-task.source-track.tier-high { background:var(--amber); }
+  .follow-task.source-track.tier-medium { background:#4A7CB5; }
+  .follow-task.source-gate { background:var(--navy); }
   .follow-task.is-checked { opacity:0.72; }
   .follow-task.is-checked .follow-task-text { text-decoration:line-through; opacity:0.85; }
   .follow-date {
@@ -534,18 +540,20 @@
   .follow-type {
     font-family:var(--mono); font-size:9px; font-weight:700; color:var(--grey); line-height:1;
   }
-  .follow-title {
-    font-family:var(--sans); font-size:13px; font-weight:600; color:#1A1D23;
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0;
-  }
+  .follow-type.type-track { color:var(--red); }
+  .follow-type.type-gate { color:var(--navy); }
   .follow-empty {
     font-family:var(--sans); font-size:14px; color:var(--grey); padding:16px 0; text-align:center;
   }
   .follow-section-empty { display:none; }
   .follow-section-block.hidden { display:none; }
   @media (max-width:760px){
-    .follow-row { grid-template-columns:1fr; grid-template-rows:auto auto; gap:6px; }
-    .follow-task { justify-self:start; max-width:100%; }
+    .follow-list-head { display:none; }
+    .follow-row { grid-template-columns:1fr; grid-template-rows:auto auto auto; gap:4px 6px; }
+    .follow-row .follow-date { grid-row:1; }
+    .follow-row .follow-type { display:inline; margin-right:6px; }
+    .follow-row .follow-title { grid-row:2; white-space:normal; }
+    .follow-row .follow-task { grid-row:3; justify-self:stretch; }
   }
 
   .footnote{ margin-top:10px; font-size:9px; color:var(--grey); font-family:var(--mono); font-weight:500; border-top:1px solid var(--line); padding-top:6px; line-height:1.35; }
@@ -1141,6 +1149,26 @@ function followTierSort(a, b) {
   return a.name.localeCompare(b.name);
 }
 
+function followTrackSortKey(item) {
+  const n = Number(item.trackNum);
+  return Number.isFinite(n) ? n : 999;
+}
+
+function followSourceSort(a, b) {
+  const sourceOrder = { track: 0, gate: 1 };
+  const sa = sourceOrder[a.source] ?? 9;
+  const sb = sourceOrder[b.source] ?? 9;
+  if (sa !== sb) return sa - sb;
+  const ta = followTrackSortKey(a);
+  const tb = followTrackSortKey(b);
+  if (ta !== tb) return ta - tb;
+  if (a.dateParsed && b.dateParsed) {
+    const byDate = a.dateParsed - b.dateParsed;
+    if (byDate !== 0) return byDate;
+  }
+  return followTierSort(a, b);
+}
+
 function buildFollowUpItems(rows) {
   const items = [];
 
@@ -1177,31 +1205,11 @@ function buildFollowUpItems(rows) {
     });
   });
 
-  rows.filter(r => r.Section === 'RISKITEM').forEach((r, i) => {
-    const priority = normalizeRiskPriority(r.Status);
-    if (!priority) return;
-    const owner = ownerName(r);
-    items.push({
-      key: `risk-${followRiskKey(r.Name, i)}`,
-      source: 'risk',
-      name: String(r.Name || '').trim(),
-      priority,
-      owner,
-      ownerKey: followOwnerKey(owner),
-      date: null,
-      dateParsed: null,
-      trackNum: (() => {
-        const k = riskItemTrackKey(r);
-        return k === 'all-tracks' ? null : k;
-      })(),
-    });
-  });
-
-  const undated = items.filter(i => !i.dateParsed).sort(followTierSort);
+  const undated = items.filter(i => !i.dateParsed).sort(followSourceSort);
   const dated = items.filter(i => i.dateParsed).sort((a, b) => {
     const byDate = a.dateParsed - b.dateParsed;
     if (byDate !== 0) return byDate;
-    return followTierSort(a, b);
+    return followSourceSort(a, b);
   });
   return { undated, dated, all: items, total: items.length };
 }
@@ -1259,11 +1267,6 @@ function heroTaskLabel(item) {
   const owner = followOwnerParts(item.owner)[0];
   const chase = owner ? `chase ${owner}` : 'follow up';
   return `Track ${item.trackNum} · ${chase}`;
-}
-
-function followTrackSortKey(item) {
-  const n = Number(item.trackNum);
-  return Number.isFinite(n) ? n : 999;
 }
 
 function pickBestPerTrack(items) {
@@ -1387,22 +1390,32 @@ function applyFollowFilter() {
   updateFollowCounts();
 }
 
+function renderFollowListHeader() {
+  return `
+    <div class="follow-list-head" aria-hidden="true">
+      <div>Date</div>
+      <div></div>
+      <div>Item</div>
+      <div>Chase</div>
+    </div>
+  `;
+}
+
 function renderFollowRow(item) {
   const tier = followPriorityTier(item);
   const taskText = followTaskLabel(item);
   const done = isFollowTaskDone(item.key);
+  const typeLabel = item.source === 'track' ? 'Track' : 'Gate';
   const dateHtml = item.date
     ? `<span class="follow-date">${escapeHtml(item.date)}</span>`
     : `<span class="follow-date is-empty">—</span>`;
   const trackAttr = item.trackNum ? ` data-track-num="${escapeHtml(item.trackNum)}"` : '';
   return `
     <div class="follow-row${done ? ' is-done' : ''}" data-source="${item.source}" data-follow-key="${escapeHtml(item.key)}" data-tier="${tier}" data-owner-key="${escapeHtml(item.ownerKey)}"${trackAttr}>
-      <button type="button" class="follow-row-link">
-        ${dateHtml}
-        <span class="follow-type" title="${item.source === 'track' ? 'Track' : item.source === 'gate' ? 'Gate' : 'Risk'}">${followTypeIcon(item.source)}</span>
-        <span class="follow-title">${escapeHtml(item.name)}</span>
-      </button>
-      <label class="follow-task tier-${tier}${done ? ' is-checked' : ''}" title="${escapeHtml(taskText)}">
+      ${dateHtml}
+      <span class="follow-type type-${item.source}" title="${typeLabel}">${followTypeIcon(item.source)}</span>
+      <button type="button" class="follow-title">${escapeHtml(item.name)}</button>
+      <label class="follow-task source-${item.source} tier-${tier}${done ? ' is-checked' : ''}" title="${escapeHtml(taskText)}">
         <input type="checkbox"${done ? ' checked' : ''} aria-label="${escapeHtml(taskText)}" />
         <span class="follow-task-text">${escapeHtml(taskText)}</span>
       </label>
@@ -1424,7 +1437,7 @@ function bindFollowToolbarEvents() {
 }
 
 function handleFollowUpClick(e) {
-  const row = e.target.closest('.follow-row-link')?.closest('.follow-row')
+  const row = e.target.closest('.follow-title')?.closest('.follow-row')
     || e.target.closest('.follow-row');
   if (!row) return;
   const source = row.dataset.source;
@@ -1490,7 +1503,7 @@ function bindFollowUpEvents() {
   });
   document.addEventListener('click', (e) => {
     if (e.target.closest('.follow-task')) return;
-    const link = e.target.closest('.follow-row-link');
+    const link = e.target.closest('.follow-title');
     if (!link || !e.target.closest('#followPanel')) return;
     handleFollowUpClick(e);
   });
@@ -1896,7 +1909,7 @@ function render(rows) {
   const datedHtml = followUps.dated.map(renderFollowRow).join('');
 
   document.getElementById('followPanel').innerHTML = `
-    <p class="follow-intro">One action per row — tick when chased. Tap a row for full details. Filter by priority or owner below.</p>
+    <p class="follow-intro">Tracks and gates only — tick when chased. Full risk list is under Open Risks. Tap a row for details.</p>
     <div class="follow-toolbar">
       <div class="tl-filter-group">
         <label for="followPriorityFilter">Priority</label>
@@ -1912,10 +1925,12 @@ function render(rows) {
     ${followUps.total ? `
       <div class="follow-section-block" id="followUndatedBlock">
         <div class="follow-section-title">Ongoing / No fixed date</div>
+        ${renderFollowListHeader()}
         <div class="follow-list" id="followUndated">${undatedHtml}</div>
       </div>
       <div class="follow-section-block" id="followDatedBlock">
         <div class="follow-section-title">By date</div>
+        ${renderFollowListHeader()}
         <div class="follow-list" id="followDated">${datedHtml}</div>
       </div>
     ` : '<div class="follow-empty">Nothing to chase right now — all clear.</div>'}

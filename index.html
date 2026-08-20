@@ -15,7 +15,7 @@
     --display:'Poppins',sans-serif;
   }
   * { box-sizing:border-box; margin:0; padding:0; }
-  body { background:var(--bg); font-family:var(--sans); color:#1A1D23; padding:10px 12px 14px; line-height:1.4; font-size:13px; -webkit-font-smoothing:antialiased; }
+  body { background:var(--bg); font-family:var(--sans); color:#1A1D23; padding:12px 14px 18px; line-height:1.45; font-size:13px; -webkit-font-smoothing:antialiased; }
   .wrap { max-width:1160px; margin:0 auto; }
   .panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; box-shadow:0 1px 2px rgba(31,56,100,0.04); }
 
@@ -207,8 +207,12 @@
   }
   .dash-tab[aria-selected="true"] .tab-badge { background:rgba(255,255,255,0.22); }
   .dash-tab:not([aria-selected="true"]) .tab-badge { background:var(--red-bg); color:var(--red); }
-  .tab-panel { display:block; }
+  .tab-panel { display:block; margin-bottom:10px; }
   .tab-panel.hidden { display:none; }
+  .tab-panel-intro {
+    font-family:var(--sans); font-size:13px; color:var(--grey); line-height:1.5;
+    margin:0 2px 14px; max-width:72ch;
+  }
 
   .section-title {
     font-size:9px; text-transform:uppercase; letter-spacing:1px; color:#9CA3AF;
@@ -402,13 +406,17 @@
   .timeline .status-label { font-size:10px; padding:3px 8px; }
   .tl-empty.visible { display:block; }
 
-  .risk-panel { padding:16px 18px; }
-  .risk-layout { display:grid; grid-template-columns:auto 1fr; gap:20px; align-items:center; }
-  @media (max-width:600px){ .risk-layout{ grid-template-columns:1fr; justify-items:center; } }
+  .risk-panel { padding:20px 20px 22px; }
+  .risk-intro {
+    font-family:var(--sans); font-size:13px; color:var(--grey); line-height:1.5;
+    margin-bottom:16px; max-width:72ch;
+  }
+  .risk-layout { display:grid; grid-template-columns:auto 1fr; gap:24px; align-items:center; }
+  @media (max-width:600px){ .risk-layout{ grid-template-columns:1fr; justify-items:center; gap:18px; } }
   .risk-chart svg { display:block; width:130px; height:130px; }
-  .risk-strip-counts { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; height:100%; }
+  .risk-strip-counts { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; height:100%; }
   @media (min-width:601px){ .risk-strip-counts{ grid-template-columns:repeat(4,1fr); } }
-  .risk-box{ background:#FAFBFC; border:1px solid var(--line); border-radius:8px; padding:12px 14px; text-align:center; display:flex; flex-direction:column; justify-content:center; min-height:72px; }
+  .risk-box{ background:#FAFBFC; border:1px solid var(--line); border-radius:8px; padding:14px 14px; text-align:center; display:flex; flex-direction:column; justify-content:center; min-height:76px; }
   .risk-box .count{ font-family:var(--mono); font-size:28px; font-weight:700; font-variant-numeric:tabular-nums; line-height:1; }
   .risk-box .rlabel{ font-size:10px; color:var(--grey); text-transform:uppercase; letter-spacing:0.5px; margin-top:6px; font-family:var(--mono); font-weight:600; }
   .risk-box.critical .count{ color:var(--red); }
@@ -417,54 +425,59 @@
   .risk-box.open-total .count{ color:var(--navy); }
 
   .risk-details-toggle {
-    display:block; width:100%; margin-top:14px; padding:10px 12px;
+    display:block; width:100%; margin-top:18px; padding:12px 14px;
     font-family:var(--sans); font-size:12px; font-weight:600; color:var(--navy);
     background:var(--grey-bg); border:1px solid var(--line); border-radius:6px;
     cursor:pointer; text-align:center; transition:background 0.15s ease;
   }
   .risk-details-toggle:hover { background:#E8ECF2; }
-  .risk-details { margin-top:10px; }
+  .risk-details { margin-top:14px; }
   .risk-details.hidden { display:none; }
-  .risk-filters { margin-bottom:8px; }
-  .risk-list { }
+  .risk-filters { margin-bottom:12px; }
+  .risk-list { display:flex; flex-direction:column; gap:2px; }
   .risk-row {
-    padding:10px 12px; border-bottom:1px solid #F0F1F4; border-radius:4px;
+    padding:14px 14px 16px; border-bottom:1px solid #F0F1F4; border-radius:6px;
     transition:background 0.15s ease;
   }
   .risk-row:hover { background:#FAFBFC; }
   .risk-row.hidden { display:none; }
   .risk-row:last-child { border-bottom:none; }
   .risk-row-head {
-    display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
-    margin-bottom:5px;
+    display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+    margin-bottom:8px;
   }
-  .risk-name { font-family:var(--sans); font-size:13px; font-weight:700; color:#1A1D23; line-height:1.3; flex:1; min-width:0; }
-  .risk-detail { font-family:var(--sans); font-size:12px; color:#444; line-height:1.45; margin:0 0 8px; }
-  .risk-row-foot { display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
+  .risk-name { font-family:var(--sans); font-size:14px; font-weight:700; color:#1A1D23; line-height:1.35; flex:1; min-width:0; }
+  .risk-detail { font-family:var(--sans); font-size:13px; color:#444; line-height:1.5; margin:0 0 10px; }
+  .risk-row-foot {
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap;
+    gap:10px 14px; margin-top:2px;
+  }
+  .risk-meta-group { display:flex; align-items:center; flex-wrap:wrap; gap:8px 10px; min-width:0; }
   .risk-owner { font-family:var(--mono); font-size:10px; font-weight:500; color:var(--grey); }
   .risk-track {
-    font-family:var(--mono); font-size:9px; font-weight:500; color:var(--slate);
-    padding:2px 6px; border-radius:4px; background:var(--grey-bg);
+    font-family:var(--mono); font-size:10px; font-weight:600; color:var(--slate);
+    padding:3px 8px; border-radius:4px; background:var(--grey-bg);
   }
   .risk-chase {
-    font-family:var(--mono); font-size:9px; font-weight:600;
-    padding:2px 7px; border-radius:4px; background:var(--amber-bg); color:var(--amber);
+    font-family:var(--mono); font-size:10px; font-weight:600;
+    padding:4px 10px; border-radius:6px; background:var(--amber-bg); color:var(--amber);
+    white-space:nowrap; flex-shrink:0;
   }
   .priority-label {
-    display:inline-block; font-family:var(--mono); font-size:9px; font-weight:600;
-    padding:2px 7px; border-radius:4px; white-space:nowrap; letter-spacing:0.1px; flex-shrink:0;
+    display:inline-block; font-family:var(--mono); font-size:10px; font-weight:600;
+    padding:3px 8px; border-radius:4px; white-space:nowrap; letter-spacing:0.1px; flex-shrink:0;
   }
   .priority-label.priority-critical { background:var(--red-bg); color:var(--red); }
   .priority-label.priority-high { background:var(--amber-bg); color:var(--amber); }
   .priority-label.priority-medium { background:#E8F0FA; color:#4A7CB5; }
 
-  .follow-panel { padding:14px 16px; }
+  .follow-panel { padding:18px 18px 22px; }
   .follow-intro {
-    font-family:var(--sans); font-size:13px; color:var(--grey); margin-bottom:12px; line-height:1.4;
+    font-family:var(--sans); font-size:13px; color:var(--grey); margin-bottom:16px; line-height:1.5; max-width:72ch;
   }
   .follow-toolbar {
-    display:flex; flex-wrap:wrap; gap:12px 16px; align-items:flex-end;
-    margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--line);
+    display:flex; flex-wrap:wrap; gap:14px 18px; align-items:flex-end;
+    margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid var(--line);
   }
   .follow-toolbar .tl-filter-group label {
     font-family:var(--sans); font-size:11px; font-weight:600; color:var(--grey);
@@ -479,11 +492,11 @@
   .follow-toolbar select:focus { outline:2px solid #C7D2E8; outline-offset:1px; }
   .follow-count-note {
     font-family:var(--sans); font-size:12px; font-weight:500; color:var(--grey);
-    margin-bottom:10px;
+    margin-bottom:12px;
   }
   .follow-section-title {
     font-family:var(--mono); font-size:10px; font-weight:700; text-transform:uppercase;
-    letter-spacing:0.8px; color:var(--navy); margin:14px 0 6px;
+    letter-spacing:0.8px; color:var(--navy); margin:18px 0 8px;
   }
   .follow-section-title:first-of-type { margin-top:0; }
   .follow-list-head {
@@ -492,10 +505,10 @@
     font-family:var(--sans); font-size:11px; font-weight:600; color:var(--navy);
   }
   .follow-list-head > div:last-child { text-align:left; }
-  .follow-list { display:flex; flex-direction:column; }
+  .follow-list { display:flex; flex-direction:column; gap:2px; }
   .follow-row {
-    display:grid; grid-template-columns:54px 16px minmax(0,1fr) minmax(240px,1fr); gap:8px 10px;
-    align-items:center; width:100%; padding:8px 6px; border-bottom:1px solid #F0F1F4; border-radius:4px;
+    display:grid; grid-template-columns:54px 16px minmax(0,1fr) minmax(240px,1fr); gap:10px 12px;
+    align-items:center; width:100%; padding:12px 8px; border-bottom:1px solid #F0F1F4; border-radius:6px;
     transition:background 0.15s ease;
   }
   .follow-row:hover { background:#FAFBFC; }
@@ -558,11 +571,21 @@
   .follow-section-block.hidden { display:none; }
   @media (max-width:760px){
     .follow-list-head { display:none; }
-    .follow-row { grid-template-columns:1fr; grid-template-rows:auto auto auto; gap:4px 6px; }
+    .follow-row { grid-template-columns:1fr; grid-template-rows:auto auto auto; gap:6px 8px; padding:14px 10px; }
     .follow-row .follow-date { grid-row:1; }
     .follow-row .follow-type { display:inline; margin-right:6px; }
-    .follow-row .follow-title { grid-row:2; white-space:normal; }
-    .follow-row .follow-task { grid-row:3; justify-self:stretch; }
+    .follow-row .follow-title { grid-row:2; white-space:normal; font-size:14px; }
+    .follow-row .follow-task { grid-row:3; justify-self:stretch; margin-top:4px; }
+  }
+  @media (max-width:420px){
+    .dash-tab { font-size:11px; padding:10px 8px; gap:5px; }
+    .tab-badge { font-size:9px; padding:2px 6px; }
+    .risk-name, .follow-title { font-size:14px; }
+    .risk-detail, .follow-intro, .risk-intro, .tab-panel-intro { font-size:13px; }
+    .follow-task { font-size:13px; padding:9px 12px; }
+    .follow-toolbar select { min-width:140px; width:100%; }
+    .risk-row-foot { flex-direction:column; align-items:flex-start; }
+    .risk-chase { align-self:flex-start; }
   }
 
   .footnote{ margin-top:10px; font-size:9px; color:var(--grey); font-family:var(--mono); font-weight:500; border-top:1px solid var(--line); padding-top:6px; line-height:1.35; }
@@ -588,7 +611,7 @@
         <span>Refresh</span>
       </button>
       <div class="sync-footer">
-        <a class="header-link" href="https://docs.google.com/spreadsheets/d/1USc4QlLolteq9TjH8tFxpq9Jx55FR2BbGjRXnCX9G5E/edit?usp=sharing" target="_blank">Edit sheet</a>
+        <a class="header-link" href="https://docs.google.com/spreadsheets/d/1lUK0kxklxO779Dp_inSl5vaGCkWqdiamkvf2AMmWBck/edit?usp=sharing" target="_blank">Edit sheet</a>
         <div class="sync-status is-loading" id="syncStatus">
           <div class="sync-status-row">
             <span class="sync-label">Connecting</span>
@@ -641,7 +664,7 @@
 </div>
 
 <script>
-const SHEET_ID = '1USc4QlLolteq9TjH8tFxpq9Jx55FR2BbGjRXnCX9G5E';
+const SHEET_ID = '1lUK0kxklxO779Dp_inSl5vaGCkWqdiamkvf2AMmWBck';
 const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
 const HERO_SHORT = {
@@ -1035,6 +1058,20 @@ function riskCount(row) {
   return isNaN(n) ? 0 : Math.round(n);
 }
 
+function countRiskItems(rows) {
+  const counts = { critical: 0, high: 0, medium: 0 };
+  rows.filter(r => r.Section === 'RISKITEM').forEach(r => {
+    const priority = normalizeRiskPriority(r.Status);
+    if (priority) counts[priority]++;
+  });
+  return {
+    critical: counts.critical,
+    high: counts.high,
+    medium: counts.medium,
+    totalOpen: counts.critical + counts.high + counts.medium,
+  };
+}
+
 function normalizeRiskPriority(status) {
   const s = String(status || '').trim().toLowerCase();
   if (s === 'critical') return 'critical';
@@ -1179,6 +1216,86 @@ function followSourceSort(a, b) {
   return followTierSort(a, b);
 }
 
+const FOLLOW_TOPIC_STOP = new Set([
+  'the', 'and', 'for', 'not', 'still', 'due', 'pending', 'issue', 'planned', 'even', 'from',
+  'with', 'without', 'after', 'before', 'under', 'over', 'team', 'project', 'only', 'both',
+  'may', 'per', 'new', 'main', 'remaining', 'being', 'into', 'this', 'that', 'are', 'was',
+]);
+
+function followTopicTokens(...texts) {
+  const tokens = new Set();
+  texts.forEach(text => {
+    String(text || '').toLowerCase()
+      .replace(/[^a-z0-9]+/g, ' ')
+      .split(/\s+/)
+      .forEach(word => {
+        if (word.length >= 3 && !FOLLOW_TOPIC_STOP.has(word)) tokens.add(word);
+      });
+  });
+  return tokens;
+}
+
+function followTopicsOverlap(a, b) {
+  const tokensA = followTopicTokens(a.name, a.detail);
+  const tokensB = followTopicTokens(b.name, b.detail);
+  for (const token of tokensA) {
+    if (tokensB.has(token)) return true;
+  }
+  const textA = `${a.name} ${a.detail || ''}`.toLowerCase();
+  const textB = `${b.name} ${b.detail || ''}`.toLowerCase();
+  for (const token of tokensA) {
+    if (token.length >= 4 && textB.includes(token)) return true;
+  }
+  for (const token of tokensB) {
+    if (token.length >= 4 && textA.includes(token)) return true;
+  }
+  return false;
+}
+
+function followOwnersOverlap(a, b) {
+  const ownersA = followOwnerParts(a.owner).map(o => o.toLowerCase());
+  const ownersB = followOwnerParts(b.owner).map(o => o.toLowerCase());
+  return ownersA.some(o => ownersB.includes(o));
+}
+
+function followTracksAlign(a, b) {
+  const trackA = a.trackNum != null ? String(a.trackNum) : '';
+  const trackB = b.trackNum != null ? String(b.trackNum) : '';
+  if (!trackA || !trackB || trackA === 'all-tracks' || trackB === 'all-tracks') return true;
+  return trackA === trackB;
+}
+
+function buildFollowDedupComparators(rows, items) {
+  const comparators = items.filter(i => i.source === 'gate');
+  rows.filter(r => r.Section === 'RISKITEM').forEach((r, i) => {
+    const priority = normalizeRiskPriority(r.Status);
+    if (!priority || priority === 'medium') return;
+    const trackNum = riskItemTrackKey(r);
+    comparators.push({
+      source: 'risk',
+      name: String(r.Name || '').trim(),
+      detail: String(r.Detail || '').trim(),
+      owner: ownerName(r),
+      trackNum: trackNum === 'all-tracks' ? null : trackNum,
+      key: `risk-${followRiskKey(r.Name, i)}`,
+    });
+  });
+  return comparators;
+}
+
+function dedupeFollowUpItems(items, rows) {
+  const comparators = buildFollowDedupComparators(rows, items);
+  return items.filter(item => {
+    if (item.source !== 'track') return true;
+    return !comparators.some(other => {
+      if (other.source === 'track') return false;
+      if (!followOwnersOverlap(item, other)) return false;
+      if (!followTracksAlign(item, other)) return false;
+      return followTopicsOverlap(item, other);
+    });
+  });
+}
+
 function buildFollowUpItems(rows) {
   const items = [];
 
@@ -1189,6 +1306,7 @@ function buildFollowUpItems(rows) {
       key: `track-${trackNum}`,
       source: 'track',
       name: String(r.Name || '').trim(),
+      detail: String(r.Detail || '').trim(),
       status: r.Status,
       owner,
       ownerKey: followOwnerKey(owner),
@@ -1205,6 +1323,7 @@ function buildFollowUpItems(rows) {
       key: `gate-${Number(r.Num)}`,
       source: 'gate',
       name: String(r.Name || '').trim(),
+      detail: String(r.Detail || '').trim(),
       status: r.Status,
       owner,
       ownerKey: followOwnerKey(owner),
@@ -1215,13 +1334,20 @@ function buildFollowUpItems(rows) {
     });
   });
 
-  const undated = items.filter(i => !i.dateParsed).sort(followSourceSort);
-  const dated = items.filter(i => i.dateParsed).sort((a, b) => {
+  const deduped = dedupeFollowUpItems(items, rows);
+  const undated = deduped.filter(i => !i.dateParsed).sort(followSourceSort);
+  const dated = deduped.filter(i => i.dateParsed).sort((a, b) => {
     const byDate = a.dateParsed - b.dateParsed;
     if (byDate !== 0) return byDate;
     return followSourceSort(a, b);
   });
-  return { undated, dated, all: items, total: items.length };
+  return {
+    undated,
+    dated,
+    all: deduped,
+    tracks: items.filter(i => i.source === 'track'),
+    total: deduped.length,
+  };
 }
 
 function followItemMatchesOwner(item) {
@@ -1596,8 +1722,8 @@ function render(rows) {
     ? `<p class="hero-note"><span class="hero-note-icon" aria-hidden="true">⚠</span>${escapeHtml(noteText)}</p>`
     : '';
   const followUps = buildFollowUpItems(rows);
-  cachedFollowUpAll = followUps.all;
-  const heroDailyTasks = pickHeroDailyTasks(cachedFollowUpAll);
+  cachedFollowUpAll = followUps.tracks;
+  const heroDailyTasks = pickHeroDailyTasks(followUps.tracks);
   document.getElementById('heroDetail').innerHTML = `
     <div class="hero-main">
       <h2>${escapeHtml(heroTitle)}</h2>
@@ -1790,17 +1916,12 @@ function render(rows) {
   applyGateFilter();
 
   /* 4 — Risk donut + stacked bar + count strip */
-  const riskRows = rows.filter(r => r.Section === 'RISK');
   const riskStrip = document.getElementById('riskStrip');
   riskStrip.innerHTML = '';
   riskStrip.className = 'risk-panel panel';
 
-  const riskMap = {};
-  riskRows.forEach(r => { riskMap[r.Name] = riskCount(r); });
-  const crit = riskMap['Critical'] || 0;
-  const high = riskMap['High'] || 0;
-  const med = riskMap['Medium'] || 0;
-  const totalOpen = riskMap['Total Open'] || (crit + high + med);
+  const riskItems = rows.filter(r => r.Section === 'RISKITEM');
+  const { critical: crit, high, medium: med, totalOpen } = countRiskItems(rows);
 
   const riskSegments = [
     { value: crit, color: STATUS_COLORS.red },
@@ -1817,7 +1938,6 @@ function render(rows) {
 
   document.getElementById('riskTabBadge').textContent = totalOpen;
 
-  const riskItems = rows.filter(r => r.Section === 'RISKITEM');
   const priorityOrder = { critical: 0, high: 1, medium: 2 };
   riskItems.sort((a, b) => {
     const pa = priorityOrder[normalizeRiskPriority(a.Status)] ?? 3;
@@ -1844,8 +1964,10 @@ function render(rows) {
         </div>
         ${detail ? `<p class="risk-detail">${escapeHtml(detail)}</p>` : ''}
         <div class="risk-row-foot">
-          <span class="risk-track">${escapeHtml(trackLabel)}</span>
-          ${owner ? `<span class="risk-owner">${escapeHtml(owner)}</span>` : ''}
+          <div class="risk-meta-group">
+            <span class="risk-track">${escapeHtml(trackLabel)}</span>
+            ${owner ? `<span class="risk-owner">${escapeHtml(owner)}</span>` : ''}
+          </div>
           ${chaseHtml}
         </div>
       </div>
@@ -1866,6 +1988,7 @@ function render(rows) {
     .join('');
 
   riskStrip.innerHTML = `
+    <p class="risk-intro">Full risk register — severity counts are calculated live from the items below, not the sheet summary row. Use filters to narrow by priority or track.</p>
     <div class="risk-layout">
       <div class="risk-chart">${riskDonut}</div>
       <div class="risk-strip-counts">
@@ -1923,7 +2046,7 @@ function render(rows) {
   const datedHtml = followUps.dated.map(renderFollowRow).join('');
 
   document.getElementById('followPanel').innerHTML = `
-    <p class="follow-intro">Tracks and gates only — tick when chased. Full risk list is under Open Risks. Tap a row for details.</p>
+    <p class="follow-intro">Today's chase list for red/amber tracks and gates — deduplicated so only the most specific item shows when a track card and a gate/risk describe the same issue. Tick when chased. For the full risk register, use Open Risks.</p>
     <div class="follow-toolbar">
       <div class="tl-filter-group">
         <label for="followPriorityFilter">Priority</label>

@@ -668,8 +668,8 @@ const SHEET_ID = '1dwoy7Rw7dTRR2IBUHW80keZiPCPcdcWs5FU7PnvesFU';
 const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
 const HERO_SHORT = {
-  'Cutover Window': 'Cutover 9 Aug (may delay to ~27 Aug)***',
-  'Hero Note 2': 'Auto-unseal, LDAP Prod, DR & UAT after 9 Aug',
+  'Cutover Window': 'Cutover 1 Sep',
+  'Hero Note 2': 'Auto-unseal, LDAP Prod, DR & UAT after 1 Sep',
 };
 
 /** Track Num → status override when sheet lags behind reality */
@@ -1707,7 +1707,7 @@ function render(rows) {
   const meta = {};
   rows.filter(r => r.Section === 'META').forEach(r => { meta[r.Name] = r.Detail; });
   // Countdown — SortDate on Cutover Window META row only
-  let cutoverStart = new Date('2026-08-09');
+  let cutoverStart = new Date('2026-09-01');
   const cutoverRow = rows.find(r => r.Section === 'META' && r.Name === 'Cutover Window');
   const cutoverParsed = cutoverRow ? parseSortDate(cutoverRow) : null;
   if (cutoverParsed) cutoverStart = cutoverParsed;

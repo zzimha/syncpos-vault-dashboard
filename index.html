@@ -1709,8 +1709,15 @@ function render(rows) {
   const cutoverParsed = cutoverRow ? parseSortDate(cutoverRow) : null;
   if (cutoverParsed) cutoverStart = cutoverParsed;
   const today = new Date(); today.setHours(0,0,0,0);
-  const days = Math.round((cutoverStart - today) / 86400000);
+  const rawDays = Math.round((cutoverStart - today) / 86400000);
+  const cutoverDetail = String(meta['Cutover Window'] || cutoverRow?.Detail || '');
+  const cutoverEnded = /completed|complete|ended|done/i.test(cutoverDetail) || rawDays <= 0;
+  const days = cutoverEnded ? 0 : rawDays;
   document.getElementById('daysToCutover').textContent = days;
+  const countdownLabel = document.querySelector('.countdown .label');
+  if (countdownLabel) {
+    countdownLabel.textContent = cutoverEnded ? 'cutover complete' : 'days to cutover start';
+  }
 
   const heroTitle = heroText('Cutover Window', meta['Cutover Window']);
   const heroNote2 = heroText('Hero Note 2', meta['Hero Note 2']);
